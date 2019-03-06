@@ -1,0 +1,20 @@
+.app {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.highlight {
+	animation: yellow-fade 2s ease-in 1;
+}
+
+@keyframes yellow-fade {
+	0% {background: yellow;}
+	100% {background: none;}
+}
+
+input::-ms-clear, input::-ms-reveal {
+	display: none;
+}

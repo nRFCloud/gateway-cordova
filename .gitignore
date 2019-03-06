@@ -1,0 +1,11 @@
+.idea
+node_modules
+plugins
+platforms
+dist
+.awcache
+/www/js/index.js
+/*.apk
+built
+/.env
+/config/nrfofficialkeystore

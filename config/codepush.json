@@ -1,0 +1,10 @@
+{
+	"android": {
+		"production": "",
+		"staging": ""
+	},
+	"ios": {
+		"production": "",
+		"staging": ""
+	}
+}
