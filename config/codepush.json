@@ -1,10 +1,12 @@
 {
 	"android": {
 		"production": "",
-		"staging": ""
+		"staging": "",
+		"appSecret": ""
 	},
 	"ios": {
 		"production": "",
-		"staging": ""
+		"staging": "",
+		"appSecret": ""
 	}
 }

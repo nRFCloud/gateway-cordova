@@ -25,17 +25,17 @@ function setPlatformCodePushKey(platform, key) {
 	}], xmlNamespace))
 }
 
+function setPlatformAppSecret(platform, key) {
+	return gulp.src(configFileName).pipe(xmlTransformer([{
+		path: '//n:widget/n:platform[@name="' + platform + '"]/n:preference[@name="APP_SECRET"]', attr: {value: key},
+	}], xmlNamespace))
+}
+
 function updateVersionNumber() {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
 		path: '//n:widget', attr: {version: packageJson.version},
 	}], xmlNamespace)).pipe(gulp.dest('./'));
 }
-
-// function setShortName(shortName) {
-// 	return gulp.src(configFileName).pipe(xmlTransformer([{
-// 		path: '//n:widget/n:name', attr: {shortName: shortName}
-// 	}], xmlNamespace)).pipe(gulp.dest('./'));
-// }
 
 function revertConfig() {
 	return gulp.src(configFileName).pipe(git.checkoutFiles());
@@ -51,6 +51,14 @@ function setAndroidProductionCodePushKey() {
 
 function setIosProductionCodePushKey() {
 	return setPlatformCodePushKey('ios', codePushConfig.ios.production).pipe(gulp.dest('./'));
+}
+
+function setAndroidAppSecret() {
+	return setPlatformAppSecret('android', codePushConfig.android.appSecret).pipe(gulp.dest('./'));
+}
+
+function setIosAppSecret() {
+	return setPlatformAppSecret('ios', codePushConfig.android.appSecret).pipe(gulp.dest('./'));
 }
 
 let passwords;
@@ -120,6 +128,7 @@ async function buildCodeForProduction() {
 
 const buildStagingAndroid = gulp.series(
 	revertConfig,
+	setAndroidAppSecret,
 	setAndroidStagingCodePushKey,
 	buildDebugAndroidPackage,
 	copyDebugAndroidBuild,
@@ -128,6 +137,7 @@ const buildStagingAndroid = gulp.series(
 
 const buildProductionAndroid = gulp.series(
 	revertConfig,
+	setAndroidAppSecret,
 	setAndroidProductionCodePushKey,
 	signAndroidPackage,
 	copyProductionAndroidBuild,
@@ -143,7 +153,7 @@ exports.buildAndroid = gulp.series(
 );
 
 exports.buildIos = gulp.series(
-	// () => setShortName('Gateway'), //This doesn't work for iOS apparently. So we're going with an edit-config in config.xml
+	setIosAppSecret,
 	setIosProductionCodePushKey,
 	buildIosPackage,
 	revertConfig,
