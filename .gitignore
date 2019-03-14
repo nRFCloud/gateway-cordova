@@ -9,3 +9,5 @@ dist
 built
 /.env
 /config/nrfofficialkeystore
+/config/codepush.json
+/config/keystore.json

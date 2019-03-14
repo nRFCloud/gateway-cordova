@@ -5,11 +5,13 @@ Pre-reqs:
 1. Cordova installed. This should be as simple as `npm i -g cordova`
 1. This repo, obviously.
 1. Copy the `.env.sample` file to `.env` and fill out details if you'd like to auto-fill your username and password
+1. Copy the two sample files in `./config` to `codepush.json` and `keystore.json`. Fill out the information if you have it.
 1. Checkout the [gateway-common](https://github.com/nRFCloud/gateway-common) repo into the parent directory (so it can satisfy the dependency in package.json.)
     1. Make sure you `npm i` and `npm run build` in the gateway directory
 
 Not required for building, but required for deployment:
 1. Microsoft AppCenter/CodePush. This is used to push updates to the apps that don't have to go through the app store process.
+	1. To get started with your own distribution, see [this guide](https://docs.microsoft.com/en-us/appcenter/distribution/codepush/).
 
 Steps to build:
 1. `npm i` (only needed once, of couse)
