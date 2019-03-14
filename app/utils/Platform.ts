@@ -128,6 +128,7 @@ export namespace Platform {
 		bg.on('activate', () => {
 			bg.disableWebViewOptimizations();
 		});
+		bg.disableBatteryOptimizations();
 	}
 
 	function unEnabler() {

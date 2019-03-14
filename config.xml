@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-packageName="no.nordicsemi.android.nrfcloudgateway" id="no.nordicsemi.bleapp" ios-CFBundleIdentifier="com.nordicsemi.nRFCloud-Gateway" version="2.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:android="schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-packageName="no.nordicsemi.android.nrfcloudgateway" id="no.nordicsemi.bleapp" ios-CFBundleIdentifier="com.nordicsemi.nRFCloud-Gateway" version="2.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:android="schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>nRF Cloud Gateway</name>
     <description>
         A gateway to connect Bluetooth devices to the internet
@@ -22,12 +22,21 @@
         <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
             <application android:icon="@mipmap/ic_launcher" android:resizeableActivity="true" android:roundIcon="@mipmap/ic_launcher_round" />
         </edit-config>
+        <config-file parent="/manifest" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+        </config-file>
         <allow-intent href="market:*" />
         <preference name="CodePushDeploymentKey" value="" />
         <preference name="StatusBarBackgroundColor" value="#0081B7" />
         <preference name="SplashMaintainAspectRatio" value="true" />
         <preference name="SplashShowOnlyFirstTime" value="true" />
         <preference name="APP_SECRET" value="" />
+        <icon density="ldpi" src="res/icon/android/ldpi.png" />
+        <icon density="mdpi" src="res/icon/android/mdpi.png" />
+        <icon density="hdpi" src="res/icon/android/hdpi.png" />
+        <icon density="xhdpi" src="res/icon/android/xhdpi.png" />
+        <icon density="xxhdpi" src="res/icon/android/xxhdpi.png" />
+        <icon density="xxxhdpi" src="res/icon/android/xxxhdpi.png" />
         <splash density="port-ldpi" src="res/screen/android/splash-port-ldpi.png" />
         <splash density="port-mdpi" src="res/screen/android/splash-port-mdpi.png" />
         <splash density="port-hdpi" src="res/screen/android/splash-port-hdpi.png" />
