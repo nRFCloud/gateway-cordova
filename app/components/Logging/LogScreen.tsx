@@ -2,16 +2,20 @@ import * as React from 'react';
 import { AppBar, Dialog, IconButton, Slide, Toolbar, Typography, withStyles } from '@material-ui/core/es';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SaveIcon from '@material-ui/icons/Save';
 import { boundMethod } from 'autobind-decorator';
 
 import EventLog from './EventLog';
-import { actions } from '../../providers/StateStore';
+import { actions, connect, LogEvent } from '../../providers/StateStore';
+import FileUtil from '../../utils/FileUtil';
 
 interface MyProps {
 	deviceId?: string;
 	classes?: any;
 	isOpen: boolean;
 	close: () => void;
+	gateway?: LogEvent[];
+	devices?: {[key: string]: LogEvent[]};
 }
 
 function Transition(props) {
@@ -35,6 +39,17 @@ class LogScreen extends React.Component<MyProps, {}> {
 		this.props.close();
 	}
 
+	@boundMethod
+	private saveLog() {
+		let events = this.props.gateway;
+
+		if (this.props.deviceId) {
+			events = this.props.devices[this.props.deviceId] || [];
+		}
+
+		FileUtil.saveLog(events);
+	}
+
 	render() {
 		const deviceTitle = this.props.deviceId ? (
 			<Typography color="secondary" variant="subtitle1">{this.props.deviceId}</Typography>
@@ -56,6 +71,9 @@ class LogScreen extends React.Component<MyProps, {}> {
 							Logs
 						</Typography>
 						{deviceTitle}
+						<IconButton color="secondary" onClick={this.saveLog} aria-label="Save">
+							<SaveIcon />
+						</IconButton>
 						<IconButton color="secondary" onClick={this.clearLog} aria-label="Clear">
 							<DeleteIcon/>
 						</IconButton>
@@ -69,11 +87,11 @@ class LogScreen extends React.Component<MyProps, {}> {
 	}
 }
 
-export default withStyles({
+export default connect(({devices, gateway}) => ({devices, gateway}))(withStyles({
 	flex: {
 		flex: 1,
 	},
 	logArea: {
 		paddingTop: '3rem',
 	},
-})(LogScreen);
+})(LogScreen));

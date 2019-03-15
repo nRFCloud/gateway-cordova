@@ -225,6 +225,10 @@ namespace Client {
 		}
 		return tenantsGetResult[0];
 	}
+
+	export function getFilesystem() {
+		return fileSystem;
+	}
 }
 
 export default Client;

@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Divider, List } from '@material-ui/core/es';
 
 import LogEntry from './LogEntry';
-import { connect, LogEvent, AppState } from '../../providers/StateStore';
-import { Logger } from '../../logger/Logger';
+import { connect, LogEvent } from '../../providers/StateStore';
 
 interface MyProps {
 	gateway?: LogEvent[];
@@ -20,9 +19,12 @@ class EventLog extends React.PureComponent<MyProps, {}> {
 			events = this.props.devices[this.props.deviceId] || [];
 		}
 
+		const eventsCopy = Array.from(events);
+		eventsCopy.sort((l, r) => r.timestamp - l.timestamp);
+
 		return (
 			<List>
-				{events.map((event) => {
+				{eventsCopy.map((event) => {
 					return (
 						<React.Fragment key={event.timestamp}>
 							<LogEntry entry={event}/>
@@ -34,13 +36,5 @@ class EventLog extends React.PureComponent<MyProps, {}> {
 		);
 	}
 }
-
-const mapStateToProps = (state: AppState) => {
-	Logger.info('called mapstatetoprops', state);
-	return {
-		devices: state.devices,
-		gateway: state.gateway,
-	};
-};
 
 export default connect(({devices, gateway}) => ({devices, gateway}))(EventLog);
