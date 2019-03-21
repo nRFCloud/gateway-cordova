@@ -308,6 +308,7 @@ export default class BluetoothPlugin {
 	}
 
 	private static handleEncodedValue(value) {
+		const bluetoothle = getBluetoothPluginObj();
 		let returnedValue = value;
 		if (value === null || typeof value === 'undefined') {
 			return [];
