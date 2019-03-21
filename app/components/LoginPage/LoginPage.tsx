@@ -54,23 +54,28 @@ class LoginPage extends React.Component<MyProps, MyState> {
 	}
 
 	@boundMethod
-	private async doLogin(username, password, type: LoginType) {
-		await this.setStateReturnPromise({
+	private doLogin(username, password, type: LoginType) {
+		let outerClient;
+		this.setStateReturnPromise({
 			loggingIn: true,
 			error: null,
-		});
-		await new Promise((resolve) => setTimeout(resolve, 100));
-		let client;
-		try {
+		}).then(() => {
+			return new Promise((resolve) => setTimeout(resolve, 100));
+		}).then(() => {
 			if (type !== LoginType.DevZone) {
-				await irisWebApi.login(username.toLowerCase(), password);
+				return irisWebApi.login(username.toLowerCase(), password);
 			} else {
-				await DevzoneHelper.showDevzoneWindow();
+				return DevzoneHelper.showDevzoneWindow();
 			}
-			client = await RestApi.factory();
+		}).then(() => {
+			return RestApi.factory();
+		}).then((client) => {
 			Logger.info('logged in successfully!', client);
-			await Client.getCurrentTenant(client); //So I don't forget, this is to catch the user when they haven't logged into the main site. Without this, the next bit of error catch fails
-		} catch (error) {
+			outerClient = client;
+			return Client.getCurrentTenant(client); //So I don't forget, this is to catch the user when they haven't logged into the main site. Without this, the next bit of error catch fails
+		}).then(() => {
+			this.props.handleSuccessfulLogin(outerClient, username);
+		}).catch((error) => {
 			let err = error && error.message;
 			Logger.error('Error logging in', JSON.stringify(error), err);
 			if (err.indexOf('does not exist') > -1) {
@@ -84,10 +89,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 				isLoading: false,
 				loggingIn: false,
 			});
-			return;
-		}
-
-		this.props.handleSuccessfulLogin(client, username);
+		});
 	}
 
 	private setStateReturnPromise(state): Promise<any> {
@@ -96,23 +98,26 @@ class LoginPage extends React.Component<MyProps, MyState> {
 		});
 	}
 
-	private async checkForLogin() {
-		try {
-			if (!await DevzoneHelper.resumeSession()) {
-				await irisWebApi.resumeSession();
+	private checkForLogin() {
+		DevzoneHelper.resumeSession().then((result) => {
+			if (result) {
+				return irisWebApi.resumeSession();
 			}
-			const client = await RestApi.factory();
+		}).then(() => {
+			return RestApi.factory();
+		}).then((client) => {
 			if (client) {
 				return this.props.handleSuccessfulLogin(client, client.cognitoUser && client.cognitoUser.username);
 			}
-
-		} catch (error) {
+			throw new Error('Client creation failed');
+		}).catch((error) => {
 			Logger.info('failed to resume session', error);
-		}
-		this.setState({
-			isLoading: false,
+
+			this.setState({
+				isLoading: false,
+			});
+			Splashscreen.hide();
 		});
-		Splashscreen.hide();
 	}
 
 	@boundMethod

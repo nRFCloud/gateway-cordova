@@ -32,7 +32,7 @@ export namespace CookieHelper {
 		window.localStorage.removeItem(LS_TAG);
 	}
 
-	export async function loadCookies(): Promise<void> {
+	export function loadCookies(): Promise<void[]> {
 		const flattenedObj = window.localStorage.getItem(LS_TAG);
 		if (!flattenedObj) {
 			return;
@@ -45,17 +45,18 @@ export namespace CookieHelper {
 			return;
 		}
 
-		await Promise.all(Object.keys(resultObj).map((key) => {
+		return Promise.all(Object.keys(resultObj).map((key) => {
 			const value = resultObj[key];
 			const url = nordicCookieNames.indexOf(key) > -1 ? Nordic_URL : Devzone_URL;
 			return setCookie(url, key, value);
 		}));
 	}
 
-	export async function saveCookies(): Promise<void> {
-		const [dzCookies, nCookies] = await Promise.all([getDevZoneCookies(), getNordicCookies()]);
-		const savedObj = Object.assign({}, dzCookies, nCookies);
-		window.localStorage.setItem(LS_TAG, JSON.stringify(savedObj));
+	export function saveCookies(): Promise<void> {
+		return Promise.all([getDevZoneCookies(), getNordicCookies()]).then(([dzCookies, nCookies]) => {
+			const savedObj = Object.assign({}, dzCookies, nCookies);
+			window.localStorage.setItem(LS_TAG, JSON.stringify(savedObj));
+		});
 	}
 
 	async function getDevZoneCookies(): Promise<{[tag: string]: string}> {
