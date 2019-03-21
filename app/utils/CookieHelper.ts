@@ -10,7 +10,7 @@ export namespace CookieHelper {
 	const dzCookieNames = [
 		// '.te.dpr',
 		// '.te.w',
-		'ARRAffinity',
+		'ApplicationGatewayAffinity',
 		// 'tzid',
 		// 'tzoffset',
 	];

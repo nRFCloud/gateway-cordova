@@ -100,7 +100,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 
 	private checkForLogin() {
 		DevzoneHelper.resumeSession().then((result) => {
-			if (result) {
+			if (!result) {
 				return irisWebApi.resumeSession();
 			}
 		}).then(() => {
