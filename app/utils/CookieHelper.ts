@@ -17,11 +17,11 @@ export namespace CookieHelper {
 
 	const nordicCookieNames = [
 		// 'AuthorizationCookie',
-		// '.CommunityServer',
+		'.CommunityServer',
 		// 'EvolutionSync',
 	];
 
-	const Nordic_URL = 'nordicsemi.com';
+	const Nordic_URL = 'https://.nordicsemi.com';
 	const Devzone_URL = 'https://devzone.nordicsemi.com';
 
 	export function hasCredentials(): boolean {
@@ -76,7 +76,7 @@ export namespace CookieHelper {
 		const returned = {};
 		for (let k of nordicCookieNames) {
 			try {
-				returned[k] = await getCookie(Devzone_URL, k);
+				returned[k] = await getCookie(Nordic_URL, k);
 			} catch (err) {
 				//missing cookie, skip
 			}
@@ -90,7 +90,7 @@ export namespace CookieHelper {
 			const manager = cookieManager();
 			// Logger.info(`calling getCookie with "${domain}" and "${tag}"`);
 			manager.getCookie(domain, tag, (result) => {
-				// Logger.info(`Got cookie for "${domain}" and "${tag}"`, result);
+				Logger.info(`Got cookie for "${domain}" and "${tag}"`, result);
 				resolve(result.cookieValue);
 			}, (error) => {
 				Logger.error(`Error getting cookie for "${domain}" and "${tag}"`, error);
@@ -102,7 +102,7 @@ export namespace CookieHelper {
 	function setCookie(domain: string, tag: string, value: string): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			const manager = cookieManager();
-			// Logger.info(`setting cookie "${domain}" "${tag}" "${value}"`);
+			Logger.info(`setting cookie "${domain}" "${tag}" "${value}"`);
 			manager.setCookie(domain, tag, value, resolve, reject);
 		});
 	}

@@ -56,54 +56,56 @@ export namespace DevzoneHelper {
 			}
 			const w = iab.open(url, '_blank', options.join(','));
 			Logger.info('iab window is', w);
-			let promise = Promise.resolve();
-			if (Platform.isIos()) {
-				promise = CookieHelper.loadCookies();
-			}
-			promise.then(() => {
-				let wasSuccessful = false;
-				w.addEventListener('exit', () => {
-					if (!wasSuccessful) {
-						reject('Unsuccessful oAuth');
-					}
-				});
+// noinspection JSIgnoredPromiseFromCall
+			CookieHelper.loadCookies();
+			let wasSuccessful = false;
+			w.addEventListener('exit', () => {
+				if (!wasSuccessful) {
+					reject('Unsuccessful oAuth');
+				}
+			});
 
-				const handleUrl = function (result) {
-					//We have a JWT token
-					const split = result.url.lastIndexOf('/');
-					if (split > -1) {
-						const token = result.url.substr(split + 1);
-						Logger.info('Token is', token);
-						wasSuccessful = true;
-						CookieHelper.saveCookies().then(() => {
-							w.close();
-							if (token.indexOf('.') < 0) {
-								reject('invalid token from oauth');
-								return;
-							}
+			const handleUrl = function (result) {
+				//We have a JWT token
+				const split = result.url.lastIndexOf('/');
+				if (split > -1) {
+					const token = result.url.substr(split + 1);
+					Logger.info('Token is', token);
+					wasSuccessful = true;
+					CookieHelper.saveCookies().then(() => {
+						w.close();
+						if (token.indexOf('.') < 0) {
+							reject('invalid token from oauth');
+							return;
+						}
 
-							DevzoneHelper.startDevzoneSession(token);
-							resolve();
-						});
-					}
-				};
+						DevzoneHelper.startDevzoneSession(token);
+						resolve();
+					});
+				}
+			};
 
-				//IOS can't load the redirect url and so it throws an error. Catch it and check if it's the proper URL
-				w.addEventListener('loaderror', (error) => {
-					if (error && error.code === 101 && error.url && error.url.indexOf(jwtStart) === 0) {
-						handleUrl(error);
-					}
-				});
-
-				w.addEventListener('loadstop', (result) => {
-					Logger.info('loadstop', result);
-					if (result.url && result.url.indexOf(jwtStart) === 0) {
-						handleUrl(result);
-					} else {
-						//It's not completed, so show the window.
-						w.show();
-
+			//IOS can't load the redirect url and so it throws an error. Catch it and check if it's the proper URL
+			w.addEventListener('loaderror', (error) => {
+				if (error && error.code === 101 && error.url && error.url.indexOf(jwtStart) === 0) {
+					handleUrl(error);
+				}
+			});
+			let isFirstRun = true;
+			w.addEventListener('loadstop', (result) => {
+				Logger.info('loadstop', result);
+				if (result.url && result.url.indexOf(jwtStart) === 0) {
+					handleUrl(result);
+				} else {
+					//It's not completed, so show the window.
+					w.show();
+					// noinspection JSIgnoredPromiseFromCall
+					CookieHelper.loadCookies().then(() => {
 						const codeToRun = [];
+						if (isFirstRun) {
+							isFirstRun = false;
+							codeToRun.push('location.reload();');
+						}
 						//There's a stupid "accept cookies?" prompt when first loaded. Auto hit the button.
 						codeToRun.push('var elem = document.getElementById("hs-eu-confirmation-button");elem && elem.click()');
 
@@ -116,8 +118,8 @@ export namespace DevzoneHelper {
 						w.executeScript({
 							code: codeToRun.join(';'),
 						});
-					}
-				});
+					});
+				}
 			});
 		});
 	}
