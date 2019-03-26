@@ -21,14 +21,14 @@ function clean(cb) {
 
 function setPlatformCodePushKey(platform, key) {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="' + platform + '"]/n:preference[@name="CodePushDeploymentKey"]', attr: {value: key},
-	}], xmlNamespace))
+		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="CodePushDeploymentKey"]`, attr: {value: key},
+	}], xmlNamespace));
 }
 
 function setPlatformAppSecret(platform, key) {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="' + platform + '"]/n:preference[@name="APP_SECRET"]', attr: {value: key},
-	}], xmlNamespace))
+		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="APP_SECRET"]`, attr: {value: key},
+	}], xmlNamespace));
 }
 
 function updateVersionNumber() {
@@ -42,11 +42,11 @@ function revertConfig() {
 }
 
 function setAndroidStagingCodePushKey() {
-	return setPlatformCodePushKey('android', codePushConfig.android.staging).pipe(gulp.dest('./'))
+	return setPlatformCodePushKey('android', codePushConfig.android.staging).pipe(gulp.dest('./'));
 }
 
 function setAndroidProductionCodePushKey() {
-	return setPlatformCodePushKey('android', codePushConfig.android.production).pipe(gulp.dest('./'))
+	return setPlatformCodePushKey('android', codePushConfig.android.production).pipe(gulp.dest('./'));
 }
 
 function setIosProductionCodePushKey() {
@@ -59,6 +59,19 @@ function setAndroidAppSecret() {
 
 function setIosAppSecret() {
 	return setPlatformAppSecret('ios', codePushConfig.android.appSecret).pipe(gulp.dest('./'));
+}
+
+function removeSecrets() {
+	return gulp.src(configFileName).pipe(xmlTransformer([{
+		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="CodePushDeploymentKey"]', attr: {value: ''},
+	}], xmlNamespace)).pipe(xmlTransformer([{
+		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="CodePushDeploymentKey"]', attr: {value: ''},
+	}], xmlNamespace)).pipe(xmlTransformer([{
+		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="APP_SECRET"]', attr: {value: ''},
+	}], xmlNamespace)).pipe(xmlTransformer([{
+		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="APP_SECRET"]', attr: {value: ''},
+	}], xmlNamespace))
+		.pipe(gulp.dest('./'));
 }
 
 let passwords;
@@ -109,6 +122,17 @@ async function buildPackage(type) {
 	}
 }
 
+function runAndroidPackage() {
+	return runPackage('android');
+}
+
+async function runPackage(type) {
+	const {stderr} = await exec(`cordova run ${type}`);
+	if (stderr) {
+		throw new Error(stderr);
+	}
+}
+
 function copyDebugAndroidBuild() {
 	const debugPackageLocation = './platforms/android/app/build/outputs/apk/debug/app-debug.apk';
 	return gulp.src(debugPackageLocation).pipe(rename(`android-staging-v${packageJson.version}.apk`)).pipe(gulp.dest('./built'));
@@ -125,6 +149,13 @@ async function buildCodeForProduction() {
 		throw new Error(stderr);
 	}
 }
+
+const buildAndRunAndroid = gulp.series(
+	setAndroidAppSecret,
+	setAndroidStagingCodePushKey,
+	runAndroidPackage,
+	removeSecrets,
+);
 
 const buildStagingAndroid = gulp.series(
 	revertConfig,
@@ -162,3 +193,5 @@ exports.buildIos = gulp.series(
 exports.updateVersionNumber = updateVersionNumber;
 
 exports.clean = clean;
+
+exports.buildAndRunAndroid = buildAndRunAndroid;
