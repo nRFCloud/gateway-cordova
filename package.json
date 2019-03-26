@@ -33,6 +33,7 @@
     "cordova-plugin-appcenter-crashes": "^0.2.2",
     "cordova-plugin-appcenter-shared": "^0.2.2",
     "cordova-plugin-background-mode": "git+https://github.com/TheBosZ/cordova-plugin-background-mode.git",
+    "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-bluetoothle": "^4.5.3",
     "cordova-plugin-code-push": "git+https://github.com/Microsoft/cordova-plugin-code-push.git#Goncharov/Revert_removing_CDVWKWebView+CodePush.m",
     "cordova-plugin-cookieemperor": "git+https://github.com/rtk/cordova-cookie-emperor.git",
@@ -43,6 +44,7 @@
     "cordova-plugin-inappbrowser": "^3.0.0",
     "cordova-plugin-insomnia": "https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git",
     "cordova-plugin-keyboard": "^1.2.0",
+    "cordova-plugin-local-notification": "^0.9.0-beta.2",
     "cordova-plugin-network-information": "^2.0.1",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
@@ -70,7 +72,8 @@
       "cordova-plugin-bluetoothle": {},
       "cordova-plugin-insomnia": {},
       "cordova-plugin-wkwebview-engine": {},
-      "cordova-plugin-background-mode": {}
+      "cordova-plugin-background-mode": {},
+      "cordova-plugin-local-notification": {}
     },
     "platforms": [
       "ios",

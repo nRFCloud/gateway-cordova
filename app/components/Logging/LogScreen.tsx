@@ -55,6 +55,16 @@ class LogScreen extends React.Component<MyProps, {}> {
 			<Typography color="secondary" variant="subtitle1">{this.props.deviceId}</Typography>
 		) : null;
 
+		let savebtn;
+
+		if (process.env.NODE_ENV === 'development') {
+			savebtn = (
+				<IconButton color="secondary" onClick={this.saveLog} aria-label="Save">
+					<SaveIcon/>
+				</IconButton>
+			);
+		}
+
 		return (
 			<Dialog
 				fullScreen
@@ -71,9 +81,7 @@ class LogScreen extends React.Component<MyProps, {}> {
 							Logs
 						</Typography>
 						{deviceTitle}
-						<IconButton color="secondary" onClick={this.saveLog} aria-label="Save">
-							<SaveIcon />
-						</IconButton>
+						{savebtn}
 						<IconButton color="secondary" onClick={this.clearLog} aria-label="Clear">
 							<DeleteIcon/>
 						</IconButton>
