@@ -1,13 +1,69 @@
+import * as csvParser from 'json2csv';
+import cpf from 'cordova-promise-fs';
+
 import { LogEvent } from '../providers/StateStore';
-import { Logger } from '../logger/Logger';
-import Client from './Client';
+import Notifications from './Notifications';
+import { Platform } from './Platform';
+
+const csvOptions = {
+	fields: ['event', {
+		label: 'timestamp',
+		value: (row) => new Date(row.timestamp).toISOString(),
+	}],
+};
+
+let fs;
 
 namespace FileUtil {
+
+	function getFileSystem() {
+		if (!fs) {
+			const fsOptions = {
+				persistent: true,
+				Promise: Promise,
+			};
+			if (Platform.isAndroid()) {
+				fsOptions['fileSystem'] = window['cordova'].file.externalDataDirectory;
+			}
+			fs = cpf(fsOptions);
+		}
+		return fs;
+	}
+
+	function getFileOpener() {
+		// @ts-ignore
+		const {cordova: {plugins: {fileOpener2: opener}}} = window;
+		return opener;
+	}
+
+	function getDateString() {
+		const d = new Date();
+		return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${d.getSeconds()}`;
+	}
+
 	export async function saveLog(logEntries: LogEvent[]) {
-		Logger.info('going to save log entries', logEntries);
-		const fs = Client.getFilesystem();
-		const result = await fs.writeFile('testlog.log', logEntries.map((entry) => JSON.stringify(entry)).join('\n'));
-		Logger.info('result of saving', result);
+		const fs = getFileSystem();
+		const csvData = csvParser.parse(logEntries, csvOptions);
+		const fileName = `${getDateString()}-log.csv`;
+		await fs.write(fileName, csvData);
+		const url = await fs.toURL(fileName);
+		return Notifications.showNotification('Log saved', `Saved to ${fileName}`, () => {
+			return openFile(url);
+		});
+	}
+
+	export async function openFile(filePath: string): Promise<any> {
+		const opener = getFileOpener();
+		if (!opener) {
+			return;
+		}
+
+		return new Promise((resolve, reject) => {
+			opener.open(filePath, 'text/csv', {
+				error: (e) => reject(e),
+				success: resolve,
+			});
+		});
 	}
 }
 
