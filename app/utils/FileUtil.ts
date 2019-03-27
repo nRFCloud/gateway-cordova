@@ -3,6 +3,7 @@ import cpf from 'cordova-promise-fs';
 
 import { LogEvent } from '../providers/StateStore';
 import Notifications from './Notifications';
+import { Platform } from './Platform';
 
 const csvOptions = {
 	fields: ['event', {
@@ -17,11 +18,14 @@ namespace FileUtil {
 
 	function getFileSystem() {
 		if (!fs) {
-			fs = cpf({
+			const fsOptions = {
 				persistent: true,
 				Promise: Promise,
-				fileSystem: window['cordova'].file.externalDataDirectory,
-			});
+			};
+			if (Platform.isAndroid()) {
+				fsOptions['fileSystem'] = window['cordova'].file.externalDataDirectory;
+			}
+			fs = cpf(fsOptions);
 		}
 		return fs;
 	}
@@ -41,10 +45,10 @@ namespace FileUtil {
 		const fs = getFileSystem();
 		const csvData = csvParser.parse(logEntries, csvOptions);
 		const fileName = `${getDateString()}-log.csv`;
-		const result = await fs.write(fileName, csvData);
+		await fs.write(fileName, csvData);
+		const url = await fs.toURL(fileName);
 		return Notifications.showNotification('Log saved', `Saved to ${fileName}`, () => {
-			const filePath = (result as any).target.localURL;
-			return openFile(filePath);
+			return openFile(url);
 		});
 	}
 
