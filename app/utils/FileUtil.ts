@@ -1,8 +1,7 @@
 import * as csvParser from 'json2csv';
+import cpf from 'cordova-promise-fs';
 
 import { LogEvent } from '../providers/StateStore';
-import { Logger } from '../logger/Logger';
-import Client from './Client';
 import Notifications from './Notifications';
 
 const csvOptions = {
@@ -12,7 +11,21 @@ const csvOptions = {
 	}],
 };
 
+let fs;
+
 namespace FileUtil {
+
+	function getFileSystem() {
+		if (!fs) {
+			fs = cpf({
+				persistent: true,
+				Promise: Promise,
+				fileSystem: window['cordova'].file.externalDataDirectory,
+			});
+		}
+		return fs;
+	}
+
 	function getFileOpener() {
 		// @ts-ignore
 		const {cordova: {plugins: {fileOpener2: opener}}} = window;
@@ -25,10 +38,10 @@ namespace FileUtil {
 	}
 
 	export async function saveLog(logEntries: LogEvent[]) {
-		const fs = Client.getFilesystem();
+		const fs = getFileSystem();
 		const csvData = csvParser.parse(logEntries, csvOptions);
-		const fileName = `${getDateString()}-log.log`;
-		const result = await fs.writeFile(fileName, csvData);
+		const fileName = `${getDateString()}-log.csv`;
+		const result = await fs.write(fileName, csvData);
 		return Notifications.showNotification('Log saved', `Saved to ${fileName}`, () => {
 			const filePath = (result as any).target.localURL;
 			return openFile(filePath);
