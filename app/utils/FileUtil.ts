@@ -58,12 +58,21 @@ namespace FileUtil {
 			return;
 		}
 
-		return new Promise((resolve, reject) => {
-			opener.open(filePath, 'text/csv', {
-				error: (e) => reject(e),
-				success: resolve,
+		try {
+			return await new Promise((resolve, reject) => {
+				opener.open(filePath, 'text/csv', {
+					error: (e) => reject(e),
+					success: resolve,
+				});
 			});
-		});
+		} catch (err) {
+			return new Promise((resolve, reject) => {
+				opener.showOpenWithDialog(filePath, 'text/csv', {
+					error: reject,
+					success: resolve,
+				});
+			});
+		}
 	}
 }
 
