@@ -24,8 +24,8 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "code-push": "^2.0.5",
-    "cordova-android": "^7.1.4",
+    "code-push": "^2.0.6",
+    "cordova-android": "^8.0.0",
     "cordova-browser": "^5.0.4",
     "cordova-ios": "^4.5.5",
     "cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
@@ -35,7 +35,7 @@
     "cordova-plugin-background-mode": "git+https://github.com/TheBosZ/cordova-plugin-background-mode.git",
     "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-bluetoothle": "^4.5.3",
-    "cordova-plugin-code-push": "git+https://github.com/Microsoft/cordova-plugin-code-push.git#Goncharov/Revert_removing_CDVWKWebView+CodePush.m",
+    "cordova-plugin-code-push": "^1.11.17",
     "cordova-plugin-cookieemperor": "git+https://github.com/rtk/cordova-cookie-emperor.git",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-dialogs": "^2.0.1",
@@ -67,7 +67,6 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-appcenter-analytics": {},
       "cordova-plugin-appcenter-crashes": {},
-      "cordova-plugin-code-push": {},
       "cordova-plugin-network-information": {},
       "cordova-plugin-app-version": {},
       "cordova-plugin-bluetoothle": {},
@@ -77,7 +76,8 @@
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
-      "cordova-plugin-local-notification": {}
+      "cordova-plugin-local-notification": {},
+      "cordova-plugin-code-push": {}
     },
     "platforms": [
       "ios",

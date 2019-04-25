@@ -19,24 +19,18 @@
     <preference name="SplashScreenSpinnerColor" value="#0081B7" />
     <preference name="ShowSplashScreenSpinner" value="false" />
     <platform name="android">
-        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
-            <application android:icon="@mipmap/ic_launcher" android:resizeableActivity="true" android:roundIcon="@mipmap/ic_launcher_round" />
-        </edit-config>
-        <config-file parent="/manifest" target="AndroidManifest.xml">
-            <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-        </config-file>
         <allow-intent href="market:*" />
         <preference name="CodePushDeploymentKey" value="" />
         <preference name="StatusBarBackgroundColor" value="#0081B7" />
         <preference name="SplashMaintainAspectRatio" value="true" />
         <preference name="SplashShowOnlyFirstTime" value="true" />
         <preference name="APP_SECRET" value="" />
-        <icon density="ldpi" src="res/icon/android/ldpi.png" />
-        <icon density="mdpi" src="res/icon/android/mdpi.png" />
-        <icon density="hdpi" src="res/icon/android/hdpi.png" />
-        <icon density="xhdpi" src="res/icon/android/xhdpi.png" />
-        <icon density="xxhdpi" src="res/icon/android/xxhdpi.png" />
-        <icon density="xxxhdpi" src="res/icon/android/xxxhdpi.png" />
+        <icon background="@color/ic_launcher_background" density="ldpi" foreground="res/icon/android/adaptiveicon/mipmap-ldpi/ic_launcher_foreground.png" src="res/icon/android/ldpi.png" />
+        <icon background="@color/ic_launcher_background" density="mdpi" foreground="res/icon/android/adaptiveicon/mipmap-mdpi/ic_launcher_foreground.png" src="res/icon/android/mdpi.png" />
+        <icon background="@color/ic_launcher_background" density="hdpi" foreground="res/icon/android/adaptiveicon/mipmap-hdpi/ic_launcher_foreground.png" src="res/icon/android/hdpi.png" />
+        <icon background="@color/ic_launcher_background" density="xhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xhdpi/ic_launcher_foreground.png" src="res/icon/android/xhdpi.png" />
+        <icon background="@color/ic_launcher_background" density="xxhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xxhdpi/ic_launcher_foreground.png" src="res/icon/android/xxhdpi.png" />
+        <icon background="@color/ic_launcher_background" density="xxxhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher_foreground.png" src="res/icon/android/xxxhdpi.png" />
         <splash density="port-ldpi" src="res/screen/android/splash-port-ldpi.png" />
         <splash density="port-mdpi" src="res/screen/android/splash-port-mdpi.png" />
         <splash density="port-hdpi" src="res/screen/android/splash-port-hdpi.png" />
@@ -49,23 +43,6 @@
         <resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xhdpi/nrfcloud.png" />
         <resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xxhdpi/nrfcloud.png" />
         <resource-file src="res/icon/android/adaptiveicon/values/ic_launcher_background.xml" target="app/src/main/res/values/ic_launcher_background.xml" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-anydpi-v26/ic_launcher.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-anydpi-v26/ic_launcher_round.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-hdpi/ic_launcher.png" target="app/src/main/res/mipmap-hdpi/ic_launcher.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-hdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-hdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-hdpi/ic_launcher_round.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-mdpi/ic_launcher.png" target="app/src/main/res/mipmap-mdpi/ic_launcher.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-mdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-mdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-mdpi/ic_launcher_round.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xhdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xxhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xxhdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher_foreground.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png" />
-        <resource-file src="res/icon/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher_round.png" target="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
@@ -147,7 +124,7 @@
     <plugin name="cordova-plugin-insomnia" spec="https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git" />
     <plugin name="cordova-plugin-cookieemperor" spec="https://github.com/rtk/cordova-cookie-emperor.git" />
     <plugin name="cordova-plugin-wkwebview-engine" spec="^1.1.4" />
-    <plugin name="cordova-plugin-code-push" spec="https://github.com/Microsoft/cordova-plugin-code-push#Goncharov/Revert_removing_CDVWKWebView+CodePush.m" />
+    <plugin name="cordova-plugin-code-push" spec="^1.11.17" />
     <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
     <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
     <plugin name="cordova-plugin-bluetoothle" spec="^4.5.3" />
@@ -159,5 +136,4 @@
     <engine name="ios" spec="^4.5.5" />
     <engine name="browser" spec="^5.0.4" />
     <engine name="windows" spec="^6.0.1" />
-    <engine name="android" spec="^7.1.4" />
 </widget>
