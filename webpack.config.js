@@ -79,7 +79,8 @@ module.exports = {
 	},
 	externals: {
 		'aws-wrapper': 'awsWrapper',
-		'RestApi': 'IrisSdk',
+		'RestApi': 'IrisRestApiClient',
+		'AWS': 'AWS',
 	},
 	resolve: {
 		extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".json"],

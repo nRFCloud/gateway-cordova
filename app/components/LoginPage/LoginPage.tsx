@@ -5,6 +5,8 @@ import { boundMethod } from 'autobind-decorator';
 // @ts-ignore
 import RestApi from 'RestApi';
 // @ts-ignore
+import AWS from 'AWS';
+// @ts-ignore
 // noinspection TypeScriptCheckImport
 import { default as irisWebApi } from 'aws-wrapper';
 
@@ -68,7 +70,9 @@ class LoginPage extends React.Component<MyProps, MyState> {
 				return DevzoneHelper.showDevzoneWindow();
 			}
 		}).then(() => {
-			return RestApi.factory();
+			return AWS.config.credentials
+				.getPromise()
+				.then(() => RestApi(AWS.config.credentials));
 		}).then((client) => {
 			Logger.info('logged in successfully!', client);
 			outerClient = client;
@@ -104,7 +108,9 @@ class LoginPage extends React.Component<MyProps, MyState> {
 				return irisWebApi.resumeSession();
 			}
 		}).then(() => {
-			return RestApi.factory();
+			return AWS.config.credentials
+				.getPromise()
+				.then(() => RestApi(AWS.config.credentials));
 		}).then((client) => {
 			if (client) {
 				return this.props.handleSuccessfulLogin(client, client.cognitoUser && client.cognitoUser.username);

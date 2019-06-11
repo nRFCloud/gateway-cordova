@@ -4,7 +4,6 @@ import { boundMethod } from 'autobind-decorator';
 
 import Environment, { EnvironmentType } from '../../utils/Environment';
 import DeviceCard from '../DeviceCard/DeviceCard';
-import { Logger } from '../../logger/Logger';
 
 interface MyProps {
 	classes?: any;

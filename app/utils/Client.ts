@@ -1,3 +1,7 @@
+import { device } from 'aws-iot-device-sdk';
+// @ts-ignore
+import AWS from 'AWS';
+
 import { IAdapterDriverFactory } from 'nrfcloud-gateway-common/src/AdapterDriverFactory';
 import { GatewayAWS } from 'nrfcloud-gateway-common/src/GatewayAWS';
 
@@ -19,19 +23,41 @@ namespace Client {
 	let client;
 	let gateway;
 	let adapterDriverFactory: IAdapterDriverFactory;
+	let mqttClient;
 
 	export function setClient(c) {
 		client = c;
+		// noinspection JSIgnoredPromiseFromCall
 		setupClient();
 	}
 
-	export function setupClient() {
+	export async function setupClient() {
 		if (!client) {
 			return;
 		}
+		mqttClient = await AWS.config.credentials
+			.getPromise()
+			.then(() => {
+				const { accessKeyId, secretAccessKey, sessionToken } = AWS.config.credentials;
+				const iotEndpoint = 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com';
+				return device({
+					clientId: `iris-api-client-${Math.floor((Math.random() * 1000000) + 1)}`,
+					host: iotEndpoint,
+					region: iotEndpoint.split('.')[2],
+					protocol: 'wss',
+					baseReconnectTimeMs: 250,
+					maximumReconnectTimeMs: 500,
+					// The empty credentials here and the call to mqttClient.updateWebSocketCredentials
+					// will make the client connect using IAM credentials and not pre-signed URLs which
+					// time out after ~20 minutes.
+					accessKeyId: accessKeyId,
+					secretKey: secretAccessKey,
+					sessionToken: sessionToken,
+				});
+			});
 
 		let cloudCloseCount = 0;
-		client.mqtt.on('close', () => {
+		mqttClient.on('close', () => {
 			cloudCloseCount++;
 			if (cloudCloseCount > 5) {
 				cloudCloseCount = 0;
@@ -160,7 +186,7 @@ namespace Client {
 	}
 
 	async function getTenants(clientApi = client) {
-		return (await clientApi.http.tenantsGet({create: false})).data;
+		return (await clientApi.tenantsGet({create: false})).data;
 	}
 
 	export async function checkIfGatewayStillExists(clientApi = client, refGateway = gateway) {
@@ -190,7 +216,7 @@ namespace Client {
 		}
 
 		const currentTenant = await getCurrentTenant(clientApi);
-		const gateways = (await clientApi.http.tenantsTenantIdGatewaysGet({
+		const gateways = (await clientApi.tenantsTenantIdGatewaysGet({
 			tenantId: currentTenant.id,
 		})).data;
 		actions.setGateways(gateways);
@@ -204,7 +230,7 @@ namespace Client {
 
 		Logger.info(`Registering gateway with tenant ${tenant.name}.`);
 
-		const gatewaysPostResult = (await clientApi.http.tenantsTenantIdGatewaysPost({
+		const gatewaysPostResult = (await clientApi.tenantsTenantIdGatewaysPost({
 			tenantId,
 		})).data;
 
