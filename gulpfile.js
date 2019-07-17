@@ -53,6 +53,10 @@ function setIosProductionCodePushKey() {
 	return setPlatformCodePushKey('ios', codePushConfig.ios.production).pipe(gulp.dest('./'));
 }
 
+function setIosStagingCodePushKey() {
+	return setPlatformCodePushKey('ios', codePushConfig.ios.staging).pipe(gulp.dest('./'));
+}
+
 function setAndroidAppSecret() {
 	return setPlatformAppSecret('android', codePushConfig.android.appSecret).pipe(gulp.dest('./'));
 }
@@ -186,6 +190,13 @@ exports.buildAndroid = gulp.series(
 exports.buildIos = gulp.series(
 	setIosAppSecret,
 	setIosProductionCodePushKey,
+	buildIosPackage,
+	revertConfig,
+);
+
+exports.buildStagingIos = gulp.series(
+	setIosAppSecret,
+	setIosStagingCodePushKey,
 	buildIosPackage,
 	revertConfig,
 );
