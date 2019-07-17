@@ -162,23 +162,6 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 											</Grid>
 										</Grid>
 									</Grid>
-									<Grid item xs>
-										<Grid container direction="column" justify="space-evenly" alignItems="center">
-											<Grid item>
-												<Typography variant="h5">
-													{device.statistics && typeof device.statistics.disconnectCount !== 'undefined' ? device.statistics.disconnectCount : 'N/A'}
-												</Typography>
-											</Grid>
-											<Grid item>
-												<Typography
-													variant="caption"
-													className={isIos ? this.props.classes.captionShrinker : ''}
-												>
-													disconnects
-												</Typography>
-											</Grid>
-										</Grid>
-									</Grid>
 								</Grid>
 							</Grid>
 						</Grid>

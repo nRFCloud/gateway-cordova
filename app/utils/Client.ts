@@ -100,7 +100,7 @@ namespace Client {
 
 		if (!gateway.isRegistered()) {
 			await registerGateway(client, gateway);
-			await getGateways(client);
+			// await getGateways(client);
 		} else {
 			await checkIfGatewayStillExists(client, gateway);
 		}
@@ -190,24 +190,25 @@ namespace Client {
 	}
 
 	export async function checkIfGatewayStillExists(clientApi = client, refGateway = gateway) {
-		if (!clientApi || !refGateway) {
-			return;
-		}
-
-		const gateways = await getGateways(clientApi);
-
-		let wasFound = false;
-		const gatewayid = refGateway.config.gatewayId;
-		for (let g of gateways) {
-			if (g.id === gatewayid) {
-				wasFound = true;
-				break;
-			}
-		}
-
-		if (!wasFound) {
-			throw new Error('Gateway no longer exists');
-		}
+		return;
+		// if (!clientApi || !refGateway) {
+		// 	return;
+		// }
+		//
+		// const gateways = await getGateways(clientApi);
+		//
+		// let wasFound = false;
+		// const gatewayid = refGateway.config.gatewayId;
+		// for (let g of gateways) {
+		// 	if (g.id === gatewayid) {
+		// 		wasFound = true;
+		// 		break;
+		// 	}
+		// }
+		//
+		// if (!wasFound) {
+		// 	throw new Error('Gateway no longer exists');
+		// }
 	}
 
 	async function getGateways(clientApi = client): Promise<any[]> {
