@@ -1,5 +1,5 @@
 // @ts-ignore
-import { default as irisWebApi } from 'aws-wrapper';
+import { Cognito as irisWebApi } from 'aws-wrapper';
 import { Logger } from '../logger/Logger';
 import { Platform } from './Platform';
 import { CookieHelper } from './CookieHelper';

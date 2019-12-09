@@ -32,7 +32,7 @@
     "cordova-plugin-appcenter-analytics": "^0.2.2",
     "cordova-plugin-appcenter-crashes": "^0.2.2",
     "cordova-plugin-appcenter-shared": "^0.2.2",
-    "cordova-plugin-background-mode": "git+https://github.com/TheBosZ/cordova-plugin-background-mode.git",
+    "cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
     "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-bluetoothle": "^4.5.3",
     "cordova-plugin-code-push": "^1.11.17",
@@ -72,12 +72,12 @@
       "cordova-plugin-bluetoothle": {},
       "cordova-plugin-insomnia": {},
       "cordova-plugin-wkwebview-engine": {},
-      "cordova-plugin-background-mode": {},
       "cordova-plugin-file-opener2": {
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-local-notification": {},
-      "cordova-plugin-code-push": {}
+      "cordova-plugin-code-push": {},
+      "cordova-plugin-background-mode": {}
     },
     "platforms": [
       "ios",
@@ -93,11 +93,13 @@
     "@types/react": "^16.7.18",
     "autobind-decorator": "^2.4.0",
     "awesome-typescript-loader": "^5.2.1",
+    "aws-appsync": "^3.0.2",
     "aws-iot-device-sdk": "^2.2.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-graphql-tag": "^2.5.0",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
@@ -117,6 +119,8 @@
     "del-cli": "^1.1.0",
     "delete": "^1.1.0",
     "dotenv-webpack": "^1.6.0",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
     "gulp": "^4.0.0",
     "gulp-git": "^2.8.0",
     "gulp-rename": "^1.4.0",

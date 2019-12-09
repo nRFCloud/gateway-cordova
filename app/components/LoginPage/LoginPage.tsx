@@ -8,7 +8,7 @@ import RestApi from 'RestApi';
 import AWS from 'AWS';
 // @ts-ignore
 // noinspection TypeScriptCheckImport
-import { default as irisWebApi } from 'aws-wrapper';
+import { Cognito as irisWebApi } from 'aws-wrapper';
 
 import LoginForm, { LoginType } from '../LoginForm/LoginForm';
 import { Logger } from '../../logger/Logger';
@@ -76,7 +76,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 		}).then((client) => {
 			Logger.info('logged in successfully!', client);
 			outerClient = client;
-			return Client.getCurrentTenant(client); //So I don't forget, this is to catch the user when they haven't logged into the main site. Without this, the next bit of error catch fails
+			return Client.getCurrentTenant(); //So I don't forget, this is to catch the user when they haven't logged into the main site. Without this, the next bit of error catch fails
 		}).then(() => {
 			this.props.handleSuccessfulLogin(outerClient, username);
 		}).catch((error) => {

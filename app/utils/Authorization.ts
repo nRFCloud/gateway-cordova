@@ -1,4 +1,6 @@
-import {default as irisWebApi } from 'aws-wrapper';
+// @ts-ignore
+// noinspection TypeScriptCheckImport
+import { Cognito as irisWebApi } from 'aws-wrapper';
 
 import Client from './Client';
 import Environment from './Environment';

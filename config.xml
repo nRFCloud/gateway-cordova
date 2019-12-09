@@ -128,7 +128,6 @@
     <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
     <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
     <plugin name="cordova-plugin-bluetoothle" spec="^4.5.3" />
-    <plugin name="cordova-plugin-background-mode" spec="https://github.com/TheBosZ/cordova-plugin-background-mode.git" />
     <plugin name="cordova-plugin-file-opener2" spec="^2.2.0">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>

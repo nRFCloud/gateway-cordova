@@ -14,6 +14,7 @@ import { rootCA } from '../util';
 import BluetoothPlugin from '../BluetoothPlugin';
 import Network from './Network';
 import { actions } from '../providers/StateStore';
+import API from './API';
 
 const GATEWAY_FILENAME = 'gateway-config.json';
 const fileSystem = new FS();
@@ -39,7 +40,7 @@ namespace Client {
 			.getPromise()
 			.then(() => {
 				const { accessKeyId, secretAccessKey, sessionToken } = AWS.config.credentials;
-				const iotEndpoint = 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com';
+				const iotEndpoint = window['MQTT_ENDPOINT'] || 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com';
 				return device({
 					clientId: `iris-api-client-${Math.floor((Math.random() * 1000000) + 1)}`,
 					host: iotEndpoint,
@@ -83,7 +84,7 @@ namespace Client {
 			accessKeyId: AWS.config.credentials.accessKeyId,
 			secretKey: AWS.config.credentials.secretAccessKey,
 			sessionToken: AWS.config.credentials.sessionToken,
-			host: 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
+			host: window['MQTT_ENDPOINT'] || 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
 			debug: process.env.NODE_ENV !== 'production',
 		};
 
@@ -185,8 +186,8 @@ namespace Client {
 		}
 	}
 
-	async function getTenants(clientApi = client) {
-		return (await clientApi.tenantsGet({create: false})).data;
+	async function getTenants() {
+		return API.getTenants();
 	}
 
 	export async function checkIfGatewayStillExists(clientApi = client, refGateway = gateway) {
@@ -229,7 +230,7 @@ namespace Client {
 		const tenant = await(getCurrentTenant(clientApi));
 		const tenantId = tenant.id;
 
-		Logger.info(`Registering gateway with tenant ${tenant.name}.`);
+		Logger.info(`Registering gateway with tenant ${tenant.id}.`);
 
 		const gatewaysPostResult = (await clientApi.tenantsTenantIdGatewaysPost({
 			tenantId,
@@ -245,8 +246,8 @@ namespace Client {
 
 	}
 
-	export async function getCurrentTenant(clientApi) {
-		const tenantsGetResult = await getTenants(clientApi);
+	export async function getCurrentTenant() {
+		const tenantsGetResult = await getTenants();
 		if (tenantsGetResult.length < 1 || !tenantsGetResult[0] || !tenantsGetResult[0].id) {
 			throw new Error('No tenant for user');
 		}
