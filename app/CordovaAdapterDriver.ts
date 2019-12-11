@@ -479,9 +479,16 @@ export class CordovaAdapterDriver extends EventEmitter implements IAdapterDriver
 		return Promise.resolve();
 	}
 
-	private shouldAllowScanResult(scanResult: BluetoothlePlugin.ScanStatus, filter: {type: ScanType}) {
-		if (filter && filter.type === ScanType.Beacon) {
-			return Util.isBeacon((scanResult as any).advertisement);
+	private shouldAllowScanResult(scanResult: BluetoothlePlugin.ScanStatus, filter: {type: ScanType, rssi?: number}) {
+		if (filter) {
+
+			if (typeof filter.rssi !== 'undefined' && filter.rssi > scanResult.rssi) {
+				return false;
+			}
+
+			if (filter.type === ScanType.Beacon) {
+				return Util.isBeacon((scanResult as any).advertisement);
+			}
 		}
 		return true;
 	}
@@ -503,6 +510,7 @@ export class CordovaAdapterDriver extends EventEmitter implements IAdapterDriver
 				case 'scanResult':
 					if (scanStatus && scanStatus.address && this.shouldAllowScanResult(scanStatus, {
 						type: scanType !== null ? +scanType : ScanType.Regular,
+						rssi,
 					})) {
 						const discoveredDevice = this.convertScanResult(scanStatus);
 						this.handleDeviceScanResult(discoveredDevice);

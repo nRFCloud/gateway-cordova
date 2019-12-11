@@ -217,7 +217,7 @@ namespace Client {
 			return;
 		}
 
-		const currentTenant = await getCurrentTenant(clientApi);
+		const currentTenant = await getCurrentTenant();
 		const gateways = (await clientApi.tenantsTenantIdGatewaysGet({
 			tenantId: currentTenant.id,
 		})).data;
@@ -227,7 +227,7 @@ namespace Client {
 
 	async function registerGateway(clientApi, gateway) {
 
-		const tenant = await(getCurrentTenant(clientApi));
+		const tenant = await(getCurrentTenant());
 		const tenantId = tenant.id;
 
 		Logger.info(`Registering gateway with tenant ${tenant.id}.`);
