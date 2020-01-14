@@ -87,7 +87,8 @@ module.exports = {
 		modules: [
 			path.resolve('app'),
 			'node_modules',
-		]
+		],
+		mainFields: ['module', 'browser', 'main'],
 	},
 	plugins: [
 		new webpack.EnvironmentPlugin({...process.env}),

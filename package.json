@@ -24,6 +24,8 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
+    "amazon-cognito-identity-js": "^3.2.2",
+    "aws-sdk": "^2.603.0",
     "code-push": "^2.0.6",
     "cordova-android": "^8.0.0",
     "cordova-browser": "^5.0.4",
@@ -89,6 +91,7 @@
   "devDependencies": {
     "@material-ui/core": "^3.8.2",
     "@material-ui/icons": "^3.0.2",
+    "@nrfcloud/gateway-common": "^3.1.0",
     "@types/node": "^7.10.1",
     "@types/react": "^16.7.18",
     "autobind-decorator": "^2.4.0",
@@ -130,7 +133,6 @@
     "livereload": "^0.7.0",
     "mdi-material-ui": "^5.8.0",
     "npm-run-all": "^4.1.5",
-    "nrfcloud-gateway-common": "file:../gateway-common",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-swipeable-views": "^0.13.0",

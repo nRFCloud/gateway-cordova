@@ -1,11 +1,10 @@
 import cpf from 'cordova-promise-fs';
-import { IFSAdapter } from 'nrfcloud-gateway-common';
 const fs = cpf({
 	persistent: true,
 	Promise: Promise,
 });
 
-export default class FS implements IFSAdapter {
+export default class FS {
 	async exists(file: string): Promise<boolean> {
 		return !!(await fs.exists(file));
 	}

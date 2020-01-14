@@ -6,9 +6,8 @@ import { boundMethod } from 'autobind-decorator';
 import RestApi from 'RestApi';
 // @ts-ignore
 import AWS from 'AWS';
-// @ts-ignore
-// noinspection TypeScriptCheckImport
-import { Cognito as irisWebApi } from 'aws-wrapper';
+
+import { Cognito } from '../../utils/Cognito';
 
 import LoginForm, { LoginType } from '../LoginForm/LoginForm';
 import { Logger } from '../../logger/Logger';
@@ -65,7 +64,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 			return new Promise((resolve) => setTimeout(resolve, 100));
 		}).then(() => {
 			if (type !== LoginType.DevZone) {
-				return irisWebApi.login(username.toLowerCase(), password);
+				return Cognito.login(username.toLowerCase(), password);
 			} else {
 				return DevzoneHelper.showDevzoneWindow();
 			}
@@ -105,7 +104,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 	private checkForLogin() {
 		DevzoneHelper.resumeSession().then((result) => {
 			if (!result) {
-				return irisWebApi.resumeSession();
+				return Cognito.resumeSession();
 			}
 		}).then(() => {
 			return AWS.config.credentials

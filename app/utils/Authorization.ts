@@ -1,6 +1,4 @@
-// @ts-ignore
-// noinspection TypeScriptCheckImport
-import { Cognito as irisWebApi } from 'aws-wrapper';
+import { Cognito } from './Cognito';
 
 import Client from './Client';
 import Environment from './Environment';
@@ -20,7 +18,7 @@ export namespace Authorization {
 			Logger.info('There was an error clearing file data', err);
 		}
 
-		irisWebApi.logout();
+		await Cognito.logout();
 		const curenv = Environment.getCurrentEnvironment();
 		Environment.clear();
 		localStorage.clear();

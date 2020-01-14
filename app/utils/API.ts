@@ -1,7 +1,5 @@
-// @ts-ignore
-import * as AWS from 'AWS';
-// @ts-ignore
-import { AWSAppSyncClient } from 'aws-wrapper';
+import * as AWS from 'aws-sdk/global';
+import AWSAppSyncClient from 'aws-appsync';
 import { AWSAppSyncClient as AWSAppSyncClientType } from 'aws-appsync';
 import gql from 'graphql-tag';
 import { Logger } from '../logger/Logger';

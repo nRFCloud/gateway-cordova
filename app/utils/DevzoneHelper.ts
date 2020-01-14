@@ -1,5 +1,4 @@
-// @ts-ignore
-import { Cognito as irisWebApi } from 'aws-wrapper';
+import { Cognito  } from './Cognito';
 import { Logger } from '../logger/Logger';
 import { Platform } from './Platform';
 import { CookieHelper } from './CookieHelper';
@@ -21,7 +20,7 @@ export namespace DevzoneHelper {
 				'cognito-identity.amazonaws.com': token,
 			},
 		});
-		irisWebApi.startDevzoneSession(creds);
+		Cognito.startDevzoneSession(creds);
 	}
 
 	export function resumeSession(): Promise<boolean> {

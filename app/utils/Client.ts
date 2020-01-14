@@ -2,19 +2,17 @@ import { device } from 'aws-iot-device-sdk';
 // @ts-ignore
 import AWS from 'AWS';
 
-import { IAdapterDriverFactory } from 'nrfcloud-gateway-common/src/AdapterDriverFactory';
-import { GatewayAWS } from 'nrfcloud-gateway-common/src/GatewayAWS';
-
 import FS from '../fs';
 
 import { Logger } from '../logger/Logger';
 
-import { CordovaAdapterDriverFactory } from '../CordovaAdapterDriverFactory';
 import { rootCA } from '../util';
 import BluetoothPlugin from '../BluetoothPlugin';
 import Network from './Network';
 import { actions } from '../providers/StateStore';
 import API from './API';
+import { CordovaAdapter } from '../CordovaAdapter';
+import { Gateway, GatewayConfiguration, GatewayEvent } from '@nrfcloud/gateway-common/dist';
 
 const GATEWAY_FILENAME = 'gateway-config.json';
 const fileSystem = new FS();
@@ -22,8 +20,7 @@ const GATEWAY_VERSION = require('../../package.json').version;
 
 namespace Client {
 	let client;
-	let gateway;
-	let adapterDriverFactory: IAdapterDriverFactory;
+	let gateway: Gateway;
 	let mqttClient;
 
 	export function setClient(c) {
@@ -69,44 +66,36 @@ namespace Client {
 		});
 	}
 
-	export async function handleGatewayConnect(gwFilename = GATEWAY_FILENAME, fs = fileSystem, gatewayVersion = GATEWAY_VERSION) {
+	export async function handleGatewayConnect() {
+		const tenantId = await getTenantId();
+		const gatewayId = await findGatewayId();
+		return createGatewayDevice(gatewayId, tenantId);
+	}
+
+	async function findGatewayId(): Promise<string> {
+		if (!(await fileSystem.exists(GATEWAY_FILENAME))) {
+		}
+		const configfile = JSON.parse(await fileSystem.readFile(GATEWAY_FILENAME));
+		return configfile.gatewayId;
+	}
+
+	async function createGatewayDevice(gatewayId: string, tenantId: string) {
 		const AWS = window['AWS'];
 		Logger.info('client is', client);
-		gateway = new GatewayAWS(gwFilename, null, fs, gatewayVersion, Logger);
 
-		if (!adapterDriverFactory) {
-			adapterDriverFactory = new CordovaAdapterDriverFactory();
-		}
-
-		const options = {
+		const options: GatewayConfiguration = {
 			protocol: 'wss',
-			accessKey: AWS.config.credentials.accessKeyId,
 			accessKeyId: AWS.config.credentials.accessKeyId,
 			secretKey: AWS.config.credentials.secretAccessKey,
 			sessionToken: AWS.config.credentials.sessionToken,
 			host: window['MQTT_ENDPOINT'] || 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
 			debug: process.env.NODE_ENV !== 'production',
+			gatewayId,
+			tenantId,
+			bluetoothAdapter: new CordovaAdapter(),
 		};
 
-		gateway.setGenericInfo({
-			platform: {
-				name: 'cordova',
-				version: process.version,
-			},
-		});
-		gateway.setConnectOptions(options);
-		gateway.setAdapterDriverFactory(adapterDriverFactory);
-		await gateway.init();
-		await gateway.setAdapter('cordova');
-
-		if (!gateway.isRegistered()) {
-			await registerGateway(client, gateway);
-			// await getGateways(client);
-		} else {
-			await checkIfGatewayStillExists(client, gateway);
-		}
-
-		await gateway.start();
+		gateway = new Gateway(options);
 
 		addListeners(gateway);
 
@@ -114,7 +103,7 @@ namespace Client {
 	}
 
 	function addListeners(gateway) {
-		gateway.on('connectionDatabaseChange', (connections) => {
+		gateway.on(GatewayEvent.ConnectionsChanged, (connections) => {
 			actions.setConnections({
 				deviceList: connections,
 				beaconList: gateway.adapterDriver.getBeacons(),
@@ -147,8 +136,9 @@ namespace Client {
 		return [];
 	}
 
-	export function getTenantId(refGateway = gateway): string {
-		return refGateway && refGateway.config && refGateway.config.tenantId;
+	export async function getTenantId(): Promise<string> {
+		const tenants = await getCurrentTenant();
+		return tenants[0].id;
 	}
 
 	export function getGatewayId(refGateway = gateway): string {
