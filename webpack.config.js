@@ -3,28 +3,27 @@ const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
 
 const babelPresets = [[
-	require.resolve("babel-preset-env"),
+	require.resolve("@babel/preset-env"),
 	{
 		"modules": false,
 		"useBuiltIns": "usage",
 		forceAllTransforms: true
 	}
 ],
-	require.resolve('babel-preset-react'),
+	require.resolve('@babel/preset-react'),
 ];
 const babelPlugins = [
-	'babel-plugin-external-helpers',
-	'babel-plugin-transform-runtime',
-	"babel-plugin-transform-class-properties",
-	"babel-plugin-transform-object-rest-spread",
-	"babel-plugin-transform-async-to-generator"
+	'@babel/plugin-external-helpers',
+	'@babel/plugin-transform-runtime',
+	"@babel/plugin-proposal-class-properties",
+	"@babel/plugin-proposal-object-rest-spread",
+	"@babel/plugin-transform-async-to-generator"
 ].map(require.resolve);
 
 module.exports = {
 	mode: 'development',
 	entry: [
 		path.resolve(__dirname, 'helpers.js'),
-		'babel-polyfill',
 		'./app/index.tsx'
 	],
 	output: {
