@@ -15,20 +15,24 @@
 		if (env) {
 			switch (env) {
 				case 'Dev':
-					configObject = {
+					configObject = Object.assign({}, configObject, {
 						COGNITO_USER_POOL_ID: 'us-east-1_nr0g7D0Zm',
 						COGNITO_IDENTITY_POOL_ID: 'us-east-1:8a18575c-fd51-4cd7-a75a-117a264fa1b7',
 						COGNITO_USER_POOL_CLIENT_ID: '21pbpsdk2pmalfh7j4t3t6g49j',
 						graphQLUrl: 'https://frtzmlvskrflffiv5kuozm7ddu.appsync-api.us-east-1.amazonaws.com/graphql',
 						invokeUrl: 'https://iris-api.dev.nrfcloud.com',
 						MQTT_ENDPOINT: 'a2wg6q8yw7gv5r-ats.iot.us-east-1.amazonaws.com',
-					};
+					});
 					break;
 				case 'Beta':
-					configObject = {
-						graphQLUrl: 'https://rsyyjmwgsbft7klufpm3qoqwq4.appsync-api.us-east-1.amazonaws.com/graphql',
-						invokeUrl: 'https://' + apiId + invokeBase + 'beta',
-					};
+					configObject = Object.assign({}, configObject, {
+						COGNITO_USER_POOL_ID: 'us-east-1_DNB5DSPuV',
+						COGNITO_IDENTITY_POOL_ID: 'us-east-1:7ac015e8-97bc-4038-99a9-e5a8ad94bedd',
+						COGNITO_USER_POOL_CLIENT_ID: '32nf5gkols4vjngt09rdu7lvcu',
+						graphQLUrl: 'https://mltmao5c4vhslewjaxulc6rmsa.appsync-api.us-east-1.amazonaws.com/graphql',
+						invokeUrl: 'https://iris-api.beta.nrfcloud.com',
+						MQTT_ENDPOINT: 'a1jtaajis3u27i-ats.iot.us-east-1.amazonaws.com',
+					});
 					break;
 			}
 		}
