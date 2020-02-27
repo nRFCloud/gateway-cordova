@@ -3,6 +3,13 @@ export function shortenUUID(uuid: string) {
 	return uuid.replace(/-/g, '');
 }
 
+export function formatUUIDIfNecessary(uuid) {
+	if (uuid.length === 32) {
+		return uuid.replace(/([0-z]{8})([0-z]{4})([0-z]{4})([0-z]{4})([0-z]{12})/, '$1-$2-$3-$4-$5');
+	}
+	return uuid;
+}
+
 export const rootCA = `-----BEGIN CERTIFICATE-----
 MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF
 ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6
