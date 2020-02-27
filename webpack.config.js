@@ -7,6 +7,7 @@ const babelPresets = [[
 	{
 		"modules": false,
 		"useBuiltIns": "usage",
+		"corejs": 3,
 		forceAllTransforms: true
 	}
 ],
@@ -82,7 +83,7 @@ module.exports = {
 		'AWS': 'AWS',
 	},
 	resolve: {
-		extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".json"],
+		extensions: [".webpack.js", ".web.js", '.mjs', ".ts", ".tsx", ".js", ".json"],
 		modules: [
 			path.resolve('app'),
 			'node_modules',
