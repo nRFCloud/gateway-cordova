@@ -25,7 +25,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "amazon-cognito-identity-js": "^3.2.2",
-    "aws-sdk": "^2.603.0",
+    "aws-sdk": "^2.628.0",
     "code-push": "^2.0.6",
     "cordova-android": "^8.1.0",
     "cordova-browser": "^5.0.4",

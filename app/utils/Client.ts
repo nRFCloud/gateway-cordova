@@ -1,6 +1,5 @@
 import { device } from 'aws-iot-device-sdk';
-// @ts-ignore
-import AWS from 'AWS';
+import * as AWS from 'aws-sdk';
 
 import FS from '../fs';
 
@@ -137,8 +136,8 @@ namespace Client {
 	}
 
 	export async function getTenantId(): Promise<string> {
-		const tenants = await getCurrentTenant();
-		return tenants[0].id;
+		const tenant = await getCurrentTenant();
+		return tenant.id;
 	}
 
 	export function getGatewayId(refGateway = gateway): string {

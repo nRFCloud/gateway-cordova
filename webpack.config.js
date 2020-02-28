@@ -78,9 +78,7 @@ module.exports = {
 		fs: 'empty'
 	},
 	externals: {
-		'aws-wrapper': 'awsWrapper',
 		'RestApi': 'IrisRestApiClient', //https://github.com/nRFCloud/gateway-cordova/blob/master/www/index.bundle.js
-		'AWS': 'AWS',
 	},
 	resolve: {
 		extensions: [".webpack.js", ".web.js", '.mjs', ".ts", ".tsx", ".js", ".json"],

@@ -4,8 +4,11 @@ import { boundMethod } from 'autobind-decorator';
 
 // @ts-ignore
 import RestApi from 'RestApi';
-// @ts-ignore
-import AWS from 'AWS';
+
+import * as AWS from 'aws-sdk';
+
+const AWS_REGION = 'us-east-1';
+AWS.config.update({region: AWS_REGION});
 
 import { Cognito } from '../../utils/Cognito';
 
@@ -68,7 +71,8 @@ class LoginPage extends React.Component<MyProps, MyState> {
 			} else {
 				return DevzoneHelper.showDevzoneWindow();
 			}
-		}).then(() => {
+		}).then((credentials) => {
+			AWS.config.credentials = credentials;
 			return AWS.config.credentials
 				.getPromise()
 				.then(() => RestApi(AWS.config.credentials));
