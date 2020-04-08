@@ -73,6 +73,8 @@ namespace Client {
 
 	async function findGatewayId(): Promise<string> {
 		if (!(await fileSystem.exists(GATEWAY_FILENAME))) {
+			//TODO: Actually fill this out
+			throw new Error('gateway file doesnt exist');
 		}
 		const configfile = JSON.parse(await fileSystem.readFile(GATEWAY_FILENAME));
 		return configfile.gatewayId;

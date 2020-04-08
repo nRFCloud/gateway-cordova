@@ -133,6 +133,5 @@
     </plugin>
     <plugin name="cordova-plugin-local-notification" spec="^0.9.0-beta.2" />
     <engine name="ios" spec="^4.5.5" />
-    <engine name="browser" spec="^5.0.4" />
     <engine name="windows" spec="^6.0.1" />
 </widget>
