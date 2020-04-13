@@ -47,7 +47,7 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				exclude: /(node_modules|bower_components|helpers)/,
-				loaders: [
+				loader: [
 					{
 						loader: 'babel-loader',
 						options: {
@@ -64,7 +64,7 @@ module.exports = {
 			},
 			{
 				test: /\.scss$/,
-				loaders: ['style-loader', 'css-loader', {
+				loader: ['style-loader', 'css-loader', {
 					loader: 'sass-loader', options: {
 						implementation: require('sass')
 					}

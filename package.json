@@ -102,13 +102,14 @@
     "@babel/plugin-syntax-import-meta": "^7.0.0",
     "@babel/plugin-transform-async-to-generator": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.0.0",
-    "@babel/polyfill": "^7.0.0",
+    "@babel/polyfill": "^7.8.7",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/runtime-corejs2": "^7.0.0",
     "@material-ui/core": "^3.8.2",
     "@material-ui/icons": "^3.0.2",
     "@nrfcloud/gateway-common": "^3.1.0",
+    "@nrfcloud/gateway-registration": "file:../gateway-registration",
     "@types/node": "^13.7.6",
     "@types/react": "^16.7.18",
     "autobind-decorator": "^2.4.0",
@@ -149,6 +150,6 @@
     "underscore": "^1.9.1",
     "watch": "^1.0.2",
     "webpack": "^4.28.3",
-    "webpack-cli": "^3.2.1"
+    "webpack-cli": "^3.3.11"
   }
 }

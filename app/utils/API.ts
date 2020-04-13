@@ -1,12 +1,9 @@
-import * as AWS from 'aws-sdk/global';
-import AWSAppSyncClient from 'aws-appsync';
-import { AWSAppSyncClient as AWSAppSyncClientType } from 'aws-appsync';
-import gql from 'graphql-tag';
+import { getOrganization, createGateway as apiCreateGateway, CreateGatewayOptions } from '@nrfcloud/gateway-registration';
+
 import { Logger } from '../logger/Logger';
+import { Credentials } from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 
-type GQLClient = AWSAppSyncClientType<{}>;
-
-let client: GQLClient;
 
 interface GQLTenant {
 	id: string;
@@ -39,50 +36,20 @@ function convertTenant(inTenant: GQLTenant): SystemTenant {
 	};
 }
 
-const getTenant = gql`
-	query account {
-    account {
-      email
-      tenant {
-        id
-        blocked
-        limits {
-          metric
-          current
-          limit
-        }
-      }
-    }
-  }
-`;
+export interface GetOrgOptions {
+	credentials: Credentials;
+	graphQLUrl: string;
+}
 
 namespace API {
 
-	const getGQLClient = (): GQLClient => {
-		if (AWS && AWS.config && AWS.config.credentials) {
-			if (!client) {
-				client = createClient(window['graphQLUrl']);
-			}
-			return client;
-		}
-
-		throw new Error('Invalid AWS credentials while creating GQL client');
-	};
-
-	const createClient = (url: string): GQLClient => new AWSAppSyncClient({
-		url,
-		region: 'us-east-1',
-		auth: {
-			type: 'AWS_IAM',
-			credentials: AWS.config.credentials,
-		},
-		disableOffline: true,
-	});
-
-	export const getTenants = async (): Promise<SystemTenant[]> => {
-
+	export const getTenants = async (options?: GetOrgOptions): Promise<SystemTenant[]> => {
+		options = options ? options : {
+			credentials: AWS.config.credentials as Credentials,
+			graphQLUrl: window['graphQLUrl'],
+		};
 		try {
-			const {data: {account: {tenant}}}: any = await getGQLClient().query({query: getTenant});
+			const tenant: any = await getOrganization(options.credentials, options.graphQLUrl);
 			console.info('tenant from graphql', tenant);
 			return [convertTenant(tenant)];
 
@@ -90,6 +57,10 @@ namespace API {
 			Logger.error(err);
 		}
 		return null;
+	};
+
+	export const createGateway = async (options: CreateGatewayOptions): Promise<any> => {
+		return apiCreateGateway(options);
 	};
 }
 

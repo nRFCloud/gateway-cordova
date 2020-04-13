@@ -88,7 +88,7 @@ class Router extends React.Component<MyProps, MyState> {
 			gateway = await Client.handleGatewayConnect();
 		} catch (err) {
 			Logger.info('error connecting gateway', err);
-			await this.handleSignOut();
+			// await this.handleSignOut();
 			return;
 		}
 

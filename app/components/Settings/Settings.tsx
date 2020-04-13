@@ -52,7 +52,7 @@ class Settings extends React.Component<MyProps, MyState> {
 		this.state = {
 			environment: Environment.getCurrentEnvironment(),
 			userEmail: UserInfo.getEmail(),
-			tenantId: Client.getTenantId(),
+			tenantId: '',
 			gatewayId: Client.getGatewayId(),
 			showLogout: false,
 			isSigningOut: false,

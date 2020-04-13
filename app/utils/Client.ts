@@ -1,5 +1,6 @@
 import { device } from 'aws-iot-device-sdk';
 import * as AWS from 'aws-sdk';
+import { getOrganizationId } from '@nrfcloud/gateway-registration';
 
 import FS from '../fs';
 
@@ -18,6 +19,7 @@ const fileSystem = new FS();
 const GATEWAY_VERSION = require('../../package.json').version;
 
 namespace Client {
+	import createGateway = API.createGateway;
 	let client;
 	let gateway: Gateway;
 	let mqttClient;
@@ -73,15 +75,27 @@ namespace Client {
 
 	async function findGatewayId(): Promise<string> {
 		if (!(await fileSystem.exists(GATEWAY_FILENAME))) {
+			const orgId = await getOrganizationId(AWS.config.credentials, window['graphQLUrl']);
 			//TODO: Actually fill this out
-			throw new Error('gateway file doesnt exist');
+			Logger.info('aws s stuff is', AWS.config.credentials.secretAccessKey, AWS.config.credentials);
+			const { accessKeyId, secretAccessKey, sessionToken } = AWS.config.credentials;
+			const gatewayCreds = await createGateway({
+				credentials: {
+					accessKeyId,
+					secretAccessKey,
+					sessionToken,
+				},
+				organizationId: orgId,
+				invokeUrl: window['invokeUrl'],
+				region: window['AWS_REGION'],
+			});
+			await fileSystem.writeFile(GATEWAY_FILENAME, JSON.stringify(gatewayCreds));
 		}
 		const configfile = JSON.parse(await fileSystem.readFile(GATEWAY_FILENAME));
 		return configfile.gatewayId;
 	}
 
 	async function createGatewayDevice(gatewayId: string, tenantId: string) {
-		const AWS = window['AWS'];
 		Logger.info('client is', client);
 
 		const options: GatewayConfiguration = {
