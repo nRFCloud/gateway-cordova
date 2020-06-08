@@ -1,18 +1,16 @@
 import { device } from 'aws-iot-device-sdk';
 import * as AWS from 'aws-sdk';
 import { getOrganizationId } from '@nrfcloud/gateway-registration';
+import { Gateway, GatewayConfiguration, GatewayEvent, DeviceConnections } from '@nrfcloud/gateway-common';
 
 import FS from '../fs';
 
 import { Logger } from '../logger/Logger';
 
-import { rootCA } from '../util';
 import BluetoothPlugin from '../BluetoothPlugin';
-import Network from './Network';
 import { actions } from '../providers/StateStore';
 import API from './API';
 import { CordovaAdapter } from '../CordovaAdapter';
-import { Gateway, GatewayConfiguration, GatewayEvent } from '@nrfcloud/gateway-common/dist';
 
 const GATEWAY_FILENAME = 'gateway-config.json';
 const fileSystem = new FS();
@@ -20,52 +18,7 @@ const GATEWAY_VERSION = require('../../package.json').version;
 
 namespace Client {
 	import createGateway = API.createGateway;
-	let client;
 	let gateway: Gateway;
-	let mqttClient;
-
-	export function setClient(c) {
-		client = c;
-		// noinspection JSIgnoredPromiseFromCall
-		setupClient();
-	}
-
-	export async function setupClient() {
-		if (!client) {
-			return;
-		}
-		mqttClient = await AWS.config.credentials
-			.getPromise()
-			.then(() => {
-				const { accessKeyId, secretAccessKey, sessionToken } = AWS.config.credentials;
-				const iotEndpoint = window['MQTT_ENDPOINT'] || 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com';
-				return device({
-					clientId: `iris-api-client-${Math.floor((Math.random() * 1000000) + 1)}`,
-					host: iotEndpoint,
-					region: iotEndpoint.split('.')[2],
-					protocol: 'wss',
-					baseReconnectTimeMs: 250,
-					maximumReconnectTimeMs: 500,
-					// The empty credentials here and the call to mqttClient.updateWebSocketCredentials
-					// will make the client connect using IAM credentials and not pre-signed URLs which
-					// time out after ~20 minutes.
-					accessKeyId: accessKeyId,
-					secretKey: secretAccessKey,
-					sessionToken: sessionToken,
-				});
-			});
-
-		let cloudCloseCount = 0;
-		mqttClient.on('close', () => {
-			cloudCloseCount++;
-			if (cloudCloseCount > 5) {
-				cloudCloseCount = 0;
-				if (Network.isOnline()) {
-					window.location.reload();
-				}
-			}
-		});
-	}
 
 	export async function handleGatewayConnect() {
 		const tenantId = await getTenantId();
@@ -76,8 +29,6 @@ namespace Client {
 	async function findGatewayId(): Promise<string> {
 		if (!(await fileSystem.exists(GATEWAY_FILENAME))) {
 			const orgId = await getOrganizationId(AWS.config.credentials, window['graphQLUrl']);
-			//TODO: Actually fill this out
-			Logger.info('aws s stuff is', AWS.config.credentials.secretAccessKey, AWS.config.credentials);
 			const { accessKeyId, secretAccessKey, sessionToken } = AWS.config.credentials;
 			const gatewayCreds = await createGateway({
 				credentials: {
@@ -96,7 +47,6 @@ namespace Client {
 	}
 
 	async function createGatewayDevice(gatewayId: string, tenantId: string) {
-		Logger.info('client is', client);
 
 		const options: GatewayConfiguration = {
 			protocol: 'wss',
@@ -117,35 +67,35 @@ namespace Client {
 		return gateway;
 	}
 
-	function addListeners(gateway) {
+	function addListeners(gateway: Gateway) {
 		gateway.on(GatewayEvent.ConnectionsChanged, (connections) => {
 			actions.setConnections({
 				deviceList: connections,
-				beaconList: gateway.adapterDriver.getBeacons(),
+				beaconList: gateway.beacons,
 			});
-		}, false);
-		gateway.adapterDriver.on('beaconUpdated', () => {
+		});
+		gateway.on('beaconUpdated', () => {
 			actions.setConnections({
 				// deviceList: gateway.getConnections(),
-				beaconList: gateway.adapterDriver.getBeacons(),
+				beaconList: gateway.beacons,
 			});
-		}, false);
+		});
 	}
 
 	export function deleteGatewayFile(gwFilename = GATEWAY_FILENAME, fs = fileSystem) {
 		return fs.unlink(gwFilename);
 	}
 
-	export function getDeviceConnections() {
-		if (gateway && gateway.deviceConnectionDatabase && gateway.deviceConnectionDatabase.getDeviceConnections) {
-			return gateway.deviceConnectionDatabase.getDeviceConnections();
+	export function getDeviceConnections(): string[] {
+		if (gateway && gateway.connections) {
+			return Object.keys(gateway.connections);
 		}
 		return [];
 	}
 
 	export function getBeacons() {
-		if (gateway && gateway.adapterDriver && gateway.adapterDriver.getBeacons) {
-			return gateway.adapterDriver.getBeacons();
+		if (gateway && gateway.beacons) {
+			return gateway.beacons;
 		}
 
 		return [];
@@ -157,34 +107,29 @@ namespace Client {
 	}
 
 	export function getGatewayId(refGateway = gateway): string {
-		return refGateway && refGateway.config && refGateway.config.gatewayId;
+		return refGateway && refGateway.gatewayId;
 	}
 
 	export function getGatewayName(refGateway = gateway): string {
-		return refGateway && refGateway.state && refGateway.state.gateway && refGateway.state.gateway.name;
+		return refGateway && refGateway.name;
 	}
 
 	export function setGatewayId(gatewayId) {
-		return gateway.setCredentials(
-			gateway.config.tenantId,
-			gatewayId,
-			'aa',
-			'aa',
-			'aa',
-		);
+		//TODO: Make this switch gateway ID
 	}
 
 	export function closeAllConnections() {
 		const deviceConnections = getDeviceConnections();
 		if (deviceConnections && deviceConnections.length) {
 			deviceConnections.forEach(async (connection) => {
+				const params = {address: connection};
 				try {
-					await BluetoothPlugin.disconnect(connection.address);
+					await BluetoothPlugin.disconnect(params);
 				} catch (ex) {
 				}
 
 				try {
-					await BluetoothPlugin.close(connection.address);
+					await BluetoothPlugin.close(params);
 				} catch (ex) {
 				}
 			});
@@ -195,7 +140,7 @@ namespace Client {
 		return API.getTenants();
 	}
 
-	export async function checkIfGatewayStillExists(clientApi = client, refGateway = gateway) {
+	export async function checkIfGatewayStillExists(refGateway = gateway) {
 		return;
 		// if (!clientApi || !refGateway) {
 		// 	return;
@@ -217,38 +162,18 @@ namespace Client {
 		// }
 	}
 
-	async function getGateways(clientApi = client): Promise<any[]> {
-		if (!clientApi) {
-			return;
-		}
-
-		const currentTenant = await getCurrentTenant();
-		const gateways = (await clientApi.tenantsTenantIdGatewaysGet({
-			tenantId: currentTenant.id,
-		})).data;
-		actions.setGateways(gateways);
-		return gateways;
-	}
-
-	async function registerGateway(clientApi, gateway) {
-
-		const tenant = await(getCurrentTenant());
-		const tenantId = tenant.id;
-
-		Logger.info(`Registering gateway with tenant ${tenant.id}.`);
-
-		const gatewaysPostResult = (await clientApi.tenantsTenantIdGatewaysPost({
-			tenantId,
-		})).data;
-
-		await gateway.setCredentials(
-			tenantId,
-			gatewaysPostResult.gatewayId,
-			gatewaysPostResult.clientCert,
-			gatewaysPostResult.privateKey,
-			rootCA,
-		);
-
+	async function getGateways(): Promise<any[]> {
+		// if (!clientApi) {
+		// 	return;
+		// }
+		//
+		// const currentTenant = await getCurrentTenant();
+		// const gateways = (await clientApi.tenantsTenantIdGatewaysGet({
+		// 	tenantId: currentTenant.id,
+		// })).data;
+		// actions.setGateways(gateways);
+		// return gateways;
+		return [];
 	}
 
 	export async function getCurrentTenant() {

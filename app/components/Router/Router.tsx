@@ -2,6 +2,7 @@ import * as React from 'react';
 import { withStyles, AppBar, Typography, withWidth, Grid } from '@material-ui/core/es';
 import SwipeableViews from 'react-swipeable-views';
 import { boundMethod } from 'autobind-decorator';
+import { GatewayEvent, GatewayState } from '@nrfcloud/gateway-common';
 
 import LoginPage from '../LoginPage/LoginPage';
 import Client from '../../utils/Client';
@@ -19,6 +20,7 @@ import { connect, actions } from '../../providers/StateStore';
 import LogScreen from '../Logging/LogScreen';
 import { Platform } from '../../utils/Platform';
 
+
 export enum CurrentPage {
 	// Loading,
 	Login,
@@ -28,7 +30,7 @@ export enum CurrentPage {
 
 interface MyState {
 	currentPage: CurrentPage;
-	gatewayState: any;
+	gatewayState: GatewayState;
 	problem: Problem;
 	isAuthorized: boolean;
 	highlightCoffeeMode: boolean;
@@ -37,14 +39,14 @@ interface MyState {
 }
 
 interface MyProps {
-	classes?: any;
-	isOnline?: boolean;
-	isNoSeleepEnabled?: boolean;
-	width?: string;
-	connections?: any[];
-	beacons?: any[];
-	gateway?: any;
-	gateways?: any[];
+	classes: any;
+	isOnline: boolean;
+	isNoSeleepEnabled: boolean;
+	width: string;
+	connections: any[];
+	beacons: any[];
+	gateway: any;
+	gateways: any[];
 }
 
 class Router extends React.Component<MyProps, MyState> {
@@ -65,11 +67,11 @@ class Router extends React.Component<MyProps, MyState> {
 			showLog: null,
 		};
 
-		this.listener = (e) => this.handleBackButton(e);
+		this.listener = () => this.handleBackButton();
 		document.addEventListener('backbutton', this.listener, false);
 	}
 
-	private handleBackButton(e) {
+	private handleBackButton() {
 		if (this.state.showLog !== null) {
 			this.hideLog();
 		} else {
@@ -78,11 +80,10 @@ class Router extends React.Component<MyProps, MyState> {
 	}
 
 	@boundMethod
-	private async handleSuccessfulLogin(client) {
+	private async handleSuccessfulLogin() {
 		clearTimeout(this.timeoutHolder);
 		this.timeoutHolder = null;
 
-		Client.setClient(client);
 		let gateway;
 		try {
 			gateway = await Client.handleGatewayConnect();
@@ -93,7 +94,7 @@ class Router extends React.Component<MyProps, MyState> {
 		}
 
 		Logger.info('gateway is', gateway);
-		gateway.on('statusUpdate', async (state) => {
+		gateway.on(GatewayEvent.StatusChanged, async (state) => {
 			if (state && state.gateway && state.gateway.disconnects && state.gateway.disconnects > 4) {
 				try {
 					await Client.checkIfGatewayStillExists();
@@ -101,8 +102,7 @@ class Router extends React.Component<MyProps, MyState> {
 					Logger.info('Gateway keeps disconnecting', err);
 					if (err.message.indexOf('no longer') > -1) {
 						// noinspection JSIgnoredPromiseFromCall
-						this.handleSignOut();
-						return;
+						return this.handleSignOut();
 					}
 					throw err;
 				}
@@ -115,7 +115,7 @@ class Router extends React.Component<MyProps, MyState> {
 
 		});
 
-		gateway.on('deletedmyself', () => {
+		gateway.on(GatewayEvent.Deleted, () => {
 			// noinspection JSIgnoredPromiseFromCall
 			this.handleSignOut();
 		});
@@ -158,8 +158,7 @@ class Router extends React.Component<MyProps, MyState> {
 				await BluetoothPlugin.requestLocation();
 				break;
 		}
-		// noinspection JSIgnoredPromiseFromCall
-		this.getAndSetProblem();
+		return this.getAndSetProblem();
 	}
 
 	private async getAndSetProblem() {
@@ -197,8 +196,7 @@ class Router extends React.Component<MyProps, MyState> {
 	@boundMethod
 	private async handleSignOut() {
 		await this.setStateReturnPromise({isSigningOut: true});
-		// noinspection JSIgnoredPromiseFromCall
-		Authorization.logout();
+		return Authorization.logout();
 	}
 
 	private setStateReturnPromise(newState): Promise<null> {

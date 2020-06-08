@@ -1,9 +1,9 @@
-import { getOrganization, createGateway as apiCreateGateway, CreateGatewayOptions } from '@nrfcloud/gateway-registration';
-
-import { Logger } from '../logger/Logger';
 import { Credentials } from 'aws-sdk';
 import * as AWS from 'aws-sdk';
 
+import { getOrganization, createGateway as apiCreateGateway, CreateGatewayOptions } from '@nrfcloud/gateway-registration';
+
+import { Logger } from '../logger/Logger';
 
 interface GQLTenant {
 	id: string;

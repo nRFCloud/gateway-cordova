@@ -23,12 +23,12 @@ export namespace DevzoneHelper {
 		Cognito.startDevzoneSession(creds);
 	}
 
-	export function resumeSession(): Promise<boolean> {
+	export function resumeSession(): Promise<string> {
 		if (!CookieHelper.hasCredentials()) {
-			return Promise.resolve(false);
+			return Promise.resolve(null);
 		}
 
-		return showDevzoneWindow().then(() => true);
+		return showDevzoneWindow().then(() => Cognito.);
 	}
 
 	export function showDevzoneWindow(): Promise<void> {

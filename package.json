@@ -27,6 +27,7 @@
     "amazon-cognito-identity-js": "^3.2.2",
     "aws-sdk": "^2.628.0",
     "code-push": "^2.0.6",
+    "cordova-android": "^8.1.0",
     "cordova-browser": "^6.0.0",
     "cordova-ios": "^4.5.5",
     "cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
@@ -83,7 +84,8 @@
     "platforms": [
       "ios",
       "windows",
-      "browser"
+      "browser",
+      "android"
     ]
   },
   "devDependencies": {
@@ -108,7 +110,7 @@
     "@babel/runtime-corejs2": "^7.0.0",
     "@material-ui/core": "^3.8.2",
     "@material-ui/icons": "^3.0.2",
-    "@nrfcloud/gateway-common": "^3.1.0",
+    "@nrfcloud/gateway-common": "file:../gateway-common",
     "@nrfcloud/gateway-registration": "file:../gateway-registration",
     "@types/node": "^13.7.6",
     "@types/react": "^16.7.18",

@@ -172,7 +172,7 @@ export namespace Cognito {
 		localStorage.removeItem(STORAGE_KEY_DEVZONE_REFRESH);
 	}
 
-	function retrieveRefreshCredentials(): { username: string, refreshToken, devzoneRefreshToken } | null {
+	function getStoredData() {
 		const data = localStorage.getItem(STORAGE_KEY_DEVZONE_REFRESH) || localStorage.getItem(STORAGE_KEY);
 		if (!data) {
 			return null;
@@ -180,9 +180,30 @@ export namespace Cognito {
 		const {username, refreshToken, devzoneRefreshToken} = JSON.parse(data);
 		return {
 			username,
+			refreshToken,
+			devzoneRefreshToken,
+		};
+	}
+
+	function retrieveRefreshCredentials(): { username: string, refreshToken, devzoneRefreshToken } | null {
+		const data = getStoredData();
+		if(!data) {
+			return null;
+		}
+		const {username, refreshToken, devzoneRefreshToken} = data;
+		return {
+			username,
 			refreshToken: new AmazonCognitoIdentity.CognitoRefreshToken({RefreshToken: refreshToken}),
 			devzoneRefreshToken,
 		};
+	}
+
+	export function getUserName(): string {
+		const data = getStoredData();
+		if (!data) {
+			return '';
+		}
+		return data.username;
 	}
 
 	function authenticate(token, resetCredentials = true): Promise<null> {

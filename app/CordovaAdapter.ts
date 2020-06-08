@@ -1,8 +1,7 @@
-import { BluetoothAdapter, Characteristic, Descriptor, ScanResult, Service, Services } from '@nrfcloud/gateway-common';
+import { AdapterEvent, Address, CharacteristicProperties, BluetoothAdapter, Characteristic, Descriptor, ScanResult, Service, Services } from '@nrfcloud/gateway-common';
 import { actions } from './providers/StateStore';
 import { isConnected, totalKillConnection, tryConnection } from './utils/DeviceMethods';
 import { Logger } from './logger/Logger';
-import { AdapterEvent, Address, CharacteristicProperties } from '@nrfcloud/gateway-common/dist';
 import BluetoothPlugin from './BluetoothPlugin';
 import { formatUUIDIfNecessary, shortenUUID } from './util';
 

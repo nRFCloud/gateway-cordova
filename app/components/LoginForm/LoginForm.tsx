@@ -58,7 +58,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 	}
 
 	private isFormValid(): boolean {
-		return validateEmail(this.state.username) && validatePassword(this.state.password);
+		return validateEmail(this.state.username) && this.state.password.length > 0;
 	}
 
 	@boundMethod
