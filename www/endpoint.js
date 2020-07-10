@@ -34,6 +34,16 @@
 						MQTT_ENDPOINT: 'a1jtaajis3u27i-ats.iot.us-east-1.amazonaws.com',
 					});
 					break;
+				case 'Test':
+					configObject = Object.assign({}, configObject, {
+						COGNITO_USER_POOL_ID: 'us-east-1_IQHrFt4bK',
+						COGNITO_IDENTITY_POOL_ID: 'us-east-1:63cb9ebd-1378-4b30-bdd1-aacc8cfb7e5c',
+						COGNITO_USER_POOL_CLIENT_ID: '3p4rblan3k3dt9t9sk1j84l6fd',
+						graphQLUrl: 'https://x2upsni2xbf6dncc2q7ocg6h4m.appsync-api.us-east-1.amazonaws.com/graphql',
+						invokeUrl: 'https://mwjhmt86eg.execute-api.us-east-1.amazonaws.com/dev',
+						MQTT_ENDPOINT: 'a3shl1aewgsftk-ats.iot.us-east-1.amazonaws.com',
+					});
+					break;
 			}
 		}
 		console.log('found env is', env);

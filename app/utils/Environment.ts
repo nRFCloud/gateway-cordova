@@ -4,6 +4,7 @@ export enum EnvironmentType {
 	Production,
 	Beta,
 	Dev,
+	Test,
 }
 
 namespace Environment {

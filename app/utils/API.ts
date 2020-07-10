@@ -5,6 +5,7 @@ import { AWSAppSyncClient } from 'aws-wrapper';
 import { AWSAppSyncClient as AWSAppSyncClientType } from 'aws-appsync';
 import gql from 'graphql-tag';
 import { Logger } from '../logger/Logger';
+import Environment, { EnvironmentType } from './Environment';
 
 type GQLClient = AWSAppSyncClientType<{}>;
 
@@ -12,6 +13,7 @@ let client: GQLClient;
 
 interface GQLTenant {
 	id: string;
+	tenantId?: string;
 	blocked: boolean;
 	limits: Limit[];
 	__typename: 'Tenant';
@@ -34,14 +36,14 @@ interface SystemTenant {
 function convertTenant(inTenant: GQLTenant): SystemTenant {
 	const limit: Limit = inTenant.limits && inTenant.limits.length ? inTenant.limits[0] : {} as Limit;
 	return {
-		id: inTenant.id,
+		id: inTenant.id || inTenant.tenantId,
 		inbound_count: limit.current,
 		name: '',
 		max_inbound_count: limit.limit,
 	};
 }
 
-const getTenant = gql`
+const getTenant = Environment.getCurrentEnvironment() !== EnvironmentType.Test ? gql`
 	query account {
     account {
       email
@@ -56,7 +58,30 @@ const getTenant = gql`
       }
     }
   }
-`;
+` : gql`
+query account {
+    account {
+      email
+      tenants {
+        tenantId
+        blocked
+        name
+				apiKey
+				role
+				deviceGroups
+        limits {
+          metric
+          current
+          limit
+        }
+				profile {
+					name
+					email
+				}
+      }
+    }
+  }
+`; //test environment uses MU stack
 
 namespace API {
 
@@ -84,7 +109,8 @@ namespace API {
 	export const getTenants = async (): Promise<SystemTenant[]> => {
 
 		try {
-			const {data: {account: {tenant}}}: any = await getGQLClient().query({query: getTenant});
+			let {data: {account: {tenant, tenants}}}: any = await getGQLClient().query({query: getTenant});
+			tenant = tenant || tenants[0];
 			console.info('tenant from graphql', tenant);
 			return [convertTenant(tenant)];
 
