@@ -264,7 +264,7 @@ class Router extends React.Component<MyProps, MyState> {
 			case CurrentPage.Dashboard:
 			case CurrentPage.Settings:
 				let dashboardPage = <Loader/>;
-				if (!this.props.isOnline || (this.state.gatewayState && this.state.gatewayState.gateway && this.state.gatewayState.gateway.connected)) {
+				if (!this.props.isOnline || (this.state.gatewayState?.connected)) {
 					const connections = this.props.connections;
 					const beacons = this.props.beacons;
 					dashboardPage = (

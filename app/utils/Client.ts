@@ -1,7 +1,6 @@
-import { device } from 'aws-iot-device-sdk';
 import * as AWS from 'aws-sdk';
 import { getOrganizationId } from '@nrfcloud/gateway-registration';
-import { Gateway, GatewayConfiguration, GatewayEvent, DeviceConnections } from '@nrfcloud/gateway-common';
+import { Gateway, GatewayConfiguration, GatewayEvent } from '@nrfcloud/gateway-common';
 
 import FS from '../fs';
 
