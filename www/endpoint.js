@@ -1,13 +1,11 @@
 (function(global) {
-	var apiId = 'hnmr2uba55';
-	var invokeBase = '.execute-api.us-east-1.amazonaws.com/';
 	var configObject = {
 		COGNITO_USER_POOL_ID: 'us-east-1_fdiBa7JSO',
 		COGNITO_IDENTITY_POOL_ID: 'us-east-1:c00e1327-dfc2-4aa7-a484-8ca366d11a68',
 		COGNITO_USER_POOL_CLIENT_ID: '2p40shpt1ru5gerbip9limhm15',
 		AWS_REGION: 'us-east-1',
 		graphQLUrl: 'https://s3t5ysg7pbcohkakeascjwgtcu.appsync-api.us-east-1.amazonaws.com/graphql',
-		invokeUrl: 'https://' + apiId + invokeBase + 'prod',
+		invokeUrl: 'https://hnmr2uba55.execute-api.us-east-1.amazonaws.com/prod',
 		MQTT_ENDPOINT: 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
 	};
 	try {
