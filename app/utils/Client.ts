@@ -14,17 +14,19 @@ import { rootCA } from '../util';
 import BluetoothPlugin from '../BluetoothPlugin';
 import Network from './Network';
 import { actions } from '../providers/StateStore';
-import API from './API';
+import API, { SystemTenant } from './API';
 
 const GATEWAY_FILENAME = 'gateway-config.json';
 const fileSystem = new FS();
 const GATEWAY_VERSION = require('../../package.json').version;
+const CURRENT_ORG_TAG = 'CURRENT_ORG_TAG';
 
 namespace Client {
 	let client;
 	let gateway;
 	let adapterDriverFactory: IAdapterDriverFactory;
 	let mqttClient;
+	let currentOrganization: SystemTenant;
 
 	export function setClient(c) {
 		client = c;
@@ -227,7 +229,7 @@ namespace Client {
 
 	async function registerGateway(clientApi, gateway) {
 
-		const tenant = await(getCurrentTenant());
+		const tenant = await getCurrentTenant();
 		const tenantId = tenant.id;
 
 		Logger.info(`Registering gateway with tenant ${tenant.id}.`);
@@ -246,12 +248,25 @@ namespace Client {
 
 	}
 
-	export async function getCurrentTenant() {
-		const tenantsGetResult = await getTenants();
-		if (tenantsGetResult.length < 1 || !tenantsGetResult[0] || !tenantsGetResult[0].id) {
-			throw new Error('No tenant for user');
+	export async function getCurrentTenant(refetch: boolean = true): Promise<SystemTenant> {
+		const savedOrg = JSON.parse(localStorage.getItem(CURRENT_ORG_TAG));
+		if (savedOrg) {
+			return savedOrg as SystemTenant;
 		}
-		return tenantsGetResult[0];
+		if (!currentOrganization && refetch) {
+			const tenantsGetResult = await getTenants();
+			Logger.info('result of gettenants', tenantsGetResult);
+			if (tenantsGetResult.length < 1 || !tenantsGetResult[0] || !tenantsGetResult[0].id) {
+				throw new Error('No tenant for user');
+			}
+			currentOrganization = tenantsGetResult[0];
+		}
+		return currentOrganization;
+	}
+
+	export function setCurrentOrganization(newOrg: SystemTenant) {
+		localStorage.setItem(CURRENT_ORG_TAG, JSON.stringify(newOrg));
+		currentOrganization = newOrg;
 	}
 }
 

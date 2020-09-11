@@ -26,7 +26,6 @@
   "dependencies": {
     "code-push": "^2.0.6",
     "cordova-android": "^8.0.0",
-    "cordova-browser": "^5.0.4",
     "cordova-ios": "^4.5.5",
     "cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
     "cordova-plugin-appcenter-analytics": "^0.2.2",
@@ -81,14 +80,15 @@
     },
     "platforms": [
       "ios",
-      "browser",
       "windows",
-      "android"
+      "android",
+      "browser"
     ]
   },
   "devDependencies": {
     "@material-ui/core": "3.8.2",
     "@material-ui/icons": "3.0.2",
+    "@material-ui/styles": "^4.10.0",
     "@types/node": "7.10.1",
     "@types/react": "16.7.18",
     "autobind-decorator": "2.4.0",
@@ -113,6 +113,7 @@
     "beacon-utilities": "http://github.com/nRFCloud/beacon-utilities.git",
     "bootstrap": "4.4.1",
     "change-case": "3.0.2",
+    "cordova-browser": "^6.0.0",
     "cordova-promise-fs": "1.2.5",
     "core-js": "2.6.1",
     "css-loader": "0.28.11",
@@ -131,8 +132,8 @@
     "mdi-material-ui": "5.8.0",
     "npm-run-all": "4.1.5",
     "nrfcloud-gateway-common": "file:../gateway-common",
-    "react": "16.7.0",
-    "react-dom": "16.7.0",
+    "react": "16.9.0",
+    "react-dom": "16.9.0",
     "react-swipeable-views": "0.13.0",
     "react-waterfall": "4.0.1",
     "sass": "1.15.3",
@@ -140,9 +141,9 @@
     "style-loader": "0.18.2",
     "terser-webpack-plugin": "1.2.1",
     "ts-loader": "5.3.3",
-    "tslint": "5.12.0",
+    "tslint": "5.18.0",
     "tslint-react": "3.6.0",
-    "typescript": "2.9.2",
+    "typescript": "^3.9.7",
     "underscore": "1.9.1",
     "watch": "1.0.2",
     "webpack": "4.28.3",
