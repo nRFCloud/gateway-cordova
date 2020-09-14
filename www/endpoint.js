@@ -26,8 +26,12 @@
 					break;
 				case 'Beta':
 					configObject = Object.assign({}, configObject, {
-						graphQLUrl: 'https://rsyyjmwgsbft7klufpm3qoqwq4.appsync-api.us-east-1.amazonaws.com/graphql',
-						invokeUrl: 'https://' + apiId + invokeBase + 'beta',
+						COGNITO_USER_POOL_ID: 'us-east-1_DNB5DSPuV',
+						COGNITO_IDENTITY_POOL_ID: 'us-east-1:7ac015e8-97bc-4038-99a9-e5a8ad94bedd',
+						COGNITO_USER_POOL_CLIENT_ID: '32nf5gkols4vjngt09rdu7lvcu',
+						graphQLUrl: 'https://mltmao5c4vhslewjaxulc6rmsa.appsync-api.us-east-1.amazonaws.com/graphql',
+						invokeUrl: 'https://iris-api.beta.nrfcloud.com',
+						MQTT_ENDPOINT: 'a1jtaajis3u27i-ats.iot.us-east-1.amazonaws.com',
 					});
 					break;
 			}
