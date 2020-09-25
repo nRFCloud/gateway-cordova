@@ -19,6 +19,9 @@ import Splashscreen from '../../utils/Splashscreen';
 import { connect, actions } from '../../providers/StateStore';
 import LogScreen from '../Logging/LogScreen';
 import { Platform } from '../../utils/Platform';
+import API, { SystemTenant } from '../../utils/API';
+import OrganizationSelector from '../OrganizationSelector/OrganizationSelector';
+import getCurrentTenant = Client.getCurrentTenant;
 
 
 export enum CurrentPage {
@@ -26,6 +29,7 @@ export enum CurrentPage {
 	Login,
 	Dashboard,
 	Settings,
+	OrgSelector,
 }
 
 interface MyState {
@@ -36,6 +40,7 @@ interface MyState {
 	highlightCoffeeMode: boolean;
 	isSigningOut: boolean;
 	showLog: string;
+	organizations: SystemTenant[];
 }
 
 interface MyProps {
@@ -65,6 +70,7 @@ class Router extends React.Component<MyProps, MyState> {
 			highlightCoffeeMode: false,
 			isSigningOut: false,
 			showLog: null,
+			organizations: [],
 		};
 
 		this.listener = () => this.handleBackButton();
@@ -80,7 +86,8 @@ class Router extends React.Component<MyProps, MyState> {
 	}
 
 	@boundMethod
-	private async handleSuccessfulLogin() {
+	private async handleOrganizationSelection(org: SystemTenant) {
+		Client.setCurrentOrganization(org);
 		clearTimeout(this.timeoutHolder);
 		this.timeoutHolder = null;
 
@@ -126,6 +133,27 @@ class Router extends React.Component<MyProps, MyState> {
 			gatewayState: gateway.state,
 		});
 		setTimeout(() => actions.setGateway(gateway));
+		Splashscreen.hide();
+	}
+
+	@boundMethod
+	private async handleSuccessfulLogin(client) {
+		clearTimeout(this.timeoutHolder);
+		this.timeoutHolder = null;
+
+		Client.setClient(client);
+		const currentOrg = await getCurrentTenant(false);
+		if (currentOrg) { //if we've already selected one, we don't need to do it again
+			return this.handleOrganizationSelection(currentOrg);
+		}
+		const orgs = await API.getTenants();
+		if (orgs.length === 1) { //auto select the first org if there's only one
+			return this.handleOrganizationSelection(orgs[0]);
+		}
+		this.setState({
+			currentPage: CurrentPage.OrgSelector,
+			organizations: orgs,
+		});
 		Splashscreen.hide();
 	}
 
@@ -261,6 +289,14 @@ class Router extends React.Component<MyProps, MyState> {
 					/>
 				);
 				break;
+			case CurrentPage.OrgSelector:
+				page = (
+					<OrganizationSelector
+						organizations={this.state.organizations}
+						handleOrganizationSelection={this.handleOrganizationSelection}
+					/>
+				);
+				break;
 			case CurrentPage.Dashboard:
 			case CurrentPage.Settings:
 				let dashboardPage = <Loader/>;
@@ -291,7 +327,7 @@ class Router extends React.Component<MyProps, MyState> {
 							showLogFor={this.showLogFor}
 						/>
 					</div>
-				) : <Loader />;
+				) : <Loader/>;
 
 				if (this.props.width === 'xs') {
 					page = (
@@ -358,10 +394,14 @@ class Router extends React.Component<MyProps, MyState> {
 			this.props.classes.mainView,
 		];
 
-		if (this.state.currentPage === CurrentPage.Login) {
-			mainViewClasses.push(this.props.classes.mainViewLoginTop);
-		} else {
-			mainViewClasses.push(this.props.classes.mainViewTop);
+		switch (this.state.currentPage) {
+			case CurrentPage.Login:
+			case CurrentPage.OrgSelector:
+				mainViewClasses.push(this.props.classes.mainViewLoginTop);
+				break;
+			default:
+				mainViewClasses.push(this.props.classes.mainViewTop);
+				break;
 		}
 
 		return (
@@ -390,6 +430,7 @@ class Router extends React.Component<MyProps, MyState> {
 const component = withWidth({
 // @ts-ignore
 	noSSR: true,
+
 	withTheme: true,
 })(Router);
 

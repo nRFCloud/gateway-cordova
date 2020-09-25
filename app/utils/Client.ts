@@ -8,16 +8,18 @@ import { Logger } from '../logger/Logger';
 
 import BluetoothPlugin from '../BluetoothPlugin';
 import { actions } from '../providers/StateStore';
-import API from './API';
+import API, { SystemTenant } from './API';
 import { CordovaAdapter } from '../CordovaAdapter';
 
 const GATEWAY_FILENAME = 'gateway-config.json';
 const fileSystem = new FS();
 const GATEWAY_VERSION = require('../../package.json').version;
+const CURRENT_ORG_TAG = 'CURRENT_ORG_TAG';
 
 namespace Client {
 	import createGateway = API.createGateway;
 	let gateway: Gateway;
+	let currentOrganization: SystemTenant;
 
 	export async function handleGatewayConnect() {
 		const tenantId = await getTenantId();
@@ -175,12 +177,25 @@ namespace Client {
 		return [];
 	}
 
-	export async function getCurrentTenant() {
-		const tenantsGetResult = await getTenants();
-		if (tenantsGetResult.length < 1 || !tenantsGetResult[0] || !tenantsGetResult[0].id) {
-			throw new Error('No tenant for user');
+	export async function getCurrentTenant(refetch: boolean = true): Promise<SystemTenant> {
+		const savedOrg = JSON.parse(localStorage.getItem(CURRENT_ORG_TAG));
+		if (savedOrg) {
+			return savedOrg as SystemTenant;
 		}
-		return tenantsGetResult[0];
+		if (!currentOrganization && refetch) {
+			const tenantsGetResult = await getTenants();
+			Logger.info('result of gettenants', tenantsGetResult);
+			if (tenantsGetResult.length < 1 || !tenantsGetResult[0] || !tenantsGetResult[0].id) {
+				throw new Error('No tenant for user');
+			}
+			currentOrganization = tenantsGetResult[0];
+		}
+		return currentOrganization;
+	}
+
+	export function setCurrentOrganization(newOrg: SystemTenant) {
+		localStorage.setItem(CURRENT_ORG_TAG, JSON.stringify(newOrg));
+		currentOrganization = newOrg;
 	}
 }
 
