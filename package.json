@@ -26,8 +26,6 @@
   "dependencies": {
     "amazon-cognito-identity-js": "^3.2.2",
     "aws-sdk": "^2.628.0",
-    "code-push": "^2.0.6",
-    "cordova-android": "^8.1.0",
     "cordova-browser": "^6.0.0",
     "cordova-ios": "^4.5.5",
     "cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
@@ -37,10 +35,8 @@
     "cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
     "cordova-plugin-badge": "^0.8.8",
     "cordova-plugin-bluetoothle": "^4.5.3",
-    "cordova-plugin-code-push": "^1.11.17",
     "cordova-plugin-cookieemperor": "git+https://github.com/rtk/cordova-cookie-emperor.git",
     "cordova-plugin-device": "^2.0.2",
-    "cordova-plugin-dialogs": "^2.0.1",
     "cordova-plugin-file": "^6.0.1",
     "cordova-plugin-file-opener2": "^2.2.0",
     "cordova-plugin-file-transfer": "^1.7.1",
@@ -78,8 +74,8 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-local-notification": {},
-      "cordova-plugin-code-push": {},
-      "cordova-plugin-background-mode": {}
+      "cordova-plugin-background-mode": {},
+      "cordova-plugin-code-push": {}
     },
     "platforms": [
       "ios",
@@ -121,6 +117,8 @@
     "babel-plugin-graphql-tag": "^2.5.0",
     "beacon-utilities": "http://github.com/nRFCloud/beacon-utilities.git",
     "bootstrap": "^4.2.1",
+    "code-push": "^3.0.1",
+    "cordova-android": "^9.0.0",
     "cordova-promise-fs": "^1.2.5",
     "core-js": "^3.6.4",
     "css-loader": "^3.4.2",

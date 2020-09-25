@@ -124,7 +124,6 @@
     <plugin name="cordova-plugin-insomnia" spec="https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git" />
     <plugin name="cordova-plugin-cookieemperor" spec="https://github.com/rtk/cordova-cookie-emperor.git" />
     <plugin name="cordova-plugin-wkwebview-engine" spec="^1.1.4" />
-    <plugin name="cordova-plugin-code-push" spec="^1.11.17" />
     <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
     <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
     <plugin name="cordova-plugin-bluetoothle" spec="^4.5.3" />

@@ -21,6 +21,6 @@
     "./app/**/*"
   ],
   "files": [
-    "app/index.ts"
+    "app/index.tsx"
   ]
 }
