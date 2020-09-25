@@ -25,7 +25,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "code-push": "^2.0.6",
-    "cordova-android": "^8.0.0",
     "cordova-ios": "^4.5.5",
     "cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
     "cordova-plugin-appcenter-analytics": "^0.2.2",
@@ -81,8 +80,8 @@
     "platforms": [
       "ios",
       "windows",
-      "android",
-      "browser"
+      "browser",
+      "android"
     ]
   },
   "devDependencies": {
@@ -113,6 +112,7 @@
     "beacon-utilities": "http://github.com/nRFCloud/beacon-utilities.git",
     "bootstrap": "4.4.1",
     "change-case": "3.0.2",
+    "cordova-android": "^9.0.0",
     "cordova-browser": "^6.0.0",
     "cordova-promise-fs": "1.2.5",
     "core-js": "2.6.1",
