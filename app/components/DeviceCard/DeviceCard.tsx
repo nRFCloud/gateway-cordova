@@ -47,7 +47,7 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 	render() {
 		const device = this.props.device;
 		let imageSrc = 'img/device-image.png';
-		if (device.raw && device.raw.image) {
+		if (device?.raw?.image) {
 			imageSrc = device.raw.image;
 		}
 
@@ -83,7 +83,7 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 			connectedBlock = (
 				<Grid container direction="column" justify="space-evenly" alignItems="center">
 					<Grid item>
-						<WifiTethering/>
+						<WifiTethering />
 					</Grid>
 					<Grid item>
 						<Typography
@@ -140,7 +140,7 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 													variant="caption"
 													className={isIos ? this.props.classes.captionShrinker : ''}
 												>
-													{typeof device.statistics.rssi !== 'undefined' ? device.statistics.rssi : 'N/A'} dBm
+													{device?.statistics?.rssi ?? 'N/A'} dBm
 												</Typography>
 											</Grid>
 										</Grid>
@@ -148,8 +148,8 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 									<Grid item xs>
 										<Grid container direction="column" justify="space-evenly" alignItems="center">
 											<Grid item>
-												<Typography	variant="h5">
-													{device.statistics && typeof device.statistics.connectCount !== 'undefined' ? device.statistics.connectCount : 'N/A'}
+												<Typography variant="h5">
+													{device?.statistics?.connectCount ?? 'N/A'}
 												</Typography>
 											</Grid>
 											<Grid item>

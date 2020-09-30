@@ -2,6 +2,7 @@ import * as React from 'react';
 import { withStyles, AppBar, Typography, withWidth, Grid } from '@material-ui/core/es';
 import SwipeableViews from 'react-swipeable-views';
 import { boundMethod } from 'autobind-decorator';
+import { GatewayEvent, GatewayState } from '@nrfcloud/gateway-common';
 
 import LoginPage from '../LoginPage/LoginPage';
 import Client from '../../utils/Client';
@@ -20,7 +21,7 @@ import LogScreen from '../Logging/LogScreen';
 import { Platform } from '../../utils/Platform';
 import API, { SystemTenant } from '../../utils/API';
 import OrganizationSelector from '../OrganizationSelector/OrganizationSelector';
-import getCurrentTenant = Client.getCurrentTenant;
+
 
 export enum CurrentPage {
 	// Loading,
@@ -32,7 +33,7 @@ export enum CurrentPage {
 
 interface MyState {
 	currentPage: CurrentPage;
-	gatewayState: any;
+	gatewayState: GatewayState;
 	problem: Problem;
 	isAuthorized: boolean;
 	highlightCoffeeMode: boolean;
@@ -42,14 +43,14 @@ interface MyState {
 }
 
 interface MyProps {
-	classes?: any;
-	isOnline?: boolean;
-	isNoSeleepEnabled?: boolean;
-	width?: string;
-	connections?: any[];
-	beacons?: any[];
-	gateway?: any;
-	gateways?: any[];
+	classes: any;
+	isOnline: boolean;
+	isNoSeleepEnabled: boolean;
+	width: string;
+	connections: any[];
+	beacons: any[];
+	gateway: any;
+	gateways: any[];
 }
 
 class Router extends React.Component<MyProps, MyState> {
@@ -71,11 +72,11 @@ class Router extends React.Component<MyProps, MyState> {
 			organizations: [],
 		};
 
-		this.listener = (e) => this.handleBackButton(e);
+		this.listener = () => this.handleBackButton();
 		document.addEventListener('backbutton', this.listener, false);
 	}
 
-	private handleBackButton(e) {
+	private handleBackButton() {
 		if (this.state.showLog !== null) {
 			this.hideLog();
 		} else {
@@ -86,17 +87,20 @@ class Router extends React.Component<MyProps, MyState> {
 	@boundMethod
 	private async handleOrganizationSelection(org: SystemTenant) {
 		Client.setCurrentOrganization(org);
+		clearTimeout(this.timeoutHolder);
+		this.timeoutHolder = null;
+
 		let gateway;
 		try {
 			gateway = await Client.handleGatewayConnect();
 		} catch (err) {
 			Logger.info('error connecting gateway', err);
-			await this.handleSignOut();
+			// await this.handleSignOut();
 			return;
 		}
 
 		Logger.info('gateway is', gateway);
-		gateway.on('statusUpdate', async (state) => {
+		gateway.on(GatewayEvent.StatusChanged, async (state) => {
 			if (state && state.gateway && state.gateway.disconnects && state.gateway.disconnects > 4) {
 				try {
 					await Client.checkIfGatewayStillExists();
@@ -117,7 +121,7 @@ class Router extends React.Component<MyProps, MyState> {
 
 		});
 
-		gateway.on('deletedmyself', () => {
+		gateway.on(GatewayEvent.Deleted, () => {
 			// noinspection JSIgnoredPromiseFromCall
 			this.handleSignOut();
 		});
@@ -132,16 +136,18 @@ class Router extends React.Component<MyProps, MyState> {
 	}
 
 	@boundMethod
-	private async handleSuccessfulLogin(client) {
+	private async handleSuccessfulLogin(username: string) {
 		clearTimeout(this.timeoutHolder);
 		this.timeoutHolder = null;
 
-		Client.setClient(client);
-		const currentOrg = await getCurrentTenant(false);
+		// Client.setClient(client);
+		const currentOrg = await Client.getCurrentTenant();
 		if (currentOrg) { //if we've already selected one, we don't need to do it again
+			console.info('we already have an org');
 			return this.handleOrganizationSelection(currentOrg);
 		}
 		const orgs = await API.getTenants();
+		console.info('result of getting orgs', orgs);
 		if (orgs.length === 1) { //auto select the first org if there's only one
 			return this.handleOrganizationSelection(orgs[0]);
 		}
@@ -181,8 +187,7 @@ class Router extends React.Component<MyProps, MyState> {
 				await BluetoothPlugin.requestLocation();
 				break;
 		}
-		// noinspection JSIgnoredPromiseFromCall
-		this.getAndSetProblem();
+		return this.getAndSetProblem();
 	}
 
 	private async getAndSetProblem() {
@@ -214,14 +219,13 @@ class Router extends React.Component<MyProps, MyState> {
 
 	@boundMethod
 	private changeToNextPage() {
-		this.handlePageChange({currentPage: this.nextPage});
+		this.handlePageChange({ currentPage: this.nextPage });
 	}
 
 	@boundMethod
 	private async handleSignOut() {
-		await this.setStateReturnPromise({isSigningOut: true});
-		// noinspection JSIgnoredPromiseFromCall
-		Authorization.logout();
+		await this.setStateReturnPromise({ isSigningOut: true });
+		return Authorization.logout();
 	}
 
 	private setStateReturnPromise(newState): Promise<null> {
@@ -236,22 +240,22 @@ class Router extends React.Component<MyProps, MyState> {
 	@boundMethod
 	private handleNavbarChange(newPage: CurrentPage) {
 		this.nextPage = newPage;
-		this.handlePageChange({currentPage: newPage});
+		this.handlePageChange({ currentPage: newPage });
 	}
 
 	@boundMethod
 	private hideLog() {
-		this.setState({showLog: null});
+		this.setState({ showLog: null });
 	}
 
 	@boundMethod
 	private showLogFor(deviceId: string = '') {
-		this.setState({showLog: deviceId});
+		this.setState({ showLog: deviceId });
 	}
 
 	render() {
 		let page = (
-			<Loader/>
+			<Loader />
 		);
 
 		const hasProblem = !this.props.isOnline || this.state.problem !== Problem.None;
@@ -296,14 +300,14 @@ class Router extends React.Component<MyProps, MyState> {
 				break;
 			case CurrentPage.Dashboard:
 			case CurrentPage.Settings:
-				let dashboardPage = <Loader/>;
-				if (!this.props.isOnline || (this.state.gatewayState && this.state.gatewayState.gateway && this.state.gatewayState.gateway.connected)) {
+				let dashboardPage = <Loader />;
+				if (!this.props.isOnline || (this.state.gatewayState?.connected)) {
 					const connections = this.props.connections;
 					const beacons = this.props.beacons;
 					dashboardPage = (
 						<div className={this.props.classes.viewInset}>
 							<Dashboard
-								style={{minHeight: mainSliderHeight}}
+								style={{ minHeight: mainSliderHeight }}
 								devices={connections}
 								beacons={beacons}
 								showLogFor={this.showLogFor}
@@ -324,7 +328,7 @@ class Router extends React.Component<MyProps, MyState> {
 							showLogFor={this.showLogFor}
 						/>
 					</div>
-				) : <Loader/>;
+				) : <Loader />;
 
 				if (this.props.width === 'xs') {
 					page = (
@@ -384,7 +388,7 @@ class Router extends React.Component<MyProps, MyState> {
 		let loader = null;
 
 		if (this.state.isSigningOut) {
-			loader = <Loader backdrop/>;
+			loader = <Loader backdrop />;
 		}
 
 		const mainViewClasses = [
@@ -405,7 +409,7 @@ class Router extends React.Component<MyProps, MyState> {
 			<>
 				{mainTitle}
 				{gatewayStatus}
-				<div className={mainViewClasses.join(' ')} style={{bottom: `${bottomPosition}px`}}>{page}</div>
+				<div className={mainViewClasses.join(' ')} style={{ bottom: `${bottomPosition}px` }}>{page}</div>
 				<ProblemBanner
 					className={bottomNav ? this.props.classes.problemBannerPusher : ''}
 					problem={!this.props.isOnline ? Problem.Network : this.state.problem}
@@ -425,7 +429,7 @@ class Router extends React.Component<MyProps, MyState> {
 
 
 const component = withWidth({
-// @ts-ignore
+	// @ts-ignore
 	noSSR: true,
 
 	withTheme: true,

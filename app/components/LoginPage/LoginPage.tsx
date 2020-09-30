@@ -2,27 +2,22 @@ import * as React from 'react';
 import { FormControl, InputLabel, MenuItem, Paper, Select, Typography, withStyles } from '@material-ui/core/es';
 import { boundMethod } from 'autobind-decorator';
 
-// @ts-ignore
-import RestApi from 'RestApi';
-// @ts-ignore
-import AWS from 'AWS';
-// @ts-ignore
-// noinspection TypeScriptCheckImport
-import { Cognito as irisWebApi } from 'aws-wrapper';
+import * as AWS from 'aws-sdk';
 
 import LoginForm, { LoginType } from '../LoginForm/LoginForm';
 import { Logger } from '../../logger/Logger';
 import Loader from '../Loader/Loader';
 import Environment, { EnvironmentType } from '../../utils/Environment';
-import { DevzoneHelper } from '../../utils/DevzoneHelper';
 import Splashscreen from '../../utils/Splashscreen';
 import Client from '../../utils/Client';
 import VersionNumber from '../VersionNumber/VersionNumber';
+import { loginDevZone, loginEmailPassword, resumeSession } from '../../gateway-abstract/login';
 
 interface MyProps {
-	handleSuccessfulLogin: (client: any, username: string) => void;
+	handleSuccessfulLogin: (username: string) => void;
 	classes?: any;
 }
+
 
 interface MyState {
 	error: any;
@@ -57,7 +52,6 @@ class LoginPage extends React.Component<MyProps, MyState> {
 
 	@boundMethod
 	private doLogin(username, password, type: LoginType) {
-		let outerClient;
 		this.setStateReturnPromise({
 			loggingIn: true,
 			error: null,
@@ -65,20 +59,15 @@ class LoginPage extends React.Component<MyProps, MyState> {
 			return new Promise((resolve) => setTimeout(resolve, 100));
 		}).then(() => {
 			if (type !== LoginType.DevZone) {
-				return irisWebApi.login(username.toLowerCase(), password);
+				return loginEmailPassword(username, password);
 			} else {
-				return DevzoneHelper.showDevzoneWindow();
+				return loginDevZone();
 			}
-		}).then(() => {
-			return AWS.config.credentials
-				.getPromise()
-				.then(() => RestApi(AWS.config.credentials));
-		}).then((client) => {
-			Logger.info('logged in successfully!', client);
-			outerClient = client;
+		}).then((credentials) => {
+			AWS.config.credentials = credentials;
 			return Client.getCurrentTenant(); //So I don't forget, this is to catch the user when they haven't logged into the main site. Without this, the next bit of error catch fails
 		}).then(() => {
-			this.props.handleSuccessfulLogin(outerClient, username);
+			this.props.handleSuccessfulLogin(username);
 		}).catch((error) => {
 			let err = error && error.message;
 			Logger.error('Error logging in', JSON.stringify(error), err);
@@ -103,17 +92,9 @@ class LoginPage extends React.Component<MyProps, MyState> {
 	}
 
 	private checkForLogin() {
-		DevzoneHelper.resumeSession().then((result) => {
-			if (!result) {
-				return irisWebApi.resumeSession();
-			}
-		}).then(() => {
-			return AWS.config.credentials
-				.getPromise()
-				.then(() => RestApi(AWS.config.credentials));
-		}).then((client) => {
-			if (client) {
-				return this.props.handleSuccessfulLogin(client, client.cognitoUser && client.cognitoUser.username);
+		resumeSession().then((username) => {
+			if (username) {
+				return this.props.handleSuccessfulLogin(username);
 			}
 			throw new Error('Client creation failed');
 		}).catch((error) => {
@@ -192,7 +173,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 					className={this.props.classes.logoArea}
 					onClick={this.handleImgClick}
 				>
-					<img src="img/logo.svg" className={this.props.classes.logo}/>
+					<img src="img/logo.svg" className={this.props.classes.logo} />
 					<Typography
 						variant="h5"
 						className={this.props.classes.logoText}
@@ -202,7 +183,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 						nRF Cloud Gateway
 					</Typography>
 				</div>
-				<div className={this.props.classes.upperBg}/>
+				<div className={this.props.classes.upperBg} />
 				<Paper className={this.props.classes.paper} elevation={1}>
 					<LoginForm
 						doLogin={this.doLogin}

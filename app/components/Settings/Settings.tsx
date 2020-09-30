@@ -52,13 +52,21 @@ class Settings extends React.Component<MyProps, MyState> {
 		this.state = {
 			environment: Environment.getCurrentEnvironment(),
 			userEmail: UserInfo.getEmail(),
-			tenantId: Client.getTenantId(),
+			tenantId: '',
 			gatewayId: Client.getGatewayId(),
 			showLogout: false,
 			isSigningOut: false,
 			showEnableBackground: false,
 			showGatewaySwitch: false,
 		};
+	}
+
+	public componentDidMount() {
+		Client.getCurrentTenant().then((org) => {
+			this.setState({
+				tenantId: org.id,
+			});
+		});
 	}
 
 	@boundMethod
@@ -84,7 +92,7 @@ class Settings extends React.Component<MyProps, MyState> {
 			Platform.stopNoSleepMode();
 		}
 		this.props.setSleepModeEnabled(enable);
-		this.setState({showEnableBackground: false});
+		this.setState({ showEnableBackground: false });
 	}
 
 	@boundMethod
@@ -92,7 +100,7 @@ class Settings extends React.Component<MyProps, MyState> {
 		if (Platform.isNoSleepModeEnabled()) {
 			this.toggleBackground(false);
 		} else {
-			this.setState({showEnableBackground: true});
+			this.setState({ showEnableBackground: true });
 		}
 	}
 
@@ -101,7 +109,7 @@ class Settings extends React.Component<MyProps, MyState> {
 		if (result) {
 			this.toggleBackground(true);
 		} else {
-			this.setState({showEnableBackground: false});
+			this.setState({ showEnableBackground: false });
 		}
 	}
 
@@ -117,7 +125,7 @@ class Settings extends React.Component<MyProps, MyState> {
 
 	@boundMethod
 	private showLogoutModal() {
-		this.setState({showLogout: true});
+		this.setState({ showLogout: true });
 	}
 
 	@boundMethod
@@ -260,7 +268,7 @@ class Settings extends React.Component<MyProps, MyState> {
 					<CardContent className={`${this.props.classes.cardContent} ${this.props.classes.gridSeparator}`}>
 						<Grid container>
 							<Grid item xs={2}>
-								<Typography>Tenant:</Typography>
+								<Typography>Organization:</Typography>
 							</Grid>
 							<Grid item xs className={this.props.classes.infoItem}>
 								<Typography className={this.props.classes.idText}>{this.state.tenantId}</Typography>

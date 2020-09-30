@@ -1,187 +1,129 @@
-import { device } from 'aws-iot-device-sdk';
-// @ts-ignore
-import AWS from 'AWS';
-
-import { IAdapterDriverFactory } from 'nrfcloud-gateway-common/src/AdapterDriverFactory';
-import { GatewayAWS } from 'nrfcloud-gateway-common/src/GatewayAWS';
-
-import FS from '../fs';
+import * as AWS from 'aws-sdk';
+import { getOrganizationId } from '@nrfcloud/gateway-registration';
+import { Gateway, GatewayConfiguration, GatewayEvent } from '@nrfcloud/gateway-common';
 
 import { Logger } from '../logger/Logger';
 
-import { CordovaAdapterDriverFactory } from '../CordovaAdapterDriverFactory';
-import { rootCA } from '../util';
 import BluetoothPlugin from '../BluetoothPlugin';
-import Network from './Network';
 import { actions } from '../providers/StateStore';
 import API, { SystemTenant } from './API';
+import { CordovaAdapter } from '../CordovaAdapter';
+import Environment, { EnvironmentType } from './Environment';
 
-const GATEWAY_FILENAME = 'gateway-config.json';
-const fileSystem = new FS();
+
 const GATEWAY_VERSION = require('../../package.json').version;
 const CURRENT_ORG_TAG = 'CURRENT_ORG_TAG';
+const GATEWAY_TAG = 'GATEWAY_TAG';
 
 namespace Client {
-	let client;
-	let gateway;
-	let adapterDriverFactory: IAdapterDriverFactory;
-	let mqttClient;
+	let gateway: Gateway;
 	let currentOrganization: SystemTenant;
 
-	export function setClient(c) {
-		client = c;
-		// noinspection JSIgnoredPromiseFromCall
-		setupClient();
+	export async function handleGatewayConnect() {
+		const tenantId = await getTenantId();
+		const gatewayId = await findGatewayId();
+		return createGatewayDevice(gatewayId, tenantId);
 	}
 
-	export async function setupClient() {
-		if (!client) {
-			return;
-		}
-		mqttClient = await AWS.config.credentials
-			.getPromise()
-			.then(() => {
-				const { accessKeyId, secretAccessKey, sessionToken } = AWS.config.credentials;
-				const iotEndpoint = window['MQTT_ENDPOINT'] || 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com';
-				return device({
-					clientId: `iris-api-client-${Math.floor((Math.random() * 1000000) + 1)}`,
-					host: iotEndpoint,
-					region: iotEndpoint.split('.')[2],
-					protocol: 'wss',
-					baseReconnectTimeMs: 250,
-					maximumReconnectTimeMs: 500,
-					// The empty credentials here and the call to mqttClient.updateWebSocketCredentials
-					// will make the client connect using IAM credentials and not pre-signed URLs which
-					// time out after ~20 minutes.
-					accessKeyId: accessKeyId,
-					secretKey: secretAccessKey,
-					sessionToken: sessionToken,
-				});
+	async function findGatewayId(): Promise<string> {
+
+		let creds = localStorage.getItem(GATEWAY_TAG);
+		if (!creds) {
+			const tenant = await getCurrentTenant();
+			const gatewayCreds = await API.createGateway({
+				credentials: AWS.config.credentials as any,
+				organizationId: tenant.id,
+				invokeUrl: window['invokeUrl'],
+				region: window['AWS_REGION'],
+				apiKey: tenant.apiKey,
 			});
-
-		let cloudCloseCount = 0;
-		mqttClient.on('close', () => {
-			cloudCloseCount++;
-			if (cloudCloseCount > 5) {
-				cloudCloseCount = 0;
-				if (Network.isOnline()) {
-					window.location.reload();
-				}
-			}
-		});
+			localStorage.setItem(GATEWAY_TAG, JSON.stringify(gatewayCreds));
+		}
+		const configfile = JSON.parse(localStorage.getItem(GATEWAY_TAG));
+		return configfile.gatewayId;
 	}
 
-	export async function handleGatewayConnect(gwFilename = GATEWAY_FILENAME, fs = fileSystem, gatewayVersion = GATEWAY_VERSION) {
-		const AWS = window['AWS'];
-		Logger.info('client is', client);
-		gateway = new GatewayAWS(gwFilename, null, fs, gatewayVersion, Logger);
+	async function createGatewayDevice(gatewayId: string, tenantId: string) {
 
-		if (!adapterDriverFactory) {
-			adapterDriverFactory = new CordovaAdapterDriverFactory();
-		}
-
-		const options = {
+		const options: GatewayConfiguration = {
 			protocol: 'wss',
-			accessKey: AWS.config.credentials.accessKeyId,
 			accessKeyId: AWS.config.credentials.accessKeyId,
 			secretKey: AWS.config.credentials.secretAccessKey,
 			sessionToken: AWS.config.credentials.sessionToken,
 			host: window['MQTT_ENDPOINT'] || 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
 			debug: process.env.NODE_ENV !== 'production',
+			gatewayId,
+			tenantId,
+			bluetoothAdapter: new CordovaAdapter(),
+			stage: EnvironmentType[Environment.getCurrentEnvironment()].toLowerCase(),
 		};
 
-		gateway.setGenericInfo({
-			platform: {
-				name: 'cordova',
-				version: process.version,
-			},
-		});
-		gateway.setConnectOptions(options);
-		gateway.setAdapterDriverFactory(adapterDriverFactory);
-		await gateway.init();
-		await gateway.setAdapter('cordova');
-
-		if (!gateway.isRegistered()) {
-			await registerGateway(client, gateway);
-			// await getGateways(client);
-		} else {
-			await checkIfGatewayStillExists(client, gateway);
-		}
-
-		await gateway.start();
+		gateway = new Gateway(options);
 
 		addListeners(gateway);
-
 		return gateway;
 	}
 
-	function addListeners(gateway) {
-		gateway.on('connectionDatabaseChange', (connections) => {
+	function addListeners(gateway: Gateway) {
+		gateway.on(GatewayEvent.ConnectionsChanged, (connections) => {
+			console.info('got a connections changed event from gateway', connections);
 			actions.setConnections({
-				deviceList: connections,
-				beaconList: gateway.adapterDriver.getBeacons(),
+				deviceList: Object.values(connections),
+				beaconList: gateway.beacons,
 			});
-		}, false);
-		gateway.adapterDriver.on('beaconUpdated', () => {
+		});
+		gateway.on('beaconUpdated', () => {
 			actions.setConnections({
 				// deviceList: gateway.getConnections(),
-				beaconList: gateway.adapterDriver.getBeacons(),
+				beaconList: gateway.beacons,
 			});
-		}, false);
+		});
 	}
 
-	export function deleteGatewayFile(gwFilename = GATEWAY_FILENAME, fs = fileSystem) {
-		return fs.unlink(gwFilename);
-	}
-
-	export function getDeviceConnections() {
-		if (gateway && gateway.deviceConnectionDatabase && gateway.deviceConnectionDatabase.getDeviceConnections) {
-			return gateway.deviceConnectionDatabase.getDeviceConnections();
+	export function getDeviceConnections(): string[] {
+		if (gateway && gateway.connections) {
+			return Object.keys(gateway.connections);
 		}
 		return [];
 	}
 
 	export function getBeacons() {
-		if (gateway && gateway.adapterDriver && gateway.adapterDriver.getBeacons) {
-			return gateway.adapterDriver.getBeacons();
+		if (gateway && gateway.beacons) {
+			return gateway.beacons;
 		}
 
 		return [];
 	}
 
-	export function getTenantId(refGateway = gateway): string {
-		return refGateway && refGateway.config && refGateway.config.tenantId;
+	export async function getTenantId(): Promise<string> {
+		const tenant = await getCurrentTenant();
+		return tenant.id;
 	}
 
 	export function getGatewayId(refGateway = gateway): string {
-		return refGateway && refGateway.config && refGateway.config.gatewayId;
+		return refGateway && refGateway.gatewayId;
 	}
 
 	export function getGatewayName(refGateway = gateway): string {
-		return refGateway && refGateway.state && refGateway.state.gateway && refGateway.state.gateway.name;
+		return refGateway && refGateway.name;
 	}
 
 	export function setGatewayId(gatewayId) {
-		return gateway.setCredentials(
-			gateway.config.tenantId,
-			gatewayId,
-			'aa',
-			'aa',
-			'aa',
-		);
+		//TODO: Make this switch gateway ID
 	}
 
 	export function closeAllConnections() {
 		const deviceConnections = getDeviceConnections();
 		if (deviceConnections && deviceConnections.length) {
 			deviceConnections.forEach(async (connection) => {
+				const params = { address: connection };
 				try {
-					await BluetoothPlugin.disconnect(connection.address);
+					await BluetoothPlugin.disconnect(params);
 				} catch (ex) {
 				}
 
 				try {
-					await BluetoothPlugin.close(connection.address);
+					await BluetoothPlugin.close(params);
 				} catch (ex) {
 				}
 			});
@@ -192,7 +134,7 @@ namespace Client {
 		return API.getTenants();
 	}
 
-	export async function checkIfGatewayStillExists(clientApi = client, refGateway = gateway) {
+	export async function checkIfGatewayStillExists(refGateway = gateway) {
 		return;
 		// if (!clientApi || !refGateway) {
 		// 	return;
@@ -214,52 +156,24 @@ namespace Client {
 		// }
 	}
 
-	async function getGateways(clientApi = client): Promise<any[]> {
-		if (!clientApi) {
-			return;
-		}
-
-		const currentTenant = await getCurrentTenant();
-		const gateways = (await clientApi.tenantsTenantIdGatewaysGet({
-			tenantId: currentTenant.id,
-		})).data;
-		actions.setGateways(gateways);
-		return gateways;
+	async function getGateways(): Promise<any[]> {
+		// if (!clientApi) {
+		// 	return;
+		// }
+		//
+		// const currentTenant = await getCurrentTenant();
+		// const gateways = (await clientApi.tenantsTenantIdGatewaysGet({
+		// 	tenantId: currentTenant.id,
+		// })).data;
+		// actions.setGateways(gateways);
+		// return gateways;
+		return [];
 	}
 
-	async function registerGateway(clientApi, gateway) {
-
-		const tenant = await getCurrentTenant();
-		const tenantId = tenant.id;
-
-		Logger.info(`Registering gateway with tenant ${tenant.id}.`);
-
-		const gatewaysPostResult = (await clientApi.tenantsTenantIdGatewaysPost({
-			tenantId,
-		})).data;
-
-		await gateway.setCredentials(
-			tenantId,
-			gatewaysPostResult.gatewayId,
-			gatewaysPostResult.clientCert,
-			gatewaysPostResult.privateKey,
-			rootCA,
-		);
-
-	}
-
-	export async function getCurrentTenant(refetch: boolean = true): Promise<SystemTenant> {
+	export async function getCurrentTenant(): Promise<SystemTenant> {
 		const savedOrg = JSON.parse(localStorage.getItem(CURRENT_ORG_TAG));
 		if (savedOrg) {
 			return savedOrg as SystemTenant;
-		}
-		if (!currentOrganization && refetch) {
-			const tenantsGetResult = await getTenants();
-			Logger.info('result of gettenants', tenantsGetResult);
-			if (tenantsGetResult.length < 1 || !tenantsGetResult[0] || !tenantsGetResult[0].id) {
-				throw new Error('No tenant for user');
-			}
-			currentOrganization = tenantsGetResult[0];
 		}
 		return currentOrganization;
 	}
