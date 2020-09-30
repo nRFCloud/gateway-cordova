@@ -1,5 +1,4 @@
-// @ts-ignore
-import { Cognito as irisWebApi } from 'aws-wrapper';
+import { Cognito } from './Cognito';
 import { Logger } from '../logger/Logger';
 import { Platform } from './Platform';
 import { CookieHelper } from './CookieHelper';
@@ -9,7 +8,7 @@ export namespace DevzoneHelper {
 
 	export function startDevzoneSession(token) {
 		const AWS = window['AWS'];
-		const {aud: IdentityPoolId, sub: IdentityId, exp: expiry} = JSON.parse(atob(token.split('.')[1]));
+		const { aud: IdentityPoolId, sub: IdentityId, exp: expiry } = JSON.parse(atob(token.split('.')[1]));
 		const current = (new Date()).getTime();
 		if (current > expiry * 1000) {
 			Logger.info('token is expired', new Date(expiry * 1000));
@@ -21,12 +20,12 @@ export namespace DevzoneHelper {
 				'cognito-identity.amazonaws.com': token,
 			},
 		});
-		irisWebApi.startDevzoneSession(creds);
+		Cognito.startDevzoneSession(creds);
 	}
 
 	export function resumeSession(): Promise<boolean> {
 		if (!CookieHelper.hasCredentials()) {
-			return Promise.resolve(false);
+			return Promise.resolve(null);
 		}
 
 		return showDevzoneWindow().then(() => true);
@@ -56,7 +55,7 @@ export namespace DevzoneHelper {
 			}
 			const w = iab.open(url, '_blank', options.join(','));
 			Logger.info('iab window is', w);
-// noinspection JSIgnoredPromiseFromCall
+			// noinspection JSIgnoredPromiseFromCall
 			CookieHelper.loadCookies();
 			let wasSuccessful = false;
 			w.addEventListener('exit', () => {

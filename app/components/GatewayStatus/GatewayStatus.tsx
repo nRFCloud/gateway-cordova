@@ -2,21 +2,11 @@ import * as React from 'react';
 import { AppBar, Grid, IconButton, Typography, withStyles } from '@material-ui/core/es';
 import Coffee from 'mdi-material-ui/Coffee';
 import { boundMethod } from 'autobind-decorator';
+import { GatewayState } from '@nrfcloud/gateway-common';
 
 interface MyProps {
 	classes?: any;
-	gatewayState: {
-		adapter: {
-			connecting: boolean;
-			scanning: boolean;
-			available: boolean;
-			advertising: boolean;
-			bleEnabled: boolean;
-		},
-		gateway: {
-			connected: boolean;
-		},
-	};
+	gatewayState: GatewayState;
 	coffeeTouch?: () => void;
 	isNoSleepModeEnabled: boolean;
 }
@@ -37,10 +27,10 @@ class GatewayStatus extends React.Component<MyProps, MyState> {
 
 	render() {
 		let statusPosition = 'Connecting...';
-		if (this.props.gatewayState.gateway.connected) {
+		if (this.props.gatewayState.connected) {
 			statusPosition = 'Connected';
 
-			if (this.props.gatewayState.adapter.scanning) {
+			if (this.props.gatewayState.scanning) {
 				statusPosition = 'Scanning';
 			}
 		}

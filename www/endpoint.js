@@ -1,4 +1,4 @@
-(function(global) {
+(function (global) {
 	var apiId = 'hnmr2uba55';
 	var invokeBase = '.execute-api.us-east-1.amazonaws.com/';
 	var configObject = {
@@ -9,6 +9,7 @@
 		graphQLUrl: 'https://s3t5ysg7pbcohkakeascjwgtcu.appsync-api.us-east-1.amazonaws.com/graphql',
 		invokeUrl: 'https://' + apiId + invokeBase + 'prod',
 		MQTT_ENDPOINT: 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
+		DEVICE_API_ENDPOINT: 'https://api.nrfcloud.com/v1'
 	};
 	try {
 		var env = localStorage.getItem('env');
@@ -22,6 +23,7 @@
 						graphQLUrl: 'https://frtzmlvskrflffiv5kuozm7ddu.appsync-api.us-east-1.amazonaws.com/graphql',
 						invokeUrl: 'https://iris-api.dev.nrfcloud.com',
 						MQTT_ENDPOINT: 'a2wg6q8yw7gv5r-ats.iot.us-east-1.amazonaws.com',
+						DEVICE_API_ENDPOINT: 'https://api.dev.nrfcloud.com/v1'
 					});
 					break;
 				case 'Beta':
@@ -32,6 +34,7 @@
 						graphQLUrl: 'https://mltmao5c4vhslewjaxulc6rmsa.appsync-api.us-east-1.amazonaws.com/graphql',
 						invokeUrl: 'https://iris-api.beta.nrfcloud.com',
 						MQTT_ENDPOINT: 'a1jtaajis3u27i-ats.iot.us-east-1.amazonaws.com',
+						DEVICE_API_ENDPOINT: 'https://api.beta.nrfcloud.com/v1'
 					});
 					break;
 				case 'Feature':
@@ -42,6 +45,7 @@
 						graphQLUrl: 'https://dya2vcgtmbaavlmijboptsgj64.appsync-api.us-east-1.amazonaws.com/graphql',
 						invokeUrl: 'https://qga9d9h4v0.execute-api.us-east-1.amazonaws.com/dev',
 						MQTT_ENDPOINT: 'a1zbg31mxiwr-ats.iot.us-east-1.amazonaws.com',
+						DEVICE_API_ENDPOINT: 'https://api.feature.nrfcloud.com/v1'
 					});
 					break;
 			}

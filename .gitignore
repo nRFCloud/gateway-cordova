@@ -11,3 +11,4 @@ built
 /config/nrfofficialkeystore
 /config/codepush.json
 /config/keystore.json
+.ez-cache

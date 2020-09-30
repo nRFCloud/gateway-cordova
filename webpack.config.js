@@ -3,28 +3,28 @@ const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
 
 const babelPresets = [[
-	require.resolve("babel-preset-env"),
+	require.resolve("@babel/preset-env"),
 	{
 		"modules": false,
 		"useBuiltIns": "usage",
+		"corejs": 3,
 		forceAllTransforms: true
 	}
 ],
-	require.resolve('babel-preset-react'),
+	require.resolve('@babel/preset-react'),
 ];
 const babelPlugins = [
-	'babel-plugin-external-helpers',
-	'babel-plugin-transform-runtime',
-	"babel-plugin-transform-class-properties",
-	"babel-plugin-transform-object-rest-spread",
-	"babel-plugin-transform-async-to-generator"
+	'@babel/plugin-external-helpers',
+	'@babel/plugin-transform-runtime',
+	"@babel/plugin-proposal-class-properties",
+	"@babel/plugin-proposal-object-rest-spread",
+	"@babel/plugin-transform-async-to-generator"
 ].map(require.resolve);
 
 module.exports = {
 	mode: 'development',
 	entry: [
 		path.resolve(__dirname, 'helpers.js'),
-		'babel-polyfill',
 		'./app/index.tsx'
 	],
 	output: {
@@ -47,7 +47,7 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				exclude: /(node_modules|bower_components|helpers)/,
-				loaders: [
+				loader: [
 					{
 						loader: 'babel-loader',
 						options: {
@@ -64,7 +64,7 @@ module.exports = {
 			},
 			{
 				test: /\.scss$/,
-				loaders: ['style-loader', 'css-loader', {
+				loader: ['style-loader', 'css-loader', {
 					loader: 'sass-loader', options: {
 						implementation: require('sass')
 					}
@@ -78,16 +78,15 @@ module.exports = {
 		fs: 'empty'
 	},
 	externals: {
-		'aws-wrapper': 'awsWrapper',
 		'RestApi': 'IrisRestApiClient', //https://github.com/nRFCloud/gateway-cordova/blob/master/www/index.bundle.js
-		'AWS': 'AWS',
 	},
 	resolve: {
-		extensions: [".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".json"],
+		extensions: [".webpack.js", ".web.js", '.mjs', ".ts", ".tsx", ".js", ".json"],
 		modules: [
 			path.resolve('app'),
 			'node_modules',
-		]
+		],
+		mainFields: ['module', 'browser', 'main'],
 	},
 	plugins: [
 		new webpack.EnvironmentPlugin({...process.env}),

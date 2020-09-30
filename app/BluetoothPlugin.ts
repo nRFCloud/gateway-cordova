@@ -198,13 +198,13 @@ export default class BluetoothPlugin {
 		});
 	}
 
-	static discover(params): Promise<BluetoothlePlugin.Service[]> {
+	static discover(deviceId: string): Promise<BluetoothlePlugin.Service[]> {
 		const bluetoothle = getBluetoothPluginObj();
 		return new Promise<BluetoothlePlugin.Service[]>((resolve, reject) => {
 			bluetoothle.discover(
 				(success) => resolve(success.services),
 				reject,
-				params,
+				{ address: deviceId },
 			);
 		});
 	}
@@ -338,7 +338,7 @@ export default class BluetoothPlugin {
 
 	static enable(): void {
 		const bluetoothle = getBluetoothPluginObj();
-		bluetoothle.enable(() => {}, () => {});
+		bluetoothle.enable(() => { }, () => { });
 	}
 
 	static hasLocation(): Promise<boolean> {
@@ -380,10 +380,10 @@ export default class BluetoothPlugin {
 		});
 	}
 
-	static getRSSI(connection): Promise<BluetoothlePlugin.RSSI> {
+	static getRSSI(connection: string): Promise<BluetoothlePlugin.RSSI> {
 		const bluetoothle = getBluetoothPluginObj();
 		return new Promise<BluetoothlePlugin.RSSI>((resolve, reject) => {
-			bluetoothle.rssi(resolve, reject, connection);
+			bluetoothle.rssi(resolve, reject, { address: connection });
 		});
 	}
 }
