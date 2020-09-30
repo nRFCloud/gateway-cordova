@@ -62,7 +62,7 @@ export namespace Platform {
 		return (window as any).plugins.insomnia;
 	}
 
-	export function getPlatform() {
+	export function getPlatform(): 'android' | 'ios' | 'browser' | 'windows' {
 		return window['cordova'] && window['cordova'].platformId;
 	}
 
@@ -178,11 +178,12 @@ export namespace Platform {
 		localStorage.setItem(BG_MODE_TAG, '');
 	}
 
-	function changeListener(action, result: Partial<AppState>, ...rest) {
+	function changeListener(action: string, result: Partial<AppState>, ...rest: any[]) {
 		if (action === 'setConnections' && isAndroid()) {
-			const deviceList = result.deviceList || [];
+			const deviceList = Object.values(result.deviceList) || [];
+			console.info('deviceList is', deviceList);
 			const beaconList = result.beaconList || [];
-			deviceCount = deviceList.filter((d) => d && d.status && d.status.connected).length + beaconList.length;
+			deviceCount = deviceList.filter((d) => d?.status?.connected).length + beaconList.length;
 			updateDeviceCount();
 		}
 	}

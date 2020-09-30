@@ -1,43 +1,29 @@
 import { Credentials } from 'aws-sdk';
 import * as AWS from 'aws-sdk';
 
-import { getOrganization, createGateway as apiCreateGateway, CreateGatewayOptions } from '@nrfcloud/gateway-registration';
+import { getOrganization, getOrganizations, createGateway as apiCreateGateway, CreateGatewayOptions, GatewayType } from '@nrfcloud/gateway-registration';
 
 import { Logger } from '../logger/Logger';
+import { Platform } from './Platform';
 
 interface GQLTenant {
 	id?: string;
 	tenantId?: string;
-	blocked: boolean;
-	limits: Limit[];
 	name: string;
-	profile: {
-		name: string;
-	};
-	__typename: 'Tenant';
-}
-
-interface Limit {
-	metric: 'inbound_count';
-	current: number;
-	limit: number;
-	__typename: 'Limit';
+	apiKey: string;
 }
 
 export interface SystemTenant {
 	id: string;
-	inbound_count: number;
 	name: string;
-	max_inbound_count: number;
+	apiKey: string;
 }
 
 function convertTenant(inTenant: GQLTenant): SystemTenant {
-	const limit: Limit = inTenant.limits && inTenant.limits.length ? inTenant.limits[0] : {} as Limit;
 	return {
 		id: inTenant.id ?? inTenant.tenantId,
-		name: inTenant?.profile?.name || inTenant.name,
-		inbound_count: limit.current,
-		max_inbound_count: limit.limit,
+		name: inTenant.name,
+		apiKey: inTenant.apiKey,
 	};
 }
 
@@ -45,38 +31,6 @@ export interface GetOrgOptions {
 	credentials: Credentials;
 	graphQLUrl: string;
 }
-
-const getOrganizationsQuery = gql(`
-query account {
-  account {
-    email
-    tenants {
-      tenantId
-      blocked
-      name
-      apiKey
-      role
-      deviceGroups
-      limits {
-        metric
-        current
-        limit
-      }
-      profile {
-        name
-        vatId
-        url
-        email
-        avatar
-        phoneNumbers {
-          type
-          value
-        }
-      }
-    }
-  }
-}
-`);
 
 namespace API {
 
@@ -86,7 +40,7 @@ namespace API {
 			graphQLUrl: window['graphQLUrl'],
 		};
 		try {
-			const orgs = await getOrganizations();
+			const orgs = await getAllOrganizations(options);
 			if (orgs) {
 				return orgs;
 			}
@@ -94,7 +48,7 @@ namespace API {
 			Logger.error(err);
 		}
 		try {
-			const oldTenant = await getOldTenant();
+			const oldTenant = await getOldTenant(options);
 			if (oldTenant) {
 				return [oldTenant];
 			}
@@ -104,9 +58,9 @@ namespace API {
 		return [];
 	};
 
-	async function getOldTenant(): Promise<SystemTenant> {
+	async function getOldTenant(options: { credentials: any; graphQLUrl: any; }): Promise<SystemTenant> {
 		try {
-			const {data: {account: {tenant}}}: any = await getGQLClient().query({query: getTenant});
+			const tenant = await getOrganization(options.credentials, options.graphQLUrl);
 			console.info('tenant from graphql', tenant);
 			return convertTenant(tenant);
 
@@ -116,9 +70,9 @@ namespace API {
 		return null;
 	}
 
-	async function getOrganizations(): Promise<SystemTenant[]> {
+	async function getAllOrganizations(options: GetOrgOptions): Promise<SystemTenant[]> {
 		try {
-			const {data: {account: {tenants}}}: any = await getGQLClient().query({query: getOrganizationsQuery});
+			const tenants = await getOrganizations(options.credentials, options.graphQLUrl);
 			return tenants.map(convertTenant);
 		} catch (err) {
 			//squelch
@@ -127,6 +81,24 @@ namespace API {
 	}
 
 	export const createGateway = async (options: CreateGatewayOptions): Promise<any> => {
+		if (!options.type) {
+			let platformSelection: GatewayType = GatewayType.Android;
+			switch (Platform.getPlatform()) {
+				case 'android':
+				case 'browser':
+				case 'windows':
+					platformSelection = GatewayType.Android;
+					break;
+				case 'ios':
+					platformSelection = GatewayType.iPhone;
+					break;
+			}
+			options.type = platformSelection;
+		}
+
+		if (!options.apiUrl) {
+			options.apiUrl = window['DEVICE_API_ENDPOINT'];
+		}
 		return apiCreateGateway(options);
 	};
 }

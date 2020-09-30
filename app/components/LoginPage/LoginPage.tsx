@@ -18,6 +18,7 @@ interface MyProps {
 	classes?: any;
 }
 
+
 interface MyState {
 	error: any;
 	isLoading: boolean;
@@ -172,7 +173,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 					className={this.props.classes.logoArea}
 					onClick={this.handleImgClick}
 				>
-					<img src="img/logo.svg" className={this.props.classes.logo}/>
+					<img src="img/logo.svg" className={this.props.classes.logo} />
 					<Typography
 						variant="h5"
 						className={this.props.classes.logoText}
@@ -182,7 +183,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 						nRF Cloud Gateway
 					</Typography>
 				</div>
-				<div className={this.props.classes.upperBg}/>
+				<div className={this.props.classes.upperBg} />
 				<Paper className={this.props.classes.paper} elevation={1}>
 					<LoginForm
 						doLogin={this.doLogin}

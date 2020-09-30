@@ -7,6 +7,18 @@ import { formatUUIDIfNecessary, shortenUUID } from './util';
 
 export class CordovaAdapter extends BluetoothAdapter {
 
+	constructor() {
+		super();
+		actions.logGatewayEvent('opening adapter');
+		BluetoothPlugin.initialize(async (enabled: boolean) => {
+			if (enabled) {
+				//handle connected
+			} else {
+				//handle disconnected
+			}
+		});
+	}
+
 	private handleDeviceDisconnected(id: string) {
 		this.emit(AdapterEvent.DeviceDisconnected, id);
 	}
@@ -22,7 +34,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 		}
 
 		actions.logGatewayEvent(`connecting to ${id}`);
-		actions.logDeviceEvent({event: 'connecting', device: id});
+		actions.logDeviceEvent({ event: 'connecting', device: id });
 
 		try {
 			await tryConnection(id, (connected => {
@@ -68,19 +80,19 @@ export class CordovaAdapter extends BluetoothAdapter {
 	async disconnect(id: string): Promise<any> {
 		await totalKillConnection(id);
 		actions.logGatewayEvent(`disconnected from ${id}`);
-		actions.logDeviceEvent({event: 'disconnected', device: id});
+		actions.logDeviceEvent({ event: 'disconnected', device: id });
 		Logger.info('in disconnect(), finished disconnecting');
 		this.handleDeviceDisconnected(id);
 	}
 
 	async discover(id: string): Promise<Services> {
 		actions.logGatewayEvent(`discovering device ${id}`);
-		actions.logDeviceEvent({event: 'discovering', device: id});
+		actions.logDeviceEvent({ event: 'discovering', device: id });
 		try {
 			const data = await BluetoothPlugin.discover(id);
 			const results = await Promise.all(data.map((s) => this.convertService(id, s)));
 			actions.logGatewayEvent(`finished discovering device ${id}`);
-			actions.logDeviceEvent({event: 'finished discovering', device: id});
+			actions.logDeviceEvent({ event: 'finished discovering', device: id });
 			const services: Services = {};
 			for (const result of results) {
 				services[result.uuid] = result;
@@ -99,8 +111,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 				return;
 			}
 
-			Logger.info('got rssi value', rssi);
-			actions.logDeviceEvent({event: `got rssi value ${rssi.rssi}`, device: deviceId});
+			actions.logDeviceEvent({ event: `got rssi value ${rssi.rssi}`, device: deviceId });
 			return rssi.rssi;
 		} catch (error) {
 			Logger.error('Error getting rssi', error);
@@ -115,7 +126,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 		};
 
 		const value = await BluetoothPlugin.readCharacteristicValue(params);
-		actions.logDeviceEvent({event: `read characteristic ${characteristic.uuid}, value is ${JSON.stringify(value)}`, device: deviceId});
+		actions.logDeviceEvent({ event: `read characteristic ${characteristic.uuid}, value is ${JSON.stringify(value)}`, device: deviceId });
 		return value;
 	}
 
@@ -133,7 +144,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 			descriptor: formatUUIDIfNecessary(descriptor.uuid),
 		};
 		const value = await BluetoothPlugin.readDescriptorValue(params);
-		actions.logDeviceEvent({event: `read descriptor ${descriptor.uuid} for characteristic ${split[1]}, value is ${JSON.stringify(value)}`, device: deviceId});
+		actions.logDeviceEvent({ event: `read descriptor ${descriptor.uuid} for characteristic ${split[1]}, value is ${JSON.stringify(value)}`, device: deviceId });
 		return value;
 	}
 
@@ -166,7 +177,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 			service: formatUUIDIfNecessary(serviceUUID),
 			characteristic: formatUUIDIfNecessary(characteristic.uuid),
 		};
-		actions.logDeviceEvent({event: `subscribing to characteristic ${characteristic.uuid}`, device: deviceId});
+		actions.logDeviceEvent({ event: `subscribing to characteristic ${characteristic.uuid}`, device: deviceId });
 		return BluetoothPlugin.subscribe(params, (newValue) => {
 			characteristic.value = newValue;
 			callback(characteristic);
@@ -183,12 +194,12 @@ export class CordovaAdapter extends BluetoothAdapter {
 			service: formatUUIDIfNecessary(serviceUUID),
 			characteristic: formatUUIDIfNecessary(characteristic.uuid),
 		};
-		actions.logDeviceEvent({event: `unsubscribing to characteristic ${characteristic.uuid}`, device: deviceId});
+		actions.logDeviceEvent({ event: `unsubscribing to characteristic ${characteristic.uuid}`, device: deviceId });
 		return BluetoothPlugin.unsubscribe(params);
 	}
 
 	writeCharacteristicValue(deviceId: string, characteristic: Characteristic): Promise<void> {
-		actions.logDeviceEvent({event: `writing characteristic value ${JSON.stringify(characteristic.value)} to characteristic ${characteristic.uuid}`, device: deviceId});
+		actions.logDeviceEvent({ event: `writing characteristic value ${JSON.stringify(characteristic.value)} to characteristic ${characteristic.uuid}`, device: deviceId });
 		const service = characteristic.path.split('/')[0];
 		return BluetoothPlugin.writeCharacteristicValue({
 			address: deviceId,
@@ -222,7 +233,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 			value: BluetoothPlugin.convertValue(descriptor.value),
 		};
 
-		actions.logDeviceEvent({event: `writing descriptor value ${JSON.stringify(descriptor.value)} to characteristic ${characteristicUUID} and descriptor ${descriptor.uuid}`, device: deviceId});
+		actions.logDeviceEvent({ event: `writing descriptor value ${JSON.stringify(descriptor.value)} to characteristic ${characteristicUUID} and descriptor ${descriptor.uuid}`, device: deviceId });
 
 		return BluetoothPlugin.writeDescriptorValue(params) as undefined;
 	}

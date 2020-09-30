@@ -2,22 +2,20 @@ import * as AWS from 'aws-sdk';
 import { getOrganizationId } from '@nrfcloud/gateway-registration';
 import { Gateway, GatewayConfiguration, GatewayEvent } from '@nrfcloud/gateway-common';
 
-import FS from '../fs';
-
 import { Logger } from '../logger/Logger';
 
 import BluetoothPlugin from '../BluetoothPlugin';
 import { actions } from '../providers/StateStore';
 import API, { SystemTenant } from './API';
 import { CordovaAdapter } from '../CordovaAdapter';
+import Environment, { EnvironmentType } from './Environment';
 
-const GATEWAY_FILENAME = 'gateway-config.json';
-const fileSystem = new FS();
+
 const GATEWAY_VERSION = require('../../package.json').version;
 const CURRENT_ORG_TAG = 'CURRENT_ORG_TAG';
+const GATEWAY_TAG = 'GATEWAY_TAG';
 
 namespace Client {
-	import createGateway = API.createGateway;
 	let gateway: Gateway;
 	let currentOrganization: SystemTenant;
 
@@ -28,22 +26,20 @@ namespace Client {
 	}
 
 	async function findGatewayId(): Promise<string> {
-		if (!(await fileSystem.exists(GATEWAY_FILENAME))) {
-			const orgId = await getOrganizationId(AWS.config.credentials, window['graphQLUrl']);
-			const { accessKeyId, secretAccessKey, sessionToken } = AWS.config.credentials;
-			const gatewayCreds = await createGateway({
-				credentials: {
-					accessKeyId,
-					secretAccessKey,
-					sessionToken,
-				},
-				organizationId: orgId,
+
+		let creds = localStorage.getItem(GATEWAY_TAG);
+		if (!creds) {
+			const tenant = await getCurrentTenant();
+			const gatewayCreds = await API.createGateway({
+				credentials: AWS.config.credentials as any,
+				organizationId: tenant.id,
 				invokeUrl: window['invokeUrl'],
 				region: window['AWS_REGION'],
+				apiKey: tenant.apiKey,
 			});
-			await fileSystem.writeFile(GATEWAY_FILENAME, JSON.stringify(gatewayCreds));
+			localStorage.setItem(GATEWAY_TAG, JSON.stringify(gatewayCreds));
 		}
-		const configfile = JSON.parse(await fileSystem.readFile(GATEWAY_FILENAME));
+		const configfile = JSON.parse(localStorage.getItem(GATEWAY_TAG));
 		return configfile.gatewayId;
 	}
 
@@ -59,19 +55,20 @@ namespace Client {
 			gatewayId,
 			tenantId,
 			bluetoothAdapter: new CordovaAdapter(),
+			stage: EnvironmentType[Environment.getCurrentEnvironment()].toLowerCase(),
 		};
 
 		gateway = new Gateway(options);
 
 		addListeners(gateway);
-
 		return gateway;
 	}
 
 	function addListeners(gateway: Gateway) {
 		gateway.on(GatewayEvent.ConnectionsChanged, (connections) => {
+			console.info('got a connections changed event from gateway', connections);
 			actions.setConnections({
-				deviceList: connections,
+				deviceList: Object.values(connections),
 				beaconList: gateway.beacons,
 			});
 		});
@@ -81,10 +78,6 @@ namespace Client {
 				beaconList: gateway.beacons,
 			});
 		});
-	}
-
-	export function deleteGatewayFile(gwFilename = GATEWAY_FILENAME, fs = fileSystem) {
-		return fs.unlink(gwFilename);
 	}
 
 	export function getDeviceConnections(): string[] {
@@ -123,7 +116,7 @@ namespace Client {
 		const deviceConnections = getDeviceConnections();
 		if (deviceConnections && deviceConnections.length) {
 			deviceConnections.forEach(async (connection) => {
-				const params = {address: connection};
+				const params = { address: connection };
 				try {
 					await BluetoothPlugin.disconnect(params);
 				} catch (ex) {
@@ -177,18 +170,10 @@ namespace Client {
 		return [];
 	}
 
-	export async function getCurrentTenant(refetch: boolean = true): Promise<SystemTenant> {
+	export async function getCurrentTenant(): Promise<SystemTenant> {
 		const savedOrg = JSON.parse(localStorage.getItem(CURRENT_ORG_TAG));
 		if (savedOrg) {
 			return savedOrg as SystemTenant;
-		}
-		if (!currentOrganization && refetch) {
-			const tenantsGetResult = await getTenants();
-			Logger.info('result of gettenants', tenantsGetResult);
-			if (tenantsGetResult.length < 1 || !tenantsGetResult[0] || !tenantsGetResult[0].id) {
-				throw new Error('No tenant for user');
-			}
-			currentOrganization = tenantsGetResult[0];
 		}
 		return currentOrganization;
 	}

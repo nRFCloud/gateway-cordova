@@ -21,7 +21,6 @@ import LogScreen from '../Logging/LogScreen';
 import { Platform } from '../../utils/Platform';
 import API, { SystemTenant } from '../../utils/API';
 import OrganizationSelector from '../OrganizationSelector/OrganizationSelector';
-import getCurrentTenant = Client.getCurrentTenant;
 
 
 export enum CurrentPage {
@@ -137,16 +136,18 @@ class Router extends React.Component<MyProps, MyState> {
 	}
 
 	@boundMethod
-	private async handleSuccessfulLogin(client) {
+	private async handleSuccessfulLogin(username: string) {
 		clearTimeout(this.timeoutHolder);
 		this.timeoutHolder = null;
 
-		Client.setClient(client);
-		const currentOrg = await getCurrentTenant(false);
+		// Client.setClient(client);
+		const currentOrg = await Client.getCurrentTenant();
 		if (currentOrg) { //if we've already selected one, we don't need to do it again
+			console.info('we already have an org');
 			return this.handleOrganizationSelection(currentOrg);
 		}
 		const orgs = await API.getTenants();
+		console.info('result of getting orgs', orgs);
 		if (orgs.length === 1) { //auto select the first org if there's only one
 			return this.handleOrganizationSelection(orgs[0]);
 		}
@@ -218,12 +219,12 @@ class Router extends React.Component<MyProps, MyState> {
 
 	@boundMethod
 	private changeToNextPage() {
-		this.handlePageChange({currentPage: this.nextPage});
+		this.handlePageChange({ currentPage: this.nextPage });
 	}
 
 	@boundMethod
 	private async handleSignOut() {
-		await this.setStateReturnPromise({isSigningOut: true});
+		await this.setStateReturnPromise({ isSigningOut: true });
 		return Authorization.logout();
 	}
 
@@ -239,22 +240,22 @@ class Router extends React.Component<MyProps, MyState> {
 	@boundMethod
 	private handleNavbarChange(newPage: CurrentPage) {
 		this.nextPage = newPage;
-		this.handlePageChange({currentPage: newPage});
+		this.handlePageChange({ currentPage: newPage });
 	}
 
 	@boundMethod
 	private hideLog() {
-		this.setState({showLog: null});
+		this.setState({ showLog: null });
 	}
 
 	@boundMethod
 	private showLogFor(deviceId: string = '') {
-		this.setState({showLog: deviceId});
+		this.setState({ showLog: deviceId });
 	}
 
 	render() {
 		let page = (
-			<Loader/>
+			<Loader />
 		);
 
 		const hasProblem = !this.props.isOnline || this.state.problem !== Problem.None;
@@ -299,14 +300,14 @@ class Router extends React.Component<MyProps, MyState> {
 				break;
 			case CurrentPage.Dashboard:
 			case CurrentPage.Settings:
-				let dashboardPage = <Loader/>;
+				let dashboardPage = <Loader />;
 				if (!this.props.isOnline || (this.state.gatewayState?.connected)) {
 					const connections = this.props.connections;
 					const beacons = this.props.beacons;
 					dashboardPage = (
 						<div className={this.props.classes.viewInset}>
 							<Dashboard
-								style={{minHeight: mainSliderHeight}}
+								style={{ minHeight: mainSliderHeight }}
 								devices={connections}
 								beacons={beacons}
 								showLogFor={this.showLogFor}
@@ -327,7 +328,7 @@ class Router extends React.Component<MyProps, MyState> {
 							showLogFor={this.showLogFor}
 						/>
 					</div>
-				) : <Loader/>;
+				) : <Loader />;
 
 				if (this.props.width === 'xs') {
 					page = (
@@ -387,7 +388,7 @@ class Router extends React.Component<MyProps, MyState> {
 		let loader = null;
 
 		if (this.state.isSigningOut) {
-			loader = <Loader backdrop/>;
+			loader = <Loader backdrop />;
 		}
 
 		const mainViewClasses = [
@@ -408,7 +409,7 @@ class Router extends React.Component<MyProps, MyState> {
 			<>
 				{mainTitle}
 				{gatewayStatus}
-				<div className={mainViewClasses.join(' ')} style={{bottom: `${bottomPosition}px`}}>{page}</div>
+				<div className={mainViewClasses.join(' ')} style={{ bottom: `${bottomPosition}px` }}>{page}</div>
 				<ProblemBanner
 					className={bottomNav ? this.props.classes.problemBannerPusher : ''}
 					problem={!this.props.isOnline ? Problem.Network : this.state.problem}
@@ -428,7 +429,7 @@ class Router extends React.Component<MyProps, MyState> {
 
 
 const component = withWidth({
-// @ts-ignore
+	// @ts-ignore
 	noSSR: true,
 
 	withTheme: true,

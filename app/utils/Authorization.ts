@@ -13,7 +13,6 @@ export namespace Authorization {
 				//On my browser, this is throwing errors, probably because of adblock
 				await DevzoneHelper.clearCredentials();
 			}
-			await Client.deleteGatewayFile();
 		} catch (err) {
 			Logger.info('There was an error clearing file data', err);
 		}

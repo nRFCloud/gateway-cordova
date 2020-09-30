@@ -1,5 +1,5 @@
+import * as AWS from 'aws-sdk/global';
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const AWS = require('aws-sdk');
 const { CognitoIdentityCredentials } = AWS;
 const { CognitoUser } = AmazonCognitoIdentity;
 
@@ -10,6 +10,8 @@ const COGNITO_USER_POOL_ID = globalThis.COGNITO_USER_POOL_ID || 'us-east-1_fdiBa
 const COGNITO_IDENTITY_POOL_ID = globalThis.COGNITO_IDENTITY_POOL_ID || 'us-east-1:c00e1327-dfc2-4aa7-a484-8ca366d11a68';
 const AWS_REGION = globalThis.AWS_REGION || 'us-east-1';
 const USERPOOL_IDP = `cognito-idp.${AWS_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}`;
+
+AWS.config.region = AWS_REGION;
 
 const STORAGE_KEY = 'nrfcloudCognitoData';
 const STORAGE_KEY_DEVZONE_REFRESH = 'devzoneRefreshToken';
@@ -67,7 +69,7 @@ export namespace Cognito {
 				reject('Credentials undefined');
 			}
 		});
-
+		storeRefreshCredentials(email, authTokens.getRefreshToken());
 		return credentials;
 	}
 
@@ -122,7 +124,7 @@ export namespace Cognito {
 
 		AWS.config.credentials = getCredentials(devzoneRefreshToken);
 		const STORAGE_KEY = 'devzoneRefreshToken';
-		localStorage.setItem(STORAGE_KEY, JSON.stringify({devzoneRefreshToken}));
+		localStorage.setItem(STORAGE_KEY, JSON.stringify({ devzoneRefreshToken }));
 
 		return new Promise((resolve, reject) => {
 			if (AWS.config.credentials) {
@@ -141,7 +143,7 @@ export namespace Cognito {
 	export function getCredentials(token): typeof CognitoIdentityCredentials {
 		let cognitoCredentials;
 		if (token) {
-			const {aud: IdentityPoolId, sub: IdentityId} = JSON.parse(atob(token.split('.')[1]));
+			const { aud: IdentityPoolId, sub: IdentityId } = JSON.parse(atob(token.split('.')[1]));
 			cognitoCredentials = new AWS.CognitoIdentityCredentials({
 				IdentityPoolId,
 				IdentityId,
@@ -177,7 +179,7 @@ export namespace Cognito {
 		if (!data) {
 			return null;
 		}
-		const {username, refreshToken, devzoneRefreshToken} = JSON.parse(data);
+		const { username, refreshToken, devzoneRefreshToken } = JSON.parse(data);
 		return {
 			username,
 			refreshToken,
@@ -187,13 +189,13 @@ export namespace Cognito {
 
 	function retrieveRefreshCredentials(): { username: string, refreshToken, devzoneRefreshToken } | null {
 		const data = getStoredData();
-		if(!data) {
+		if (!data) {
 			return null;
 		}
-		const {username, refreshToken, devzoneRefreshToken} = data;
+		const { username, refreshToken, devzoneRefreshToken } = data;
 		return {
 			username,
-			refreshToken: new AmazonCognitoIdentity.CognitoRefreshToken({RefreshToken: refreshToken}),
+			refreshToken: new AmazonCognitoIdentity.CognitoRefreshToken({ RefreshToken: refreshToken }),
 			devzoneRefreshToken,
 		};
 	}

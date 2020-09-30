@@ -19,8 +19,8 @@ interface MyState {
 class Dashboard extends React.Component<MyProps, MyState> {
 
 	@boundMethod
-	private getDeviceCard(device): JSX.Element {
-		return <DeviceCard showLogFor={this.showLogFor} device={device} key={device.id}/>;
+	private getDeviceCard(device: { id: string; }): JSX.Element {
+		return <DeviceCard showLogFor={this.showLogFor} device={device} key={device.id} />;
 	}
 
 
@@ -34,7 +34,7 @@ class Dashboard extends React.Component<MyProps, MyState> {
 
 	@boundMethod
 	private closeLog() {
-		this.setState({showLogFor: null});
+		this.setState({ showLogFor: null });
 	}
 
 	@boundMethod
