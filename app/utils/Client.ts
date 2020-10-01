@@ -27,13 +27,13 @@ namespace Client {
 
 	async function findGatewayId(): Promise<string> {
 
-		let creds = localStorage.getItem(GATEWAY_TAG);
+		const creds = localStorage.getItem(GATEWAY_TAG);
 		if (!creds) {
 			const tenant = await getCurrentTenant();
 			const gatewayCreds = await API.createGateway({
 				credentials: AWS.config.credentials as any,
 				organizationId: tenant.id,
-				invokeUrl: window['invokeUrl'],
+				invokeUrl: window['IRIS_API_ENDPOINT'],
 				region: window['AWS_REGION'],
 				apiKey: tenant.apiKey,
 			});
