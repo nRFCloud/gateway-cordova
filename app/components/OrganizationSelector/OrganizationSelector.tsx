@@ -11,8 +11,7 @@ interface MyProps {
 	theme: any;
 }
 
-const OrganizationSelector: React.FC<MyProps> = ({organizations, theme, handleOrganizationSelection}) => {
-	Logger.info('going to display selection list for orgs', organizations);
+const OrganizationSelector: React.FC<MyProps> = ({ organizations, theme, handleOrganizationSelection }) => {
 	const styles = makeStyles({
 		paper: {
 			padding: '1.2rem',
@@ -24,7 +23,6 @@ const OrganizationSelector: React.FC<MyProps> = ({organizations, theme, handleOr
 	})();
 
 	const handleClick = (org: SystemTenant) => {
-		Logger.info('clicked on', org);
 		handleOrganizationSelection(org);
 	};
 
@@ -36,7 +34,7 @@ const OrganizationSelector: React.FC<MyProps> = ({organizations, theme, handleOr
 			open
 		>
 			<DialogTitle>
-				Which organization?
+				Which Team?
 			</DialogTitle>
 			<DialogContent>
 				<List>
