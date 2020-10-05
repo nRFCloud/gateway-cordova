@@ -48,8 +48,8 @@ class LoginForm extends React.Component<MyProps, MyState> {
 		};
 		if (process.env.NODE_ENV !== 'production') {
 			defaults = {
-				username: process.env.TEST_USERNAME,
-				password: process.env.TEST_PASSWORD,
+				username: process.env.TEST_USERNAME ?? '',
+				password: process.env.TEST_PASSWORD ?? '',
 				showPassword: true,
 			};
 		}
@@ -94,7 +94,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 		if (this.passwordElem) {
 			setTimeout(() => this.passwordElem.focus());
 		}
-		this.setState({showPassword: !this.state.showPassword});
+		this.setState({ showPassword: !this.state.showPassword });
 	}
 
 	@boundMethod
@@ -128,7 +128,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 			</Grid>
 		);
 		if (this.props.loggingIn) {
-			loginBtn = <Loader/>;
+			loginBtn = <Loader />;
 		}
 
 		let error;
@@ -184,7 +184,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 									aria-label="Toggle password visibility"
 									onClick={this.togglePassword}
 								>
-									{this.state.showPassword ? <VisibilityOff/> : <Visibility/>}
+									{this.state.showPassword ? <VisibilityOff /> : <Visibility />}
 								</IconButton>
 							</InputAdornment>
 						}
@@ -197,7 +197,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 	}
 }
 
-export default connect(({isOnline}) => ({isOnline}))(withStyles({
+export default connect(({ isOnline }) => ({ isOnline }))(withStyles({
 	padTop: {
 		marginTop: '1.5rem',
 	},

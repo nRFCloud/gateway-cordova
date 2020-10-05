@@ -1,5 +1,5 @@
 export function validateEmail(email): boolean {
-	if (email.length < 1) {
+	if (!email || email.length < 1) {
 		return false;
 	}
 
@@ -18,7 +18,7 @@ export function validateEmail(email): boolean {
 export function validatePassword(pw): boolean {
 	return (
 		//Based on Cognito's requirements:
-		pw.length >= 8 && //Length
+		pw?.length >= 8 && //Length
 
 		///[A-Z]/.test(pw) && //Must have uppercase
 
