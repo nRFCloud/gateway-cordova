@@ -37,7 +37,7 @@ namespace API {
 	export const getTenants = async (options?: GetOrgOptions): Promise<SystemTenant[]> => {
 		options = options ? options : {
 			credentials: AWS.config.credentials as Credentials,
-			graphQLUrl: window['graphQLUrl'],
+			graphQLUrl: window['GRAPHQL_URL'],
 		};
 		try {
 			const orgs = await getAllOrganizations(options);
