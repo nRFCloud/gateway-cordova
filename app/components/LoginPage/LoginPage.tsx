@@ -11,7 +11,7 @@ import Environment, { EnvironmentType } from '../../utils/Environment';
 import Splashscreen from '../../utils/Splashscreen';
 import Client from '../../utils/Client';
 import VersionNumber from '../VersionNumber/VersionNumber';
-import { loginDevZone, loginEmailPassword, resumeSession } from '../../gateway-abstract/login';
+import { loginEmailPassword, resumeSession } from '../../gateway-abstract/login';
 
 interface MyProps {
 	handleSuccessfulLogin: (username: string) => void;
@@ -51,18 +51,14 @@ class LoginPage extends React.Component<MyProps, MyState> {
 	}
 
 	@boundMethod
-	private doLogin(username, password, type: LoginType) {
+	private doLogin(username: string, password: string) {
 		this.setStateReturnPromise({
 			loggingIn: true,
 			error: null,
 		}).then(() => {
 			return new Promise((resolve) => setTimeout(resolve, 100));
 		}).then(() => {
-			if (type !== LoginType.DevZone) {
-				return loginEmailPassword(username, password);
-			} else {
-				return loginDevZone();
-			}
+			return loginEmailPassword(username, password);
 		}).then((credentials) => {
 			AWS.config.credentials = credentials;
 			return Client.getCurrentTenant(); //So I don't forget, this is to catch the user when they haven't logged into the main site. Without this, the next bit of error catch fails

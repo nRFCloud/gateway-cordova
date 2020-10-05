@@ -29,7 +29,7 @@ export enum LoginType {
 }
 
 interface MyProps {
-	doLogin: (username: string, password: string, type: LoginType) => void;
+	doLogin: (username: string, password: string) => void;
 	loggingIn: boolean;
 	error: any;
 	classes?: any;
@@ -67,7 +67,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 		e.stopPropagation();
 
 		if (this.isFormValid()) {
-			this.props.doLogin(this.state.username, this.state.password, LoginType.Normal);
+			this.props.doLogin(this.state.username, this.state.password);
 		}
 	}
 
@@ -95,15 +95,6 @@ class LoginForm extends React.Component<MyProps, MyState> {
 			setTimeout(() => this.passwordElem.focus());
 		}
 		this.setState({ showPassword: !this.state.showPassword });
-	}
-
-	@boundMethod
-	private handleDevZoneClick() {
-		if (!this.props.isOnline) {
-			return;
-		}
-
-		this.props.doLogin(null, null, LoginType.DevZone);
 	}
 
 	@boundMethod
@@ -146,16 +137,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 		}
 
 		return (
-			<form id="login-form" name="login-form" className="form-group" onSubmit={this.handleLogin}>
-				<div className={this.props.classes.altSignin}>
-					<a
-						href="#"
-						className={this.props.classes.devZone}
-						onClick={this.handleDevZoneClick}
-					/>
-				</div>
-
-				<div className={this.props.classes.separator}>OR</div>
+			<form id="login-form" name="login-form" className={`form-group ${this.props.classes.spacer}`} onSubmit={this.handleLogin}>
 				{error}
 				<TextField
 					label="Email"
@@ -212,28 +194,7 @@ export default connect(({ isOnline }) => ({ isOnline }))(withStyles({
 		display: 'flex',
 		justifyContent: 'center',
 	},
-	separator: {
-		color: '#77878b',
-		fontSize: '.75rem',
-		margin: '1rem',
-		position: 'relative',
-		textAlign: 'center',
-		'&::after': {
-			right: 0,
-			marginRight: '-1rem',
-		},
-		'&::before': {
-			left: 0,
-			marginLeft: '-1rem',
-		},
-		'&::before, &::after': {
-			borderTop: '1px solid #d8d8d8',
-			content: '" "',
-			display: 'block',
-			height: 0,
-			position: 'absolute',
-			top: '50%',
-			width: '50%',
-		},
+	spacer: {
+		marginTop: '1rem',
 	},
 })(LoginForm));

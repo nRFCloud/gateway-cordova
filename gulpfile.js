@@ -13,7 +13,7 @@ const packageJson = require('./package.json');
 
 const configFileName = './config.xml';
 
-const xmlNamespace = {n: 'http://www.w3.org/ns/widgets'};
+const xmlNamespace = { n: 'http://www.w3.org/ns/widgets' };
 
 function clean(cb) {
 	del(['./built/*.apk'], cb);
@@ -21,19 +21,19 @@ function clean(cb) {
 
 function setPlatformCodePushKey(platform, key) {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="CodePushDeploymentKey"]`, attr: {value: key},
+		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="CodePushDeploymentKey"]`, attr: { value: key },
 	}], xmlNamespace));
 }
 
 function setPlatformAppSecret(platform, key) {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="APP_SECRET"]`, attr: {value: key},
+		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="APP_SECRET"]`, attr: { value: key },
 	}], xmlNamespace));
 }
 
 function updateVersionNumber() {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: '//n:widget', attr: {version: packageJson.version},
+		path: '//n:widget', attr: { version: packageJson.version },
 	}], xmlNamespace)).pipe(gulp.dest('./'));
 }
 
@@ -67,20 +67,20 @@ function setIosAppSecret() {
 
 function removeSecrets() {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="CodePushDeploymentKey"]', attr: {value: ''},
+		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="CodePushDeploymentKey"]', attr: { value: '' },
 	}], xmlNamespace)).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="CodePushDeploymentKey"]', attr: {value: ''},
+		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="CodePushDeploymentKey"]', attr: { value: '' },
 	}], xmlNamespace)).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="APP_SECRET"]', attr: {value: ''},
+		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="APP_SECRET"]', attr: { value: '' },
 	}], xmlNamespace)).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="APP_SECRET"]', attr: {value: ''},
+		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="APP_SECRET"]', attr: { value: '' },
 	}], xmlNamespace))
 		.pipe(gulp.dest('./'));
 }
 
 let passwords;
 async function askForPasswords() {
-	passwords = await inquirer.prompt([ {
+	passwords = await inquirer.prompt([{
 		type: 'password',
 		name: 'store',
 		message: 'Please enter store password',
@@ -120,7 +120,7 @@ function buildIosPackage() {
 }
 
 async function buildPackage(type) {
-	const {stderr} = await exec(`cordova build ${type}`);
+	const { stderr } = await exec(`cordova build ${type}`);
 	if (stderr) {
 		throw new Error(stderr);
 	}
@@ -131,7 +131,7 @@ function runAndroidPackage() {
 }
 
 async function runPackage(type) {
-	const {stderr} = await exec(`cordova run ${type}`);
+	const { stderr } = await exec(`cordova run ${type}`);
 	if (stderr) {
 		throw new Error(stderr);
 	}
@@ -148,7 +148,7 @@ function copyProductionAndroidBuild() {
 }
 
 async function buildCodeForProduction() {
-	const {stderr} = await exec('npm run build:production');
+	const { stderr } = await exec('npm run build:production');
 	if (stderr) {
 		throw new Error(stderr);
 	}
@@ -186,6 +186,8 @@ exports.buildAndroid = gulp.series(
 	buildStagingAndroid,
 	buildProductionAndroid,
 );
+
+exports.buildStagingAndroid = buildStagingAndroid;
 
 exports.buildIos = gulp.series(
 	setIosAppSecret,

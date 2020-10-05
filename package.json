@@ -35,15 +35,12 @@
 		"cordova-plugin-device": "^2.0.2",
 		"cordova-plugin-file": "^6.0.1",
 		"cordova-plugin-file-opener2": "^2.2.0",
-		"cordova-plugin-file-transfer": "^1.7.1",
-		"cordova-plugin-inappbrowser": "^3.0.0",
 		"cordova-plugin-keyboard": "^1.2.0",
 		"cordova-plugin-local-notification": "^0.9.0-beta.2",
 		"cordova-plugin-network-information": "^2.0.1",
 		"cordova-plugin-splashscreen": "^5.0.2",
 		"cordova-plugin-statusbar": "^2.4.2",
 		"cordova-plugin-whitelist": "^1.3.3",
-		"cordova-plugin-wkwebview-engine": "^1.1.4",
 		"cordova-plugin-zip": "^3.1.0",
 		"cordova-windows": "^6.0.1"
 	},
@@ -52,25 +49,25 @@
 			"cordova-plugin-whitelist": {},
 			"cordova-plugin-file": {},
 			"cordova-plugin-zip": {},
-			"cordova-plugin-file-transfer": {},
 			"cordova-plugin-statusbar": {},
 			"cordova-plugin-keyboard": {},
-			"cordova-plugin-inappbrowser": {},
-			"cordova-plugin-cookieemperor": {},
 			"cordova-plugin-splashscreen": {},
 			"cordova-plugin-appcenter-analytics": {},
 			"cordova-plugin-appcenter-crashes": {},
 			"cordova-plugin-network-information": {},
 			"cordova-plugin-app-version": {},
 			"cordova-plugin-insomnia": {},
-			"cordova-plugin-wkwebview-engine": {},
 			"cordova-plugin-file-opener2": {
 				"ANDROID_SUPPORT_V4_VERSION": "27.+"
 			},
 			"cordova-plugin-local-notification": {},
 			"cordova-plugin-background-mode": {},
 			"cordova-plugin-code-push": {},
-			"cordova-plugin-bluetoothle": {}
+			"cordova-plugin-bluetoothle": {},
+			"cordova-plugin-file-transfer": {},
+			"cordova-plugin-inappbrowser": {},
+			"cordova-plugin-cookieemperor": {},
+			"cordova-plugin-wkwebview-engine": {}
 		},
 		"platforms": [
 			"ios",
@@ -122,7 +119,6 @@
 		"cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
 		"cordova-plugin-bluetoothle": "^6.0.1",
 		"cordova-plugin-code-push": "^1.13.1",
-		"cordova-plugin-cookieemperor": "git+https://github.com/rtk/cordova-cookie-emperor.git",
 		"cordova-plugin-dialogs": "^2.0.2",
 		"cordova-plugin-insomnia": "git+https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git",
 		"cordova-promise-fs": "^1.2.5",
@@ -157,6 +153,10 @@
 		"underscore": "^1.9.1",
 		"watch": "^1.0.2",
 		"webpack": "^4.28.3",
-		"webpack-cli": "^3.3.11"
+		"webpack-cli": "^3.3.11",
+		"cordova-plugin-file-transfer": "^1.7.1",
+		"cordova-plugin-inappbrowser": "^3.0.0",
+		"cordova-plugin-cookieemperor": "https://github.com/rtk/cordova-cookie-emperor.git",
+		"cordova-plugin-wkwebview-engine": "^1.1.4"
 	}
 }
