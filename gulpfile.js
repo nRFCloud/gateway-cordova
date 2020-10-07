@@ -6,6 +6,7 @@ const git = require('gulp-git');
 const inquirer = require('inquirer');
 const rename = require('gulp-rename');
 const del = require('delete');
+const vinylPaths = require('vinyl-paths');
 
 const codePushConfig = require('./config/codepush.json');
 const keystore = require('./config/keystore.json');
@@ -16,7 +17,7 @@ const configFileName = './config.xml';
 const xmlNamespace = { n: 'http://www.w3.org/ns/widgets' };
 
 function clean(cb) {
-	del(['./built/*.apk'], cb);
+	return del(['./built/*.apk'], cb);
 }
 
 function setPlatformCodePushKey(platform, key) {
@@ -147,8 +148,26 @@ function copyProductionAndroidBuild() {
 	return gulp.src(productionPackageLocation).pipe(rename(`android-production-v${packageJson.version}.apk`)).pipe(gulp.dest('./built'));
 }
 
+function replaceEnvFile() {
+	const envLocation = './.env';
+	gulp.src(envLocation).pipe(vinylPaths(del)).pipe(rename('env.env')).pipe(gulp.dest('./'));
+	return gulp.src('./.env.sample').pipe(rename('.env')).pipe(gulp.dest('./'));
+}
+
+function revertEnvFile() {
+	const envLocation = './env.env';
+	return gulp.src(envLocation).pipe(vinylPaths(del)).pipe(rename('.env')).pipe(gulp.dest('./'));
+}
+
 async function buildCodeForProduction() {
 	const { stderr } = await exec('npm run build:production');
+	if (stderr) {
+		throw new Error(stderr);
+	}
+}
+
+async function buildCodeForStaging() {
+	const { stderr } = await exec('npm run build');
 	if (stderr) {
 		throw new Error(stderr);
 	}
@@ -162,12 +181,15 @@ const buildAndRunAndroid = gulp.series(
 );
 
 const buildStagingAndroid = gulp.series(
+	replaceEnvFile,
 	revertConfig,
 	setAndroidAppSecret,
 	setAndroidStagingCodePushKey,
+	buildCodeForStaging,
 	buildDebugAndroidPackage,
 	copyDebugAndroidBuild,
-	revertConfig
+	revertConfig,
+	revertEnvFile,
 );
 
 const buildProductionAndroid = gulp.series(

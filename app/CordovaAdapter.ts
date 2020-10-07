@@ -104,7 +104,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 		}
 	}
 
-	async getRSSI(deviceId: string): Promise<number> {
+	async getRSSI(deviceId: string): Promise<ScanResult> {
 		try {
 			const rssi = await BluetoothPlugin.getRSSI(deviceId);
 			if (!rssi) {
@@ -112,7 +112,7 @@ export class CordovaAdapter extends BluetoothAdapter {
 			}
 
 			actions.logDeviceEvent({ event: `got rssi value ${rssi.rssi}`, device: deviceId });
-			return rssi.rssi;
+			return this.convertScanResult(rssi as BluetoothlePlugin.ScanStatus);
 		} catch (error) {
 			Logger.error('Error getting rssi', error);
 		}
