@@ -116,7 +116,6 @@
 		"cordova-plugin-bluetoothle": "^6.0.1",
 		"cordova-plugin-code-push": "^1.13.1",
 		"cordova-plugin-dialogs": "^2.0.2",
-		"cordova-plugin-file-transfer": "^1.7.1",
 		"cordova-plugin-insomnia": "git+https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git",
 		"cordova-promise-fs": "^1.2.5",
 		"core-js": "^3.6.4",
