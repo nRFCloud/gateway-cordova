@@ -27,7 +27,6 @@
 		"@babel/runtime": "^7.11.2",
 		"amazon-cognito-identity-js": "^3.2.2",
 		"aws-sdk": "^2.628.0",
-		"cordova-ios": "^4.5.5",
 		"cordova-plugin-appcenter-analytics": "^0.2.2",
 		"cordova-plugin-appcenter-crashes": "^0.2.2",
 		"cordova-plugin-appcenter-shared": "^0.2.2",
@@ -66,10 +65,10 @@
 			"cordova-plugin-bluetoothle": {}
 		},
 		"platforms": [
-			"ios",
 			"windows",
 			"android",
-			"browser"
+			"browser",
+			"ios"
 		]
 	},
 	"devDependencies": {
@@ -110,6 +109,7 @@
 		"code-push": "^3.0.1",
 		"cordova-android": "^9.0.0",
 		"cordova-browser": "^6.0.0",
+		"cordova-ios": "^6.1.1",
 		"cordova-plugin-advanced-http": "^3.0.1",
 		"cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
 		"cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
