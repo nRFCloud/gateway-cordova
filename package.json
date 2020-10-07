@@ -63,11 +63,7 @@
 			"cordova-plugin-local-notification": {},
 			"cordova-plugin-background-mode": {},
 			"cordova-plugin-code-push": {},
-			"cordova-plugin-bluetoothle": {},
-			"cordova-plugin-file-transfer": {},
-			"cordova-plugin-inappbrowser": {},
-			"cordova-plugin-cookieemperor": {},
-			"cordova-plugin-wkwebview-engine": {}
+			"cordova-plugin-bluetoothle": {}
 		},
 		"platforms": [
 			"ios",
@@ -119,12 +115,9 @@
 		"cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
 		"cordova-plugin-bluetoothle": "^6.0.1",
 		"cordova-plugin-code-push": "^1.13.1",
-		"cordova-plugin-cookieemperor": "https://github.com/rtk/cordova-cookie-emperor.git",
 		"cordova-plugin-dialogs": "^2.0.2",
 		"cordova-plugin-file-transfer": "^1.7.1",
-		"cordova-plugin-inappbrowser": "^3.0.0",
 		"cordova-plugin-insomnia": "git+https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git",
-		"cordova-plugin-wkwebview-engine": "^1.1.4",
 		"cordova-promise-fs": "^1.2.5",
 		"core-js": "^3.6.4",
 		"css-loader": "^3.4.2",
