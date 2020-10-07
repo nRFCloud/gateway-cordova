@@ -28,7 +28,6 @@ module.exports = async env => {
 		concatenateModules: true,
 	};
 	if (isProd) {
-		console.log('IS PRODUCTION!!!!');
 		optimization.minimizer = [new TerserPlugin({
 			extractComments: {
 				condition: true,
