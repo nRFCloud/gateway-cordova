@@ -23,7 +23,7 @@ const babelPlugins = [
 ].map(require.resolve);
 
 module.exports = async env => {
-	const isProd = env.NODE_ENV === 'production';
+	const isProd = env && (env.NODE_ENV === 'production');
 	const optimization = {
 		concatenateModules: true,
 	};

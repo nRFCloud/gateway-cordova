@@ -129,7 +129,7 @@
 		"gulp-git": "^2.8.0",
 		"gulp-rename": "^1.4.0",
 		"gulp-xml-transformer": "^4.0.2",
-		"inquirer": "^6.2.1",
+		"inquirer": "^7.3.3",
 		"json2csv": "^4.4.1",
 		"livereload": "^0.7.0",
 		"mdi-material-ui": "^6.13.1",
