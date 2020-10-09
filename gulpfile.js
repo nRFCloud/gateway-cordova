@@ -214,6 +214,7 @@ exports.buildStagingAndroid = buildStagingAndroid;
 exports.buildIos = gulp.series(
 	setIosAppSecret,
 	setIosProductionCodePushKey,
+	buildCodeForProduction,
 	buildIosPackage,
 	revertConfig,
 );
@@ -221,6 +222,7 @@ exports.buildIos = gulp.series(
 exports.buildStagingIos = gulp.series(
 	setIosAppSecret,
 	setIosStagingCodePushKey,
+	buildCodeForStaging,
 	buildIosPackage,
 	revertConfig,
 );
