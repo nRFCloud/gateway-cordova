@@ -152,7 +152,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 						value={this.state.currentEnv}
 						onChange={this.handleEnvOption}
 					>
-						<MenuItem value={EnvironmentType.Production}>Production</MenuItem>
+						<MenuItem value={EnvironmentType.Prod}>Production</MenuItem>
 						<MenuItem value={EnvironmentType.Beta}>Beta</MenuItem>
 						<MenuItem value={EnvironmentType.Dev}>Dev</MenuItem>
 						<MenuItem value={EnvironmentType.Feature}>Feature</MenuItem>

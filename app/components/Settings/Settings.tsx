@@ -165,7 +165,7 @@ class Settings extends React.Component<MyProps, MyState> {
 	render() {
 		let envNotice = null;
 
-		if (this.state.environment !== EnvironmentType.Production) {
+		if (this.state.environment !== EnvironmentType.Prod) {
 			envNotice = (
 				<CardContent className={`${this.props.classes.cardContent} ${this.props.classes.gridSeparator}`}>
 					<Grid container>
