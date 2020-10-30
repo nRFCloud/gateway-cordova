@@ -1,7 +1,7 @@
 const ENV_KEY = 'env';
 
 export enum EnvironmentType {
-	Production,
+	Prod,
 	Beta,
 	Dev,
 	Feature,
@@ -16,7 +16,7 @@ namespace Environment {
 		}
 
 		if (!currentEnv) {
-			return EnvironmentType.Production;
+			return EnvironmentType.Prod;
 		}
 
 		return currentEnv;
