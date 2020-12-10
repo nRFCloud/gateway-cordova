@@ -28,7 +28,7 @@ export default class BackgroundModeModal extends React.Component<MyProps, {}> {
 	render() {
 
 		let sleepModeText = `By enabling this option, nRF Cloud Gateway will run in the background. This
-							may use lots of data and battery and will count against your nRF Cloud message limits. To close the
+							may use lots of data and battery. To close the
 							gateway, you can swipe it away on the "Recent Apps" screen or use the notification's "Close"
 							button.`;
 		let sleepModeTitle = 'Enable background mode?';
