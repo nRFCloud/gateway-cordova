@@ -56,6 +56,7 @@ namespace Client {
 			tenantId,
 			bluetoothAdapter: new CordovaAdapter(),
 			stage: EnvironmentType[Environment.getCurrentEnvironment()].toLowerCase(),
+			supportsBLEFOTA: true,
 		};
 
 		gateway = new Gateway(options);
