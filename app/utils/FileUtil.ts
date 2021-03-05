@@ -32,7 +32,7 @@ namespace FileUtil {
 
 	function getFileOpener() {
 		// @ts-ignore
-		const {cordova: {plugins: {fileOpener2: opener}}} = window;
+		const { cordova: { plugins: { fileOpener2: opener } } } = window;
 		return opener;
 	}
 
@@ -73,6 +73,13 @@ namespace FileUtil {
 				});
 			});
 		}
+	}
+
+	export async function saveFirmwareFile(file: Blob): Promise<string> {
+		const fs = getFileSystem();
+		const fileName = `firmware-file-${Math.round(Math.random() * 100)}`;
+		await fs.write(fileName, file);
+		return fs.toURL(fileName);
 	}
 }
 
