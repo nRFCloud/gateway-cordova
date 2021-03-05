@@ -61,13 +61,15 @@
 			"cordova-plugin-local-notification": {},
 			"cordova-plugin-background-mode": {},
 			"cordova-plugin-code-push": {},
+			"cordova-plugin-nordic-update": {},
+			"cordova-plugin-androidx-adapter": {},
 			"cordova-plugin-bluetoothle": {}
 		},
 		"platforms": [
-			"android",
 			"browser",
 			"ios",
-			"windows"
+			"windows",
+			"android"
 		]
 	},
 	"devDependencies": {
@@ -110,12 +112,14 @@
 		"cordova-browser": "^6.0.0",
 		"cordova-ios": "^6.1.1",
 		"cordova-plugin-advanced-http": "^3.0.1",
+		"cordova-plugin-androidx-adapter": "^1.1.3",
 		"cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
 		"cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
-		"cordova-plugin-bluetoothle": "^6.0.1",
+		"cordova-plugin-bluetoothle": "^6.3.0",
 		"cordova-plugin-code-push": "^1.13.1",
 		"cordova-plugin-dialogs": "^2.0.2",
 		"cordova-plugin-insomnia": "git+https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git",
+		"cordova-plugin-nordic-update": "file:../cordova-plugin-nordic-update",
 		"cordova-promise-fs": "^1.2.5",
 		"cordova-windows": "^7.0.1",
 		"core-js": "^3.6.4",

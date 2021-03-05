@@ -45,6 +45,7 @@
 		<resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xhdpi/nrfcloud.png"/>
 		<resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xxhdpi/nrfcloud.png"/>
 		<resource-file src="res/icon/android/adaptiveicon/values/ic_launcher_background.xml" target="app/src/main/res/values/ic_launcher_background.xml"/>
+		<preference name="AndroidXEnabled" value="true" />
 	</platform>
 	<platform name="ios">
 		<allow-intent href="itms:*"/>

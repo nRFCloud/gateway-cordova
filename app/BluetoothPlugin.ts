@@ -1,5 +1,8 @@
+/// <reference types="cordova-plugin-bluetoothle" />
+
 import { Logger } from './logger/Logger';
 import * as Util from 'beacon-utilities';
+
 import ScanStatus = BluetoothlePlugin.ScanStatus;
 import { Platform } from './utils/Platform';
 
