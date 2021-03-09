@@ -82,11 +82,11 @@ function removeSecrets() {
 let passwords;
 async function askForPasswords() {
 	passwords = await inquirer.prompt([{
-		type: 'password',
+		type: 'text',
 		name: 'store',
 		message: 'Please enter store password',
 	}, {
-		type: 'password',
+		type: 'text',
 		name: 'keystore',
 		message: 'Please enter alias password',
 	},]);
@@ -96,7 +96,7 @@ async function askForPasswords() {
 	}
 }
 
-async function signAndroidPackage() {
+async function buildAndSignAndroidPackage() {
 	if (!keystore || !keystore.alias || !keystore.location) {
 		throw new Error('Keystore configuration is not correct');
 	}
@@ -196,7 +196,8 @@ const buildProductionAndroid = gulp.series(
 	revertConfig,
 	setAndroidAppSecret,
 	setAndroidProductionCodePushKey,
-	signAndroidPackage,
+	buildCodeForProduction,
+	buildAndSignAndroidPackage,
 	copyProductionAndroidBuild,
 	revertConfig
 );
@@ -204,7 +205,7 @@ const buildProductionAndroid = gulp.series(
 exports.buildAndroid = gulp.series(
 	askForPasswords,
 	clean,
-	buildCodeForProduction,
+
 	buildStagingAndroid,
 	buildProductionAndroid,
 );
