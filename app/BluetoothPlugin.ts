@@ -339,9 +339,9 @@ export default class BluetoothPlugin {
 		return Array.from(bluetoothle.encodedStringToBytes(str));
 	}
 
-	static enable(): void {
+	static enable(): Promise<void> {
 		const bluetoothle = getBluetoothPluginObj();
-		bluetoothle.enable(() => { }, () => { });
+		return new Promise((resolve, reject) => bluetoothle.enable(() => resolve(), (err) => reject(err)));
 	}
 
 	static hasLocation(): Promise<boolean> {
