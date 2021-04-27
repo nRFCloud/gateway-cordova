@@ -4,7 +4,7 @@
 		COGNITO_IDENTITY_POOL_ID: 'us-east-1:c00e1327-dfc2-4aa7-a484-8ca366d11a68',
 		COGNITO_USER_POOL_CLIENT_ID: '2p40shpt1ru5gerbip9limhm15',
 		AWS_REGION: 'us-east-1',
-		GRAPHQL_URL: 'https://s3t5ysg7pbcohkakeascjwgtcu.appsync-api.us-east-1.amazonaws.com/graphql',
+		GRAPHQL_URL: 'https://objcrwsamnavhcir56nvmd4qqm.appsync-api.us-east-1.amazonaws.com/graphql',
 		MQTT_ENDPOINT: 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
 		DEVICE_API_ENDPOINT: 'https://api.nrfcloud.com/v1'
 	};
