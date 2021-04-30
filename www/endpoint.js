@@ -34,10 +34,10 @@
 					break;
 				case 'Feature':
 					configObject = Object.assign({}, configObject, {
-						COGNITO_USER_POOL_ID: 'us-east-1_7j72ADM6A',
+						COGNITO_USER_POOL_ID: 'us-east-1_6h4HcUqOw',
 						COGNITO_IDENTITY_POOL_ID: 'us-east-1:11e36768-a6ae-4d28-87cc-3677886b0249',
-						COGNITO_USER_POOL_CLIENT_ID: '6u6aitl15tmulpb7e6amfm6095',
-						GRAPHQL_URL: 'https://dya2vcgtmbaavlmijboptsgj64.appsync-api.us-east-1.amazonaws.com/graphql',
+						COGNITO_USER_POOL_CLIENT_ID: 'otsdg93k7klq3p20g63cl66hj',
+						GRAPHQL_URL: 'https://bru3adoj4rfntmos2d56p6gaau.appsync-api.us-east-1.amazonaws.com/graphql',
 						MQTT_ENDPOINT: 'a1zbg31mxiwr-ats.iot.us-east-1.amazonaws.com',
 						DEVICE_API_ENDPOINT: 'https://api.feature.nrfcloud.com/v1'
 					});
