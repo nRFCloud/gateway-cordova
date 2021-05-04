@@ -77,7 +77,7 @@ namespace FileUtil {
 
 	export async function saveFirmwareFile(file: Blob): Promise<string> {
 		const fs = getFileSystem();
-		const fileName = `firmware-file-${Math.round(Math.random() * 100)}`;
+		const fileName = `firmware-file-${Math.round(Math.random() * 100)}-${new Date().getTime()}`;
 		await fs.write(fileName, file);
 		return fs.toURL(fileName);
 	}

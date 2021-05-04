@@ -8,11 +8,9 @@ export class CordovaFotaAdapter extends FotaAdapter {
 
 	private async handleUpdate(file: Blob, deviceId: string, callback: (status: UpdateInformation) => void): Promise<void> {
 		const fileName = await FileUtil.saveFirmwareFile(file);
-		window['NordicUpdate'].updateFirmware(function (status) {
-			console.info('got nordic update info', arguments);
+		window['NordicUpdate'].updateFirmware((status: UpdateInformation) => {
 			callback(status);
-		}, function (status) {
-			console.error('Nordic update error', arguments);
+		}, (status: UpdateInformation) => {
 			callback(status);
 		}, fileName, deviceId);
 	}
