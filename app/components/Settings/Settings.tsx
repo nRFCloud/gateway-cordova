@@ -82,7 +82,7 @@ class Settings extends React.Component<MyProps, MyState> {
 	}
 
 	private setStateReturnPromise(newState): Promise<any> {
-		return new Promise(resolve => this.setState(newState, resolve));
+		return new Promise<void>(resolve => this.setState(newState, resolve));
 	}
 
 	private toggleBackground(enable: boolean) {

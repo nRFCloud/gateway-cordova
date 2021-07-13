@@ -228,12 +228,12 @@ class Router extends React.Component<MyProps, MyState> {
 		return Authorization.logout();
 	}
 
-	private setStateReturnPromise(newState): Promise<null> {
-		return new Promise<null>((resolve) => this.setState(newState, resolve));
+	private setStateReturnPromise(newState: Partial<MyState>): Promise<void> {
+		return new Promise<void>((resolve) => this.setState(newState as MyState, resolve));
 	}
 
 	@boundMethod
-	private handleSwipeChange(ind) {
+	private handleSwipeChange(ind: number) {
 		this.nextPage = ind === 0 ? CurrentPage.Dashboard : CurrentPage.Settings;
 	}
 
