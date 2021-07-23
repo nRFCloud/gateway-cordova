@@ -151,7 +151,7 @@ export namespace Platform {
 		bg.enable();
 	}
 
-	function enableInsomnia() {
+	export function enableInsomnia() {
 		if (!ensureInsomnia()) {
 			return;
 		}
@@ -160,7 +160,7 @@ export namespace Platform {
 		insomnia.keepAwake();
 	}
 
-	function disableInsomnia() {
+	export function disableInsomnia() {
 		if (!ensureInsomnia()) {
 			return;
 		}
