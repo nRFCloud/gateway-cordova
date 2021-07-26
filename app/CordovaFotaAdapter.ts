@@ -1,4 +1,4 @@
-import { FotaAdapter, UpdateInformation, UpdateStatus } from '@nrfcloud/gateway-common';
+import { assumeType, FotaAdapter, UpdateInformation, UpdateStatus } from '@nrfcloud/gateway-common';
 import FileUtil from './utils/FileUtil';
 import { Platform } from './utils/Platform';
 
@@ -13,7 +13,15 @@ export class CordovaFotaAdapter extends FotaAdapter {
 		window['NordicUpdate'].updateFirmware((status: UpdateInformation) => {
 			callback(status);
 			this.disableInsomniaIfDone(status.status);
-		}, (status: UpdateInformation) => {
+		}, (status: UpdateInformation | string) => { // The plugin *shouldn't* just give us a string, but protect ourselves if it does
+			if (typeof (status as UpdateInformation).status === 'undefined') {
+				status = {
+					status: UpdateStatus.DfuAborted,
+					message: status as string,
+					id: deviceId,
+				};
+			}
+			assumeType<UpdateInformation>(status);
 			callback(status);
 			this.disableInsomniaIfDone(status.status);
 		}, fileName, deviceId);
@@ -23,7 +31,7 @@ export class CordovaFotaAdapter extends FotaAdapter {
 		if (Platform.isNoSleepModeEnabled() && Platform.isIos()) {
 			return;
 		}
-		switch (status.status) {
+		switch (status) {
 			case UpdateStatus.DfuCompleted:
 			case UpdateStatus.DfuAborted:
 				Platform.disableInsomnia();
