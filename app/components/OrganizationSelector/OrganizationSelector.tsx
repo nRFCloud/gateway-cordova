@@ -32,6 +32,7 @@ const OrganizationSelector: React.FC<MyProps> = ({ organizations, theme, handleO
 			disableEscapeKeyDown
 			fullScreen
 			open
+			id="org-selector-dialog"
 		>
 			<DialogTitle>
 				Which Team?
@@ -46,6 +47,7 @@ const OrganizationSelector: React.FC<MyProps> = ({ organizations, theme, handleO
 								button
 								key={org.id}
 								onClick={onClick}
+								id={`org-selection-${org.id}`}
 							>
 								<ListItemText>{org.name}</ListItemText>
 							</ListItem>

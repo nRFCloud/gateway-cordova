@@ -131,7 +131,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 				);
 			} else {
 				error = (
-					<Typography color="error">{this.props.error}</Typography>
+					<Typography color="error" id="error-message">{this.props.error}</Typography>
 				);
 			}
 		}
@@ -146,6 +146,7 @@ class LoginForm extends React.Component<MyProps, MyState> {
 					disabled={this.props.loggingIn}
 					value={this.state.username}
 					onChange={this.handleUsernameChange}
+					id="email"
 				/>
 				<FormControl
 					fullWidth

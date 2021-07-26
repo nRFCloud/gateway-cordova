@@ -82,7 +82,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 	}
 
 	private setStateReturnPromise(state): Promise<any> {
-		return new Promise((resolve) => {
+		return new Promise<void>((resolve) => {
 			this.setState(state, () => resolve());
 		});
 	}
@@ -146,11 +146,15 @@ class LoginPage extends React.Component<MyProps, MyState> {
 		let envSelector = null;
 		if (this.state.showEnvironmentSelector) {
 			envSelector = (
-				<FormControl className={this.props.classes.envSelector}>
-					<InputLabel htmlFor="env-select">Environment</InputLabel>
+				<FormControl className={this.props.classes.envSelector} >
+					<InputLabel htmlFor="environment-selector">Environment</InputLabel>
 					<Select
 						value={this.state.currentEnv}
 						onChange={this.handleEnvOption}
+						SelectDisplayProps={{
+							id: 'environment-selector'
+						}}
+
 					>
 						<MenuItem value={EnvironmentType.Prod}>Production</MenuItem>
 						<MenuItem value={EnvironmentType.Beta}>Beta</MenuItem>
@@ -161,13 +165,12 @@ class LoginPage extends React.Component<MyProps, MyState> {
 			);
 		}
 
-		// noinspection HtmlUnknownTarget
-		// noinspection CheckTagEmptyBody
 		return (
-			<div>
+			<>
 				<div
 					className={this.props.classes.logoArea}
 					onClick={this.handleImgClick}
+					id="logo-holder"
 				>
 					<img src="img/logo.svg" className={this.props.classes.logo} />
 					<Typography
@@ -191,7 +194,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 				<div className={this.props.classes.versionPlacer}>
 					<VersionNumber />
 				</div>
-			</div>
+			</>
 		);
 	}
 }

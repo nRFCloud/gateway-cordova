@@ -1,5 +1,6 @@
-import { FotaAdapter, UpdateInformation } from '@nrfcloud/gateway-common';
+import { FotaAdapter, UpdateInformation, UpdateStatus } from '@nrfcloud/gateway-common';
 import FileUtil from './utils/FileUtil';
+import { Platform } from './utils/Platform';
 
 export class CordovaFotaAdapter extends FotaAdapter {
 	startUpdate(file: Blob, deviceId: string, callback: (status: UpdateInformation) => void): void {
@@ -8,10 +9,25 @@ export class CordovaFotaAdapter extends FotaAdapter {
 
 	private async handleUpdate(file: Blob, deviceId: string, callback: (status: UpdateInformation) => void): Promise<void> {
 		const fileName = await FileUtil.saveFirmwareFile(file);
+		Platform.enableInsomnia();
 		window['NordicUpdate'].updateFirmware((status: UpdateInformation) => {
 			callback(status);
+			this.disableInsomniaIfDone(status.status);
 		}, (status: UpdateInformation) => {
 			callback(status);
+			this.disableInsomniaIfDone(status.status);
 		}, fileName, deviceId);
+	}
+
+	private disableInsomniaIfDone(status: UpdateStatus) {
+		if (Platform.isNoSleepModeEnabled() && Platform.isIos()) {
+			return;
+		}
+		switch (status.status) {
+			case UpdateStatus.DfuCompleted:
+			case UpdateStatus.DfuAborted:
+				Platform.disableInsomnia();
+				break;
+		}
 	}
 }
