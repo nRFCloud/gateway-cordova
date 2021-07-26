@@ -27,9 +27,6 @@
 		"@babel/runtime": "^7.11.2",
 		"amazon-cognito-identity-js": "^3.2.2",
 		"aws-sdk": "^2.628.0",
-		"cordova-plugin-appcenter-analytics": "^0.2.2",
-		"cordova-plugin-appcenter-crashes": "^0.2.2",
-		"cordova-plugin-appcenter-shared": "^0.2.2",
 		"cordova-plugin-badge": "^0.8.8",
 		"cordova-plugin-device": "^2.0.2",
 		"cordova-plugin-file": "^6.0.1",
@@ -75,18 +72,10 @@
 		"babel-plugin-graphql-tag": "^2.5.0",
 		"beacon-utilities": "git+ssh://git@github.com/nRFCloud/beacon-utilities.git",
 		"bootstrap": "^4.4.1",
-		"code-push": "^3.0.1",
 		"cordova-android": "^9.0.0",
 		"cordova-browser": "^6.0.0",
-		"cordova-ios": "^6.1.1",
-		"cordova-plugin-advanced-http": "^3.0.1",
 		"cordova-plugin-androidx-adapter": "^1.1.3",
-		"cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
-		"cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
 		"cordova-plugin-bluetoothle": "^6.3.0",
-		"cordova-plugin-code-push": "^1.13.1",
-		"cordova-plugin-dialogs": "^2.0.2",
-		"cordova-plugin-insomnia": "git+https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git",
 		"cordova-promise-fs": "^1.2.5",
 		"cordova-windows": "^7.0.1",
 		"core-js": "^3.6.4",
@@ -131,8 +120,6 @@
 			"cordova-plugin-statusbar": {},
 			"cordova-plugin-keyboard": {},
 			"cordova-plugin-splashscreen": {},
-			"cordova-plugin-appcenter-analytics": {},
-			"cordova-plugin-appcenter-crashes": {},
 			"cordova-plugin-network-information": {},
 			"cordova-plugin-app-version": {},
 			"cordova-plugin-insomnia": {},
@@ -141,19 +128,28 @@
 			},
 			"cordova-plugin-local-notification": {},
 			"cordova-plugin-background-mode": {},
-			"cordova-plugin-code-push": {},
 			"cordova-plugin-androidx-adapter": {},
 			"cordova-plugin-bluetoothle": {},
-			"cordova-plugin-nordic-update": {}
+			"cordova-plugin-nordic-update": {},
+			"cordova-plugin-code-push": {},
+			"cordova-plugin-appcenter-crashes": {},
+			"cordova-plugin-appcenter-analytics": {}
 		},
 		"platforms": [
 			"browser",
-			"ios",
 			"windows",
-			"android"
+			"android",
+			"ios"
 		]
 	},
 	"devDependencies": {
-		"cordova-plugin-nordic-update": "git+https://TheBosZ@bitbucket.org/TheBosZ/cordova-plugin-nordic-update.git"
+		"cordova-plugin-app-version": "git+https://github.com/whiteoctober/cordova-plugin-app-version.git",
+		"cordova-plugin-appcenter-analytics": "^0.5.1",
+		"cordova-plugin-appcenter-crashes": "^0.5.1",
+		"cordova-plugin-appcenter-shared": "^0.5.1",
+		"cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
+		"cordova-plugin-code-push": "^2.0.0",
+		"cordova-plugin-insomnia": "git+https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git",
+		"cordova-plugin-nordic-update": "file:../cordova-plugin-nordic-update"
 	}
 }
