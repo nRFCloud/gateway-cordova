@@ -12,3 +12,4 @@ built
 /config/codepush.json
 /config/keystore.json
 .ez-cache
+.DS_Store
