@@ -1,7 +1,7 @@
 {
 	"name": "no.nordicsemi.bleapp",
 	"displayName": "nRF Cloud Gateway",
-	"version": "2.2.1",
+	"version": "2.3.0",
 	"description": "A gateway to connect Bluetooth devices to nRF Cloud",
 	"main": "app/index.js",
 	"scripts": {
@@ -154,6 +154,6 @@
 		]
 	},
 	"devDependencies": {
-		"cordova-plugin-nordic-update": "git+https://TheBosZ@bitbucket.org/TheBosZ/cordova-plugin-nordic-update.git"
+		"cordova-plugin-nordic-update": "^0.1.0"
 	}
 }

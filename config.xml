@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:android="schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" android-packageName="no.nordicsemi.android.nrfcloudgateway" id="no.nordicsemi.bleapp" ios-CFBundleIdentifier="com.nordicsemi.nRFCloud-Gateway" version="2.2.1">
+<widget xmlns="http://www.w3.org/ns/widgets"
+	xmlns:android="schemas.android.com/apk/res/android"
+	xmlns:cdv="http://cordova.apache.org/ns/1.0" android-packageName="no.nordicsemi.android.nrfcloudgateway" id="no.nordicsemi.bleapp" ios-CFBundleIdentifier="com.nordicsemi.nRFCloud-Gateway" version="2.3.0">
 	<name>nRF Cloud Gateway</name>
 	<description>
         A gateway to connect Bluetooth devices to the internet
