@@ -8,8 +8,8 @@ import BluetoothPlugin from '../BluetoothPlugin';
 import { actions } from '../providers/StateStore';
 import API, { SystemTenant } from './API';
 import { CordovaAdapter } from '../CordovaAdapter';
+import { CordovaFotaAdapter } from '../CordovaFotaAdapter';
 import Environment, { EnvironmentType } from './Environment';
-
 
 const GATEWAY_VERSION = require('../../package.json').version;
 const CURRENT_ORG_TAG = 'CURRENT_ORG_TAG';
@@ -33,7 +33,6 @@ namespace Client {
 			const gatewayCreds = await API.createGateway({
 				credentials: AWS.config.credentials as any,
 				organizationId: tenant.id,
-				invokeUrl: window['IRIS_API_ENDPOINT'],
 				region: window['AWS_REGION'],
 				apiKey: tenant.apiKey,
 			});
@@ -56,6 +55,7 @@ namespace Client {
 			tenantId,
 			bluetoothAdapter: new CordovaAdapter(),
 			stage: EnvironmentType[Environment.getCurrentEnvironment()].toLowerCase(),
+			fotaAdapter: typeof window['NordicUpdate'] !== 'undefined' ? new CordovaFotaAdapter() : null,
 		};
 
 		gateway = new Gateway(options);
