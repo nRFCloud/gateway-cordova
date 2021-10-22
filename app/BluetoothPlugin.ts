@@ -130,7 +130,7 @@ export default class BluetoothPlugin {
 		});
 	}
 
-	static isConnected(params): Promise<boolean> {
+	static isConnected(params: { address: string; }): Promise<boolean> {
 		const bluetoothle = getBluetoothPluginObj();
 		return new Promise<boolean>((resolve) => {
 			bluetoothle.isConnected((success) => {
@@ -139,7 +139,7 @@ export default class BluetoothPlugin {
 		});
 	}
 
-	static unbond(params): Promise<void> {
+	static unbond(params: { address: string; }): Promise<void> {
 		if (!Platform.isAndroid()) {
 			return Promise.resolve();
 		}
@@ -386,7 +386,8 @@ export default class BluetoothPlugin {
 	static getRSSI(connection: string): Promise<BluetoothlePlugin.RSSI> {
 		const bluetoothle = getBluetoothPluginObj();
 		return new Promise<BluetoothlePlugin.RSSI>((resolve, reject) => {
-			bluetoothle.rssi(resolve, reject, { address: connection });
+			const params = { address: connection };
+			bluetoothle.rssi(resolve, reject, params);
 		});
 	}
 }

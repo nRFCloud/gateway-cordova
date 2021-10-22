@@ -28,7 +28,7 @@ export async function totalKillConnection(connection: string): Promise<void> {
 			await BluetoothPlugin.unbond(addressParams);
 		} catch (err) {
 			Logger.info('in tkc, unbond', err);
-			if (!(err && err.message && err.message.indexOf('already') > -1)) {
+			if (err?.error !== 'unbond') {
 				throw err;
 			}
 		}
@@ -38,7 +38,7 @@ export async function totalKillConnection(connection: string): Promise<void> {
 		await BluetoothPlugin.close(addressParams);
 	} catch (err) {
 		Logger.info('in tkc, close', err);
-		if (!(err && err.error && err.error === 'neverConnected')) {
+		if (err?.error !== 'neverConnected') {
 			throw err;
 		}
 	}
