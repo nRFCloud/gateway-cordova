@@ -5,7 +5,7 @@ import { Gateway, GatewayConfiguration, GatewayEvent } from '@nrfcloud/gateway-c
 import { Logger } from '../logger/Logger';
 
 import BluetoothPlugin from '../BluetoothPlugin';
-import { actions } from '../providers/StateStore';
+import { actions, Device } from '../providers/StateStore';
 import API, { SystemTenant } from './API';
 import { CordovaAdapter } from '../CordovaAdapter';
 import { CordovaFotaAdapter } from '../CordovaFotaAdapter';
@@ -65,12 +65,23 @@ namespace Client {
 	}
 
 	function addListeners(gateway: Gateway) {
-		gateway.on(GatewayEvent.ConnectionsChanged, (connections) => {
+		gateway.on(GatewayEvent.ConnectionsChanged, async (connections) => {
 			console.info('got a connections changed event from gateway', connections);
+			const deviceObjs: Device[] = Object.values(connections);
+			const apiKey = (await Client.getCurrentTenant()).apiKey;
+			const fetchedDevices: Device[] = await Promise.all(deviceObjs.map(async (d) => {
+				const apiDevice = await API.fetchDevice({ deviceId: d.id, apiKey });
+				return { ...d, image: apiDevice.image };
+			}));
+			console.info('going to set connections to', fetchedDevices);
 			actions.setConnections({
-				deviceList: Object.values(connections),
+				deviceList: fetchedDevices,
 				beaconList: gateway.beacons,
 			});
+		});
+		gateway.on(GatewayEvent.DeviceUpdate, (deviceObj) => {
+			console.info('got a device update', deviceObj);
+			actions.updateDevice(deviceObj);
 		});
 		gateway.on('beaconUpdated', () => {
 			actions.setConnections({

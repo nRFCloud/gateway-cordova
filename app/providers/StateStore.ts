@@ -1,3 +1,4 @@
+import { BLEDevice, ScanResult } from '@nrfcloud/gateway-common';
 import createStore from 'react-waterfall';
 
 export interface LogEvent {
@@ -9,10 +10,14 @@ export interface DeviceLogEvent extends LogEvent {
 	device: string;
 }
 
+export interface Device extends BLEDevice, Omit<ScanResult, 'address'> {
+	image?: string;
+}
+
 export interface AppState {
 	gateway: LogEvent[];
 	devices: { [key: string]: DeviceLogEvent[] };
-	deviceList: any[];
+	deviceList: Device[];
 	beaconList: any[];
 	isOnline: boolean;
 	isNoSeleepEnabled: boolean;
@@ -51,7 +56,7 @@ function processEvent(event: LogEvent | string): LogEvent {
 
 const logDeviceEvent = (state: AppState, action, event: DeviceLogEvent): Partial<AppState> => {
 	event = processEvent(event) as DeviceLogEvent;
-	const messages =  typeof state.devices[event.device] !== 'undefined' ? state.devices[event.device] : [];
+	const messages = typeof state.devices[event.device] !== 'undefined' ? state.devices[event.device] : [];
 	return {
 		devices: {
 			[event.device]: [
@@ -100,9 +105,20 @@ const setNoSleepEnabled = (state: AppState, action, isNoSeleepEnabled: boolean):
 
 const setConnections = (state: AppState, action, connections): Partial<AppState> => {
 	return {
-		deviceList: connections.deviceList,
-		beaconList: connections.beaconList,
+		deviceList: connections.deviceList ?? state.deviceList,
+		beaconList: connections.beaconList ?? state.beaconList,
 	};
+};
+
+const updateDevice = (state: AppState, action, deviceUpdate: ScanResult): Partial<AppState> => {
+	const list = Array.from(state.deviceList);
+	const index = list.findIndex((d) => d.id === deviceUpdate.address.address || d.address.address === deviceUpdate.address.address);
+	if (index !== -1) {
+		list[index] = { ...list[index], ...deviceUpdate };
+	}
+	return {
+		deviceList: list,
+	}
 };
 
 const setGateways = (state: AppState, action, gateways): Partial<AppState> => {
@@ -142,6 +158,7 @@ const config = {
 		setGateway,
 		setAppVersion,
 		setCodePushPackage,
+		updateDevice,
 	},
 };
 

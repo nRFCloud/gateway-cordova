@@ -1,13 +1,14 @@
-import * as React from 'react';
 import { Card, CardActionArea, CardContent, Grid, Typography, withStyles } from '@material-ui/core/es';
 import { WifiTethering } from '@material-ui/icons';
+import { boundMethod } from 'autobind-decorator';
+import * as Util from 'beacon-utilities';
+import * as React from 'react';
+import { Device } from '../../providers/StateStore';
 
 import { Platform } from '../../utils/Platform';
-import * as Util from 'beacon-utilities';
-import { boundMethod } from 'autobind-decorator';
 
 interface MyProps {
-	device: any;
+	device: Device;
 	classes?: any;
 	showLogFor: (device: any) => void;
 }
@@ -19,9 +20,9 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 		this.props.showLogFor(this.props.device);
 	}
 
-	private getBarsIcon(device): string {
-		if (device && device.statistics && typeof device.statistics.rssi !== 'undefined') {
-			const RSSI = device.statistics.rssi;
+	private getBarsIcon(device: Device): string {
+		if (device?.rssi) {
+			const RSSI = device.rssi;
 			if (RSSI) {
 
 				if (RSSI > -70) {
@@ -47,14 +48,14 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 	render() {
 		const device = this.props.device;
 		let imageSrc = 'img/device-image.png';
-		if (device?.raw?.image) {
-			imageSrc = device.raw.image;
+		if (device.image || (device as any)?.raw?.image) {
+			imageSrc = device.image || (device as any).raw.image;
 		}
 
 		const isIos = Platform.isIos();
 
 		let connectedBlock = null;
-		if (!device.isBeacon) {
+		if (!(device as any).isBeacon) {
 
 			connectedBlock = (
 
@@ -119,11 +120,11 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 											className={this.props.classes.name}
 											noWrap
 										>
-											{device.deviceName || device.name || device.id}
+											{(device as any).deviceName || device.name || device.id}
 										</Typography>
 									</Grid>
 								</Grid>
-								<Grid container direction="row" justify="space-between" alignItems="flex-end">
+								<Grid container direction="row" justify="space-between" alignItems="flex-end" className={this.props.classes.dividerLine}>
 									<Grid item xs>
 										{connectedBlock}
 									</Grid>
@@ -140,24 +141,7 @@ class DeviceCard extends React.PureComponent<MyProps, {}> {
 													variant="caption"
 													className={isIos ? this.props.classes.captionShrinker : ''}
 												>
-													{device?.statistics?.rssi ?? 'N/A'} dBm
-												</Typography>
-											</Grid>
-										</Grid>
-									</Grid>
-									<Grid item xs>
-										<Grid container direction="column" justify="space-evenly" alignItems="center">
-											<Grid item>
-												<Typography variant="h5">
-													{device?.statistics?.connectCount ?? 'N/A'}
-												</Typography>
-											</Grid>
-											<Grid item>
-												<Typography
-													variant="caption"
-													className={isIos ? this.props.classes.captionShrinker : ''}
-												>
-													connects
+													{device?.rssi ?? 'N/A'} dBm
 												</Typography>
 											</Grid>
 										</Grid>
@@ -214,5 +198,8 @@ export default withStyles({
 	},
 	name: {
 		width: '100%',
+	},
+	dividerLine: {
+		paddingTop: '5px',
 	},
 })(DeviceCard);

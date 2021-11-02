@@ -142,11 +142,13 @@ class Router extends React.Component<MyProps, MyState> {
 
 		// Client.setClient(client);
 		const currentOrg = await Client.getCurrentTenant();
+		const orgs = await API.getTenants();
 		if (currentOrg) { //if we've already selected one, we don't need to do it again
 			console.info('we already have an org');
-			return this.handleOrganizationSelection(currentOrg);
+			const refetchedOrg = orgs.find((org) => org.id === currentOrg.id);
+			return this.handleOrganizationSelection(refetchedOrg);
 		}
-		const orgs = await API.getTenants();
+
 		console.info('result of getting orgs', orgs);
 		if (orgs.length === 1) { //auto select the first org if there's only one
 			return this.handleOrganizationSelection(orgs[0]);

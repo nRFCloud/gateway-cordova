@@ -57,7 +57,7 @@ export namespace Cognito {
 				[USERPOOL_IDP]: token,
 			},
 		});
-		await new Promise((resolve, reject) => {
+		await new Promise<void>((resolve, reject) => {
 			if (credentials) {
 				credentials.refresh(error => {
 					if (error) {
@@ -70,7 +70,7 @@ export namespace Cognito {
 			}
 		});
 		storeRefreshCredentials(email, authTokens.getRefreshToken());
-		return credentials;
+		return credentials as any;
 	}
 
 	export async function resumeSession(): Promise<void> {
@@ -118,26 +118,6 @@ export namespace Cognito {
 		if (currentCognitoUser) {
 			currentCognitoUser.signOut();
 		}
-	}
-
-	export function startDevzoneSession(devzoneRefreshToken): Promise<void> {
-
-		AWS.config.credentials = getCredentials(devzoneRefreshToken);
-		const STORAGE_KEY = 'devzoneRefreshToken';
-		localStorage.setItem(STORAGE_KEY, JSON.stringify({ devzoneRefreshToken }));
-
-		return new Promise((resolve, reject) => {
-			if (AWS.config.credentials) {
-				(AWS.config.credentials as any).refresh(error => {
-					if (error) {
-						return reject(error);
-					}
-					resolve();
-				});
-			} else {
-				reject('Credentials undefined');
-			}
-		});
 	}
 
 	export function getCredentials(token): typeof CognitoIdentityCredentials {
@@ -208,7 +188,7 @@ export namespace Cognito {
 		return data.username;
 	}
 
-	function authenticate(token, resetCredentials = true): Promise<null> {
+	function authenticate(token, resetCredentials = true): Promise<void> {
 		if (resetCredentials) {
 			cachedCredentials = AWS.config.credentials = new CognitoIdentityCredentials({
 				IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
@@ -218,7 +198,7 @@ export namespace Cognito {
 			});
 		}
 
-		return new Promise<null>((resolve, reject) => {
+		return new Promise<void>((resolve, reject) => {
 			if (AWS.config.credentials) {
 				(AWS.config.credentials as any).refresh(error => {
 					if (error) {

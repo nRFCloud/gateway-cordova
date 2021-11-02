@@ -147,7 +147,7 @@ export default class App extends React.Component<MyProps, MyState> {
 	}
 
 	private setKeyboard() {
-		if (Platform.isIos() && window['Keyboard'] && window['Keyboard'].hideFormAccessoryBar) {
+		if (Platform.isIos() && typeof window?.['Keyboard']?.hideFormAccessoryBar === 'function') {
 			window['Keyboard'].hideFormAccessoryBar(true);
 		}
 	}
@@ -175,12 +175,12 @@ export default class App extends React.Component<MyProps, MyState> {
 	render() {
 		if (!this.state.isDeviceReady) {
 			return (
-				<Loader/>
+				<Loader />
 			);
 		}
 
 		return (
-			<Router/>
+			<Router />
 		);
 	}
 

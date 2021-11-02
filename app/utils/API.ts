@@ -1,7 +1,14 @@
+import fetch from 'cross-fetch';
+import { BLEDevice } from '@nrfcloud/gateway-common';
+import {
+	createGateway as apiCreateGateway,
+	CreateGatewayOptions,
+	GatewayType,
+	getOrganization,
+	getOrganizations,
+} from '@nrfcloud/gateway-registration';
 import { Credentials } from 'aws-sdk';
 import * as AWS from 'aws-sdk';
-
-import { getOrganization, getOrganizations, createGateway as apiCreateGateway, CreateGatewayOptions, GatewayType } from '@nrfcloud/gateway-registration';
 
 import { Logger } from '../logger/Logger';
 import { Platform } from './Platform';
@@ -30,6 +37,12 @@ function convertTenant(inTenant: GQLTenant): SystemTenant {
 export interface GetOrgOptions {
 	credentials: Credentials;
 	graphQLUrl: string;
+}
+
+interface FetchDeviceOptions {
+	deviceId: string;
+	apiKey: string;
+	apiUrl?: string;
 }
 
 namespace API {
@@ -100,6 +113,23 @@ namespace API {
 			options.apiUrl = window['DEVICE_API_ENDPOINT'];
 		}
 		return apiCreateGateway(options);
+	};
+
+	export const fetchDevice = async (options: FetchDeviceOptions): Promise<BLEDevice> => {
+		if (!options.apiUrl) {
+			options.apiUrl = window['DEVICE_API_ENDPOINT'];
+		}
+
+		const result = await fetch(`${options.apiUrl}/devices/${options.deviceId}`, {
+			headers: {
+				'Authorization': `Bearer ${options.apiKey}`,
+			},
+		});
+		if (result.status >= 400) {
+			throw new Error('Bad response from server');
+		}
+
+		return result.json();
 	};
 }
 
