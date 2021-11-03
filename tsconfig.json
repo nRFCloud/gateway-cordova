@@ -1,25 +1,22 @@
 {
-  "compileOnSave": true,
-  "compilerOptions": {
-    "module": "es2015",
-    "target": "es2015",
-    "noImplicitAny": false,
-    "sourceMap": true,
-    "outDir": "dist/",
-    "noUnusedParameters": false,
-    "noUnusedLocals": false,
-    "moduleResolution": "node",
-    "allowJs": true,
-    "declaration": false,
-    "jsx": "react",
-    "strictNullChecks": false,
-    "experimentalDecorators": true,
-    "lib": ["es2017", "dom"]
-  },
-  "include": [
-    "./app/**/*"
-  ],
-  "files": [
-    "app/index.tsx"
-  ]
+	"compileOnSave": true,
+	"compilerOptions": {
+		"module": "es2015",
+		"target": "es2015",
+		"noImplicitAny": false,
+		"sourceMap": true,
+		"outDir": "dist/",
+		"noUnusedParameters": false,
+		"noUnusedLocals": false,
+		"moduleResolution": "node",
+		"allowJs": true,
+		"declaration": false,
+		"jsx": "react",
+		"strictNullChecks": false,
+		"experimentalDecorators": true,
+		"lib": ["es2017", "dom"],
+		"types": ["webdriverio/async", "@wdio/mocha-framework"]
+	},
+	"include": ["./app/**/*", "./test/**/*.ts"],
+	"files": ["app/index.tsx"]
 }
