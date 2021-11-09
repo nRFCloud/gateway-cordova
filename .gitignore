@@ -13,3 +13,4 @@ built
 /config/keystore.json
 .ez-cache
 .DS_Store
+/test/.env

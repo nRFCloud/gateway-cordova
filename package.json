@@ -5,7 +5,8 @@
 	"description": "A gateway to connect Bluetooth devices to nRF Cloud",
 	"main": "app/index.js",
 	"scripts": {
-		"test": "wdio run ./test/wdio.conf.ts",
+		"test": "env-cmd -f ./test/.env wdio run ./test/wdio.conf.ts",
+		"test:watch": "npm run test -- --watch",
 		"build": "webpack --config webpack.config.js",
 		"build:production": "webpack --config webpack.config.js --env.NODE_ENV=production && del junk.js",
 		"lint": "tslint --project ./tsconfig.json",
@@ -152,6 +153,7 @@
 		"appium": "^1.22.0",
 		"appium-doctor": "^1.16.0",
 		"cordova-plugin-nordic-update": "^0.1.0",
+		"env-cmd": "^10.1.0",
 		"ts-node": "^10.4.0",
 		"typescript": "^3.9.10"
 	}

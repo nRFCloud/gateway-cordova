@@ -2,6 +2,8 @@ import BasePage from './BasePage';
 
 class LoginPage extends BasePage {
 	open() {
+		browser.execute('window.localStorage.clear();');
+		browser.refresh();
 	}
 
 	get inputEmail() {
