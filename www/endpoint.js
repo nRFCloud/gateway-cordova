@@ -14,20 +14,20 @@
 			switch (env) {
 				case 'Dev':
 					configObject = Object.assign({}, configObject, {
-						COGNITO_USER_POOL_ID: 'us-east-1_nr0g7D0Zm',
-						COGNITO_IDENTITY_POOL_ID: 'us-east-1:8a18575c-fd51-4cd7-a75a-117a264fa1b7',
-						COGNITO_USER_POOL_CLIENT_ID: '21pbpsdk2pmalfh7j4t3t6g49j',
-						GRAPHQL_URL: 'https://oguodtpv5zhuja2mthb4ur2nku.appsync-api.us-east-1.amazonaws.com/graphql',
+						COGNITO_USER_POOL_ID: 'us-east-1_ywR9wLS8D',
+						COGNITO_IDENTITY_POOL_ID: 'us-east-1:8a142f1c-da22-4fb8-ac91-feefc2a36bf3',
+						COGNITO_USER_POOL_CLIENT_ID: '423c0o1fdrphdb6uhoc8528d9r',
+						GRAPHQL_URL: 'https://hh47fjznxzcu5l5erye2zuhoba.appsync-api.us-east-1.amazonaws.com/graphql',
 						MQTT_ENDPOINT: 'a2wg6q8yw7gv5r-ats.iot.us-east-1.amazonaws.com',
 						DEVICE_API_ENDPOINT: 'https://api.dev.nrfcloud.com/v1'
 					});
 					break;
 				case 'Beta':
 					configObject = Object.assign({}, configObject, {
-						COGNITO_USER_POOL_ID: 'us-east-1_DNB5DSPuV',
-						COGNITO_IDENTITY_POOL_ID: 'us-east-1:7ac015e8-97bc-4038-99a9-e5a8ad94bedd',
-						COGNITO_USER_POOL_CLIENT_ID: '32nf5gkols4vjngt09rdu7lvcu',
-						GRAPHQL_URL: 'https://oueegzvkmra7tpfvqnb45l7lzq.appsync-api.us-east-1.amazonaws.com/graphql',
+						COGNITO_USER_POOL_ID: 'us-east-1_ktLOZSN2F',
+						COGNITO_IDENTITY_POOL_ID: 'us-east-1:985cc751-819f-4cef-bc19-808ff02ac7aa',
+						COGNITO_USER_POOL_CLIENT_ID: '2jcrv7r0d80orpcuof8jb65737',
+						GRAPHQL_URL: 'https://hfqlyvy7ivcotl2ax7edtyx5sa.appsync-api.us-east-1.amazonaws.com/graphql',
 						MQTT_ENDPOINT: 'a1jtaajis3u27i-ats.iot.us-east-1.amazonaws.com',
 						DEVICE_API_ENDPOINT: 'https://api.beta.nrfcloud.com/v1'
 					});
