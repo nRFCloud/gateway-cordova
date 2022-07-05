@@ -79,6 +79,17 @@ function removeSecrets() {
 		.pipe(gulp.dest('./'));
 }
 
+async function execCommand(cmdline) {
+	const { stderr } = await exec(cmdline);
+	if (stderr) {
+		if (stderr.indexOf('Mapping new') > -1) {
+			console.log('Got mapping new ns message, ignoring');
+		} else {
+			throw new Error(stderr);
+		}
+	}
+}
+
 let passwords;
 async function askForPasswords() {
 	passwords = await inquirer.prompt([{
@@ -104,12 +115,9 @@ async function buildAndSignAndroidPackage() {
 	if (!passwords.keystore || !passwords.store) {
 		throw new Error('Invalid passwords');
 	}
-	const cmdline = `cordova build android --release -- --keystore="${keystore.location}" --alias=${keystore.alias} --storePassword="${passwords.store}" --password="${passwords.keystore}"`;
+	const cmdline = `cordova build android --release -- --keystore="${keystore.location}" --alias=${keystore.alias} --storePassword="${passwords.store}" --password="${passwords.keystore}" --packageType=apk`;
 	// console.log(cmdline);
-	const { stderr } = await exec(cmdline);
-	if (stderr) {
-		throw new Error(stderr);
-	}
+	await execCommand(cmdline);
 }
 
 function buildDebugAndroidPackage() {
@@ -121,21 +129,15 @@ function buildIosPackage() {
 }
 
 async function buildPackage(type) {
-	const { stderr } = await exec(`cordova build ${type}`);
-	if (stderr) {
-		throw new Error(stderr);
-	}
+	return execCommand(`cordova build ${type}`);
 }
 
 function runAndroidPackage() {
 	return runPackage('android');
 }
 
-async function runPackage(type) {
-	const { stderr } = await exec(`cordova run ${type}`);
-	if (stderr) {
-		throw new Error(stderr);
-	}
+function runPackage(type) {
+	return execCommand(`cordova run ${type}`);
 }
 
 function copyDebugAndroidBuild() {
@@ -159,18 +161,12 @@ function revertEnvFile() {
 	return gulp.src(envLocation).pipe(vinylPaths(del)).pipe(rename('.env')).pipe(gulp.dest('./'));
 }
 
-async function buildCodeForProduction() {
-	const { stderr } = await exec('npm run build:production');
-	if (stderr) {
-		throw new Error(stderr);
-	}
+function buildCodeForProduction() {
+	return execCommand('npm run build:production');
 }
 
-async function buildCodeForStaging() {
-	const { stderr } = await exec('npm run build');
-	if (stderr) {
-		throw new Error(stderr);
-	}
+function buildCodeForStaging() {
+	return execCommand('npm run build');
 }
 
 const buildAndRunAndroid = gulp.series(
