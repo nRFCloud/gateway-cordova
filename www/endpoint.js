@@ -1,10 +1,10 @@
 (function (global) {
 	var configObject = {
-		COGNITO_USER_POOL_ID: 'us-east-1_fdiBa7JSO',
-		COGNITO_IDENTITY_POOL_ID: 'us-east-1:c00e1327-dfc2-4aa7-a484-8ca366d11a68',
-		COGNITO_USER_POOL_CLIENT_ID: '2p40shpt1ru5gerbip9limhm15',
+		COGNITO_USER_POOL_ID: 'us-east-1_2u7cSZZ4K',
+		COGNITO_IDENTITY_POOL_ID: 'us-east-1:cd81c47e-98de-401d-a70d-1c26b7c8ae96',
+		COGNITO_USER_POOL_CLIENT_ID: 'llvecda3hv7ffn4a7j6mn35v5',
 		AWS_REGION: 'us-east-1',
-		GRAPHQL_URL: 'https://pdhccldfvzh5pjwtjpr5wyjvxu.appsync-api.us-east-1.amazonaws.com/graphql',
+		GRAPHQL_URL: 'https://cs2zjx6npjgz5c5xbk24w3jmfe.appsync-api.us-east-1.amazonaws.com/graphql',
 		MQTT_ENDPOINT: 'a2n7tk1kp18wix-ats.iot.us-east-1.amazonaws.com',
 		DEVICE_API_ENDPOINT: 'https://api.nrfcloud.com/v1'
 	};
