@@ -1,7 +1,7 @@
 {
 	"name": "no.nordicsemi.bleapp",
 	"displayName": "nRF Cloud Gateway",
-	"version": "2.3.0",
+	"version": "2.4.0",
 	"description": "A gateway to connect Bluetooth devices to nRF Cloud",
 	"main": "app/index.js",
 	"scripts": {
