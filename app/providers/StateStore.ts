@@ -19,7 +19,6 @@ export interface AppState {
 	gatewayDevice: any;
 	gateways: any[];
 	appversion: string;
-	codePushPackage: any;
 }
 
 const DEFAULT_STATE: AppState = {
@@ -32,7 +31,6 @@ const DEFAULT_STATE: AppState = {
 	gateways: [],
 	gatewayDevice: null,
 	appversion: null,
-	codePushPackage: null,
 };
 
 function processEvent(event: LogEvent | string): LogEvent {
@@ -51,7 +49,7 @@ function processEvent(event: LogEvent | string): LogEvent {
 
 const logDeviceEvent = (state: AppState, action, event: DeviceLogEvent): Partial<AppState> => {
 	event = processEvent(event) as DeviceLogEvent;
-	const messages =  typeof state.devices[event.device] !== 'undefined' ? state.devices[event.device] : [];
+	const messages = typeof state.devices[event.device] !== 'undefined' ? state.devices[event.device] : [];
 	return {
 		devices: {
 			[event.device]: [
@@ -123,12 +121,6 @@ const setAppVersion = (state: AppState, action, appVersion): Partial<AppState> =
 	};
 };
 
-const setCodePushPackage = (state: AppState, action, codePushPackage): Partial<AppState> => {
-	return {
-		codePushPackage,
-	};
-};
-
 const config = {
 	initialState: DEFAULT_STATE,
 	actionsCreators: {
@@ -141,7 +133,6 @@ const config = {
 		setGateways,
 		setGateway,
 		setAppVersion,
-		setCodePushPackage,
 	},
 };
 

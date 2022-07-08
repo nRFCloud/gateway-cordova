@@ -8,7 +8,6 @@ const rename = require('gulp-rename');
 const del = require('delete');
 const vinylPaths = require('vinyl-paths');
 
-const codePushConfig = require('./config/codepush.json');
 const keystore = require('./config/keystore.json');
 const packageJson = require('./package.json');
 
@@ -20,18 +19,6 @@ function clean(cb) {
 	return del(['./built/*.apk'], cb);
 }
 
-function setPlatformCodePushKey(platform, key) {
-	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="CodePushDeploymentKey"]`, attr: { value: key },
-	}], xmlNamespace));
-}
-
-function setPlatformAppSecret(platform, key) {
-	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: `//n:widget/n:platform[@name="${platform}"]/n:preference[@name="APP_SECRET"]`, attr: { value: key },
-	}], xmlNamespace));
-}
-
 function updateVersionNumber() {
 	return gulp.src(configFileName).pipe(xmlTransformer([{
 		path: '//n:widget', attr: { version: packageJson.version },
@@ -40,43 +27,6 @@ function updateVersionNumber() {
 
 function revertConfig() {
 	return gulp.src(configFileName).pipe(git.checkoutFiles());
-}
-
-function setAndroidStagingCodePushKey() {
-	return setPlatformCodePushKey('android', codePushConfig.android.staging).pipe(gulp.dest('./'));
-}
-
-function setAndroidProductionCodePushKey() {
-	return setPlatformCodePushKey('android', codePushConfig.android.production).pipe(gulp.dest('./'));
-}
-
-function setIosProductionCodePushKey() {
-	return setPlatformCodePushKey('ios', codePushConfig.ios.production).pipe(gulp.dest('./'));
-}
-
-function setIosStagingCodePushKey() {
-	return setPlatformCodePushKey('ios', codePushConfig.ios.staging).pipe(gulp.dest('./'));
-}
-
-function setAndroidAppSecret() {
-	return setPlatformAppSecret('android', codePushConfig.android.appSecret).pipe(gulp.dest('./'));
-}
-
-function setIosAppSecret() {
-	return setPlatformAppSecret('ios', codePushConfig.android.appSecret).pipe(gulp.dest('./'));
-}
-
-function removeSecrets() {
-	return gulp.src(configFileName).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="CodePushDeploymentKey"]', attr: { value: '' },
-	}], xmlNamespace)).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="CodePushDeploymentKey"]', attr: { value: '' },
-	}], xmlNamespace)).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="android"]/n:preference[@name="APP_SECRET"]', attr: { value: '' },
-	}], xmlNamespace)).pipe(xmlTransformer([{
-		path: '//n:widget/n:platform[@name="ios"]/n:preference[@name="APP_SECRET"]', attr: { value: '' },
-	}], xmlNamespace))
-		.pipe(gulp.dest('./'));
 }
 
 async function execCommand(cmdline) {
@@ -170,8 +120,6 @@ function buildCodeForStaging() {
 }
 
 const buildAndRunAndroid = gulp.series(
-	setAndroidAppSecret,
-	setAndroidStagingCodePushKey,
 	runAndroidPackage,
 	removeSecrets,
 );
@@ -179,8 +127,6 @@ const buildAndRunAndroid = gulp.series(
 const buildStagingAndroid = gulp.series(
 	replaceEnvFile,
 	revertConfig,
-	setAndroidAppSecret,
-	setAndroidStagingCodePushKey,
 	buildCodeForStaging,
 	buildDebugAndroidPackage,
 	copyDebugAndroidBuild,
@@ -190,8 +136,6 @@ const buildStagingAndroid = gulp.series(
 
 const buildProductionAndroid = gulp.series(
 	revertConfig,
-	setAndroidAppSecret,
-	setAndroidProductionCodePushKey,
 	buildCodeForProduction,
 	buildAndSignAndroidPackage,
 	copyProductionAndroidBuild,
@@ -209,16 +153,12 @@ exports.buildAndroid = gulp.series(
 exports.buildStagingAndroid = buildStagingAndroid;
 
 exports.buildIos = gulp.series(
-	setIosAppSecret,
-	setIosProductionCodePushKey,
 	buildCodeForProduction,
 	buildIosPackage,
 	revertConfig,
 );
 
 exports.buildStagingIos = gulp.series(
-	setIosAppSecret,
-	setIosStagingCodePushKey,
 	buildCodeForStaging,
 	buildIosPackage,
 	revertConfig,

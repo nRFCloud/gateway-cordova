@@ -10,8 +10,6 @@
 		"build:production": "webpack --config webpack.config.js --env.NODE_ENV=production && del junk.js",
 		"lint": "tslint --project ./tsconfig.json",
 		"lint:fix": "tslint --project ./tsconfig.json --fix",
-		"deploy": "appcenter codepush release-cordova -a thebosz/NrfCloudGateway-Android -m",
-		"deploy:ios": "appcenter codepush release-cordova -a thebosz/NrfCloudGateway-iOS -m",
 		"watch": "npm-run-all -p start watch:code watch:livereload watch:www",
 		"watch:code": "watch \"npm run build\" app/ --wait=5",
 		"watch:www": "watch \"cordova prepare browser\" www/",
@@ -36,7 +34,6 @@
 		"cordova-plugin-network-information": "^2.0.1",
 		"cordova-plugin-splashscreen": "^5.0.2",
 		"cordova-plugin-statusbar": "^2.4.2",
-		"cordova-plugin-zip": "^3.1.0",
 		"@babel/cli": "^7.0.0",
 		"@babel/core": "^7.0.0",
 		"@babel/plugin-external-helpers": "^7.0.0",
@@ -113,7 +110,6 @@
 	"cordova": {
 		"plugins": {
 			"cordova-plugin-file": {},
-			"cordova-plugin-zip": {},
 			"cordova-plugin-statusbar": {},
 			"cordova-plugin-keyboard": {},
 			"cordova-plugin-splashscreen": {},
@@ -128,7 +124,6 @@
 			"cordova-plugin-androidx-adapter": {},
 			"cordova-plugin-bluetoothle": {},
 			"cordova-plugin-nordic-update": {},
-			"cordova-plugin-code-push": {},
 			"cordova-plugin-appcenter-crashes": {},
 			"cordova-plugin-appcenter-analytics": {}
 		},

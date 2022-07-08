@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Logger } from '../../logger/Logger';
 import Client from '../../utils/Client';
 import { Platform } from '../../utils/Platform';
-import CodePush from '../../utils/CodePush';
 import Loader from '../Loader/Loader';
 import Router from '../Router/Router';
 import Network from '../../utils/Network';
@@ -42,15 +41,12 @@ export default class App extends React.Component<MyProps, MyState> {
 	// }
 
 	private checkPlugins() {
-		this.checkCodePush();
 		this.checkBluetoothle();
 		this.checkBackgroundMode();
 		this.checkGlobals();
 		Network.checkNetworkInformation();
 		// noinspection JSIgnoredPromiseFromCall
 		this.getAppVersion();
-		// noinspection JSIgnoredPromiseFromCall
-		this.getCodePushPackage();
 	}
 
 	private checkGlobals() {
@@ -92,20 +88,6 @@ export default class App extends React.Component<MyProps, MyState> {
 		}
 	}
 
-	private checkCodePush() {
-		if (!Platform.isAndroid() && !Platform.isIos()) {
-			return;
-		}
-
-		if (!window['codePush']) {
-			Logger.info('codePush not found');
-			// window.location.reload();
-			return;
-		}
-
-		CodePush.sync();
-	}
-
 	private setBackgroundMode() {
 		Platform.enableBackgroundModeIfSelected();
 	}
@@ -113,15 +95,6 @@ export default class App extends React.Component<MyProps, MyState> {
 	private async getAppVersion() {
 		// noinspection TypeScriptValidateJSTypes
 		actions.setAppVersion(await AppVersion.getAppVersion());
-	}
-
-	private async getCodePushPackage() {
-		try {
-			// noinspection TypeScriptValidateJSTypes
-			actions.setCodePushPackage(await CodePush.getCurrentPackage());
-		} catch (err) {
-			//squelch, it's probably browser or something
-		}
 	}
 
 	private async handleDeviceResume() {
@@ -175,12 +148,12 @@ export default class App extends React.Component<MyProps, MyState> {
 	render() {
 		if (!this.state.isDeviceReady) {
 			return (
-				<Loader/>
+				<Loader />
 			);
 		}
 
 		return (
-			<Router/>
+			<Router />
 		);
 	}
 
