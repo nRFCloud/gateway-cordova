@@ -12,7 +12,10 @@ namespace Environment {
 
 	export function getCurrentEnvironment(): EnvironmentType {
 		if (!currentEnv) {
-			currentEnv = EnvironmentType[localStorage.getItem(ENV_KEY)];
+			const storedEnv = localStorage.getItem(ENV_KEY);
+			if (typeof EnvironmentType[storedEnv] !== 'undefined') {
+				currentEnv = EnvironmentType[storedEnv];
+			}
 		}
 
 		if (!currentEnv) {
