@@ -121,7 +121,6 @@ function buildCodeForStaging() {
 
 const buildAndRunAndroid = gulp.series(
 	runAndroidPackage,
-	removeSecrets,
 );
 
 const buildStagingAndroid = gulp.series(
