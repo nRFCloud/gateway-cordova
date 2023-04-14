@@ -27,7 +27,7 @@
 						COGNITO_USER_POOL_ID: 'us-east-1_ktLOZSN2F',
 						COGNITO_IDENTITY_POOL_ID: 'us-east-1:985cc751-819f-4cef-bc19-808ff02ac7aa',
 						COGNITO_USER_POOL_CLIENT_ID: '2jcrv7r0d80orpcuof8jb65737',
-						GRAPHQL_URL: 'https://hfqlyvy7ivcotl2ax7edtyx5sa.appsync-api.us-east-1.amazonaws.com/graphql',
+						GRAPHQL_URL: 'https://graphql.us-east-1.beta.nrfcloud.com/graphql',
 						MQTT_ENDPOINT: 'a1jtaajis3u27i-ats.iot.us-east-1.amazonaws.com',
 						DEVICE_API_ENDPOINT: 'https://api.beta.nrfcloud.com/v1'
 					});
