@@ -65,30 +65,72 @@ export default class BluetoothPlugin {
 		});
 	}
 
-	static hasPermission(): Promise<boolean> {
+	static async hasPermission(): Promise<boolean> {
 		if (!Platform.isAndroid()) {
-			return Promise.resolve(true);
+			return true;
 		}
 
 		const bluetoothle = getBluetoothPluginObj();
-		return new Promise<boolean>((resolve) => {
-			bluetoothle.hasPermission((result) => {
-				resolve(result.hasPermission);
-			});
-		});
+		const permChecks = await Promise.all([
+			new Promise<boolean>((resolve) => {
+				bluetoothle.hasPermission((result) => {
+					resolve(result.hasPermission);
+				});
+			}),
+			new Promise<boolean>((resolve) => {
+				bluetoothle.hasPermissionBtScan((result) => {
+					resolve(result.hasPermission);
+				});
+			}),
+			new Promise<boolean>((resolve) => {
+				bluetoothle.hasPermissionBtConnect((result) => {
+					resolve(result.hasPermission);
+				});
+			}),
+		]);
+		for (const check of permChecks) {
+			if (!check) {
+				return false;
+			}
+		}
+		return true;
+
 	}
 
-	static requestPermission(): Promise<boolean> {
+	static async requestPermission(): Promise<boolean> {
 		if (!Platform.isAndroid()) {
-			return Promise.resolve(true);
+			return true;
 		}
 
 		const bluetoothle = getBluetoothPluginObj();
-		return new Promise<boolean>((resolve, reject) => {
+
+		let result = await new Promise<boolean>((resolve, reject) => {
 			(bluetoothle as any).requestPermission((result) => {
 				resolve(result.requestPermission);
 			}, reject);
 		});
+
+		if (!result) {
+			return false;
+		}
+
+		result = await new Promise<boolean>((resolve, reject) => {
+			(bluetoothle as any).requestPermissionBtScan((result) => {
+				resolve(result.requestPermission);
+			}, reject);
+		});
+
+		if (!result) {
+			return false;
+		}
+
+		result = await new Promise<boolean>((resolve, reject) => {
+			(bluetoothle as any).requestPermissionBtConnect((result) => {
+				resolve(result.requestPermission);
+			}, reject);
+		});
+
+		return result;
 	}
 
 	static close(params: { address: string }): Promise<any> {
