@@ -1,127 +1,121 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:android="schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" android-packageName="no.nordicsemi.android.nrfcloudgateway" id="no.nordicsemi.bleapp" ios-CFBundleIdentifier="com.nordicsemi.nRFCloud-Gateway" version="2.4.1">
-	<name>nRF Cloud Gateway</name>
-	<description>
+<?xml version='1.0' encoding='utf-8'?>
+<widget android-packageName="no.nordicsemi.android.nrfcloudgateway" id="no.nordicsemi.bleapp" ios-CFBundleIdentifier="com.nordicsemi.nRFCloud-Gateway" version="2.4.1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>nRF Cloud Gateway</name>
+    <description>
         A gateway to connect Bluetooth devices to the internet
 	</description>
-	<author email="admin@nrfcloud.com">
+    <author email="admin@nrfcloud.com">
         Nordic Semiconductor
 	</author>
-	<content src="index.html"/>
-	<access origin="*"/>
-	<allow-intent href="http://*/*"/>
-	<allow-intent href="https://*/*"/>
-	<allow-intent href="tel:*"/>
-	<allow-intent href="sms:*"/>
-	<allow-intent href="mailto:*"/>
-	<allow-intent href="geo:*"/>
-	<preference name="AutoHideSplashScreen" value="false"/>
-	<preference name="SplashScreenSpinnerColor" value="#0081B7"/>
-	<preference name="ShowSplashScreenSpinner" value="false"/>
-	<platform name="android">
-		<allow-intent href="market:*"/>
-		<preference name="StatusBarBackgroundColor" value="#0081B7"/>
-		<preference name="SplashMaintainAspectRatio" value="true"/>
-		<preference name="SplashShowOnlyFirstTime" value="true"/>
-		<preference name="APP_SECRET" value="a5174b3f-752b-4c4c-951e-1a72aa032fa1"/>
-		<icon background="@color/ic_launcher_background" density="ldpi" foreground="res/icon/android/adaptiveicon/mipmap-ldpi/ic_launcher_foreground.png" src="res/icon/android/ldpi.png"/>
-		<icon background="@color/ic_launcher_background" density="mdpi" foreground="res/icon/android/adaptiveicon/mipmap-mdpi/ic_launcher_foreground.png" src="res/icon/android/mdpi.png"/>
-		<icon background="@color/ic_launcher_background" density="hdpi" foreground="res/icon/android/adaptiveicon/mipmap-hdpi/ic_launcher_foreground.png" src="res/icon/android/hdpi.png"/>
-		<icon background="@color/ic_launcher_background" density="xhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xhdpi/ic_launcher_foreground.png" src="res/icon/android/xhdpi.png"/>
-		<icon background="@color/ic_launcher_background" density="xxhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xxhdpi/ic_launcher_foreground.png" src="res/icon/android/xxhdpi.png"/>
-		<icon background="@color/ic_launcher_background" density="xxxhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher_foreground.png" src="res/icon/android/xxxhdpi.png"/>
-		<splash density="ldpi" src="res/screen/android/splash-port-ldpi.png"/>
-		<splash density="mdpi" src="res/screen/android/splash-port-mdpi.png"/>
-		<splash density="hdpi" src="res/screen/android/splash-port-hdpi.png"/>
-		<splash density="xhdpi" src="res/screen/android/splash-port-xhdpi.png"/>
-		<splash density="xxhdpi" src="res/screen/android/splash-port-xxhdpi.png"/>
-		<splash density="xxxhdpi" src="res/screen/android/splash-port-xxxhdpi.png"/>
-		<resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-ldpi/nrfcloud.png"/>
-		<resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-mdpi/nrfcloud.png"/>
-		<resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-hdpi/nrfcloud.png"/>
-		<resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xhdpi/nrfcloud.png"/>
-		<resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xxhdpi/nrfcloud.png"/>
-		<resource-file src="res/icon/android/adaptiveicon/values/ic_launcher_background.xml" target="app/src/main/res/values/ic_launcher_background.xml"/>
-		<preference name="AndroidXEnabled" value="true"/>
-	</platform>
-	<platform name="ios">
-		<allow-intent href="itms:*"/>
-		<allow-intent href="itms-apps:*"/>
-		<edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
-			<string>Use the camera to scan QR code</string>
-		</edit-config>
-		<edit-config file="*-Info.plist" mode="merge" target="CFBundleDisplayName">
-			<string>Gateway</string>
-		</edit-config>
-		<edit-config file="*-Info.plist" mode="add" target="ITSAppUsesNonExemptEncryption">
-			<false/>
-		</edit-config>
-		<preference name="DisallowOverscroll" value="true"/>
-		<preference name="UIWebViewBounce" value="false"/>
-		<edit-config file="*-Info.plist" mode="merge" target="NSBluetoothPeripheralUsageDescription">
-			<string>Bluetooth access is required to talk to Bluetooth devices.</string>
-		</edit-config>
-		<edit-config file="*-Info.plist" mode="merge" target="NSBluetoothAlwaysUsageDescription">
-			<string>Bluetooth access is required to talk to Bluetooth devices.</string>
-		</edit-config>
-		<preference name="APP_SECRET" value=""/>
-		<icon height="1024" src="res/icon/ios/icon-1024.png" width="1024"/>
-		<icon height="29" src="res/icon/ios/icon-small.png" width="29"/>
-		<icon height="58" src="res/icon/ios/icon-small@2x.png" width="58"/>
-		<icon height="87" src="res/icon/ios/icon-small@3x.png" width="87"/>
-		<icon height="40" src="res/icon/ios/icon-small-40.png" width="40"/>
-		<icon height="80" src="res/icon/ios/icon-small-40@2x.png" width="80"/>
-		<icon height="120" src="res/icon/ios/icon-small-40@3x.png" width="120"/>
-		<icon height="50" src="res/icon/ios/icon-small-50.png" width="50"/>
-		<icon height="100" src="res/icon/ios/icon-small-50@2x.png" width="100"/>
-		<icon height="57" src="res/icon/ios/icon.png" width="57"/>
-		<icon height="114" src="res/icon/ios/icon@2x.png" width="114"/>
-		<icon height="60" src="res/icon/ios/icon-60.png" width="60"/>
-		<icon height="120" src="res/icon/ios/icon-60@2x.png" width="120"/>
-		<icon height="180" src="res/icon/ios/icon-60@3x.png" width="180"/>
-		<icon height="72" src="res/icon/ios/icon-72.png" width="72"/>
-		<icon height="144" src="res/icon/ios/icon-72@2x.png" width="144"/>
-		<icon height="76" src="res/icon/ios/icon-76.png" width="76"/>
-		<icon height="152" src="res/icon/ios/icon-76@2x.png" width="152"/>
-		<icon height="167" src="res/icon/ios/icon-167.png" width="167"/>
-		<icon height="167" src="res/icon/ios/icon-83.5@2x.png" width="167"/>
-		<splash src="res/screen/ios/Default@2x~iphone~anyany.png"/>
-		<splash src="res/screen/ios/Default@2x~iphone~comany.png"/>
-		<splash src="res/screen/ios/Default@3x~iphone~anyany.png"/>
-		<splash src="res/screen/ios/Default@3x~iphone~comany.png"/>
-		<splash src="res/screen/ios/Default@2x~ipad~anyany.png"/>
-		<splash src="res/screen/ios/Default@2x~ipad~comany.png"/>
-		<splash height="480" src="res/screen/ios/Default~iphone.png" width="320"/>
-		<splash height="960" src="res/screen/ios/Default@2x~iphone.png" width="640"/>
-		<splash height="1024" src="res/screen/ios/Default-Portrait~ipad.png" width="768"/>
-		<splash height="2048" src="res/screen/ios/Default-Portrait@2x~ipad.png" width="1536"/>
-		<splash height="1136" src="res/screen/ios/Default-568h@2x~iphone.png" width="640"/>
-		<splash height="1334" src="res/screen/ios/Default-667h.png" width="750"/>
-		<splash height="2208" src="res/screen/ios/Default-736h.png" width="1242"/>
-	</platform>
-	<platform name="windows">
-		<preference name="windows-target-version" value="10.0"/>
-		<preference name="windows-phone-target-version" value="10.0"/>
-		<preference name="WindowsDefaultUriPrefix" value="ms-appx://"/>
-		<icon src="res/icon/windows/storelogo.png" target="StoreLogo"/>
-		<icon src="res/icon/windows/smalllogo.png" target="Square30x30Logo"/>
-		<icon src="res/icon/windows/Square44x44Logo.png" target="Square44x44Logo"/>
-		<icon src="res/icon/windows/Square70x70Logo.png" target="Square70x70Logo"/>
-		<icon src="res/icon/windows/Square71x71Logo.png" target="Square71x71Logo"/>
-		<icon src="res/icon/windows/Square150x150Logo.png" target="Square150x150Logo"/>
-		<icon src="res/icon/windows/Square310x310Logo.png" target="Square310x310Logo"/>
-		<splash src="res/screen/windows/splashscreen.png" target="SplashScreen"/>
-		<splash src="res/screen/windows/splashscreenphone.png" target="SplashScreenPhone"/>
-	</platform>
-	<plugin name="cordova-plugin-file" spec="^6.0.1"/>
-	<plugin name="cordova-plugin-statusbar" spec="^2.4.2"/>
-	<plugin name="cordova-plugin-keyboard" spec="^1.2.0"/>
-	<plugin name="cordova-plugin-splashscreen" spec="^5.0.2"/>
-	<plugin name="cordova-plugin-insomnia" spec="https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git"/>
-	<plugin name="cordova-plugin-network-information" spec="^2.0.1"/>
-	<plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git"/>
-	<plugin name="cordova-plugin-file-opener2" spec="^2.2.0">
-		<variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+"/>
-	</plugin>
-	<plugin name="cordova-plugin-local-notification" spec="^0.9.0-beta.2"/>
+    <content src="index.html" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <preference name="AutoHideSplashScreen" value="true" />
+    <preference name="SplashScreenSpinnerColor" value="#0081B7" />
+    <preference name="ShowSplashScreenSpinner" value="false" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <preference name="StatusBarBackgroundColor" value="#0081B7" />
+        <preference name="SplashMaintainAspectRatio" value="true" />
+        <preference name="SplashShowOnlyFirstTime" value="true" />
+        <preference name="APP_SECRET" value="a5174b3f-752b-4c4c-951e-1a72aa032fa1" />
+        <icon background="@color/ic_launcher_background" density="ldpi" foreground="res/icon/android/adaptiveicon/mipmap-ldpi/ic_launcher_foreground.png" src="res/icon/android/ldpi.png" />
+        <icon background="@color/ic_launcher_background" density="mdpi" foreground="res/icon/android/adaptiveicon/mipmap-mdpi/ic_launcher_foreground.png" src="res/icon/android/mdpi.png" />
+        <icon background="@color/ic_launcher_background" density="hdpi" foreground="res/icon/android/adaptiveicon/mipmap-hdpi/ic_launcher_foreground.png" src="res/icon/android/hdpi.png" />
+        <icon background="@color/ic_launcher_background" density="xhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xhdpi/ic_launcher_foreground.png" src="res/icon/android/xhdpi.png" />
+        <icon background="@color/ic_launcher_background" density="xxhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xxhdpi/ic_launcher_foreground.png" src="res/icon/android/xxhdpi.png" />
+        <icon background="@color/ic_launcher_background" density="xxxhdpi" foreground="res/icon/android/adaptiveicon/mipmap-xxxhdpi/ic_launcher_foreground.png" src="res/icon/android/xxxhdpi.png" />
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/icon/android/adaptiveicon/values/ic_launcher_background.xml" />
+		<preference name="AndroidWindowSplashScreenBackground" value="#0077c8" />
+        <resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-ldpi/nrfcloud.png" />
+        <resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-mdpi/nrfcloud.png" />
+        <resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-hdpi/nrfcloud.png" />
+        <resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xhdpi/nrfcloud.png" />
+        <resource-file src="nrfcloud.png" target="app/src/main/res/mipmap-xxhdpi/nrfcloud.png" />
+        <resource-file src="res/icon/android/adaptiveicon/values/ic_launcher_background.xml" target="app/src/main/res/values/ic_launcher_background.xml" />
+        <preference name="AndroidXEnabled" value="true" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+        <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+            <string>Use the camera to scan QR code</string>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="CFBundleDisplayName">
+            <string>Gateway</string>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="add" target="ITSAppUsesNonExemptEncryption">
+            <false />
+        </edit-config>
+        <preference name="DisallowOverscroll" value="true" />
+        <preference name="UIWebViewBounce" value="false" />
+        <edit-config file="*-Info.plist" mode="merge" target="NSBluetoothPeripheralUsageDescription">
+            <string>Bluetooth access is required to talk to Bluetooth devices.</string>
+        </edit-config>
+        <edit-config file="*-Info.plist" mode="merge" target="NSBluetoothAlwaysUsageDescription">
+            <string>Bluetooth access is required to talk to Bluetooth devices.</string>
+        </edit-config>
+        <preference name="APP_SECRET" value="" />
+        <icon height="1024" src="res/icon/ios/icon-1024.png" width="1024" />
+        <icon height="29" src="res/icon/ios/icon-small.png" width="29" />
+        <icon height="58" src="res/icon/ios/icon-small@2x.png" width="58" />
+        <icon height="87" src="res/icon/ios/icon-small@3x.png" width="87" />
+        <icon height="40" src="res/icon/ios/icon-small-40.png" width="40" />
+        <icon height="80" src="res/icon/ios/icon-small-40@2x.png" width="80" />
+        <icon height="120" src="res/icon/ios/icon-small-40@3x.png" width="120" />
+        <icon height="50" src="res/icon/ios/icon-small-50.png" width="50" />
+        <icon height="100" src="res/icon/ios/icon-small-50@2x.png" width="100" />
+        <icon height="57" src="res/icon/ios/icon.png" width="57" />
+        <icon height="114" src="res/icon/ios/icon@2x.png" width="114" />
+        <icon height="60" src="res/icon/ios/icon-60.png" width="60" />
+        <icon height="120" src="res/icon/ios/icon-60@2x.png" width="120" />
+        <icon height="180" src="res/icon/ios/icon-60@3x.png" width="180" />
+        <icon height="72" src="res/icon/ios/icon-72.png" width="72" />
+        <icon height="144" src="res/icon/ios/icon-72@2x.png" width="144" />
+        <icon height="76" src="res/icon/ios/icon-76.png" width="76" />
+        <icon height="152" src="res/icon/ios/icon-76@2x.png" width="152" />
+        <icon height="167" src="res/icon/ios/icon-167.png" width="167" />
+        <icon height="167" src="res/icon/ios/icon-83.5@2x.png" width="167" />
+        <splash src="res/screen/ios/Default@2x~iphone~anyany.png" />
+        <splash src="res/screen/ios/Default@2x~iphone~comany.png" />
+        <splash src="res/screen/ios/Default@3x~iphone~anyany.png" />
+        <splash src="res/screen/ios/Default@3x~iphone~comany.png" />
+        <splash src="res/screen/ios/Default@2x~ipad~anyany.png" />
+        <splash src="res/screen/ios/Default@2x~ipad~comany.png" />
+        <splash height="480" src="res/screen/ios/Default~iphone.png" width="320" />
+        <splash height="960" src="res/screen/ios/Default@2x~iphone.png" width="640" />
+        <splash height="1024" src="res/screen/ios/Default-Portrait~ipad.png" width="768" />
+        <splash height="2048" src="res/screen/ios/Default-Portrait@2x~ipad.png" width="1536" />
+        <splash height="1136" src="res/screen/ios/Default-568h@2x~iphone.png" width="640" />
+        <splash height="1334" src="res/screen/ios/Default-667h.png" width="750" />
+        <splash height="2208" src="res/screen/ios/Default-736h.png" width="1242" />
+    </platform>
+    <platform name="windows">
+        <preference name="windows-target-version" value="10.0" />
+        <preference name="windows-phone-target-version" value="10.0" />
+        <preference name="WindowsDefaultUriPrefix" value="ms-appx://" />
+        <icon src="res/icon/windows/storelogo.png" target="StoreLogo" />
+        <icon src="res/icon/windows/smalllogo.png" target="Square30x30Logo" />
+        <icon src="res/icon/windows/Square44x44Logo.png" target="Square44x44Logo" />
+        <icon src="res/icon/windows/Square70x70Logo.png" target="Square70x70Logo" />
+        <icon src="res/icon/windows/Square71x71Logo.png" target="Square71x71Logo" />
+        <icon src="res/icon/windows/Square150x150Logo.png" target="Square150x150Logo" />
+        <icon src="res/icon/windows/Square310x310Logo.png" target="Square310x310Logo" />
+        <splash src="res/screen/windows/splashscreen.png" target="SplashScreen" />
+        <splash src="res/screen/windows/splashscreenphone.png" target="SplashScreenPhone" />
+    </platform>
+    <plugin name="cordova-plugin-file" spec="^6.0.1" />
+    <plugin name="cordova-plugin-statusbar" spec="^2.4.2" />
+    <plugin name="cordova-plugin-keyboard" spec="^1.2.0" />
+    <plugin name="cordova-plugin-insomnia" spec="https://github.com/EddyVerbruggen/Insomnia-PhoneGap-Plugin.git" />
+    <plugin name="cordova-plugin-network-information" spec="^2.0.1" />
+    <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
+    <plugin name="cordova-plugin-file-opener2" spec="^2.2.0">
+        <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
+    </plugin>
 </widget>
