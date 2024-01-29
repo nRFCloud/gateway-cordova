@@ -4,7 +4,7 @@ Pre-reqs:
 
 1. Have NodeJS and npm installed
 1. Cordova installed. This should be as simple as `npm i -g cordova`
-1. This repo, obviously.
+1. This repo.
 1. Copy the `.env.sample` file to `.env` and fill out details if you'd like to auto-fill your username and password
 1. Copy the sample file in `./config` to `keystore.json`. Fill out the information if you have it.
 1. Checkout the [gateway-common](https://github.com/nRFCloud/gateway-common) repo into the parent directory (so it can satisfy the dependency in package.json.)
@@ -12,7 +12,7 @@ Pre-reqs:
 
 Steps to build:
 
-1. `npm i` (only needed once, of couse)
+1. `npm i` (only needed on first build)
 1. `npm run build`
 
 To test locally (in a browser):
