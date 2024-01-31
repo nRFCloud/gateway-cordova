@@ -6,7 +6,7 @@ import { Logger } from '../logger/Logger';
 
 import BluetoothPlugin from '../BluetoothPlugin';
 import { actions } from '../providers/StateStore';
-import API, { SystemTenant } from './API';
+import API, { Team } from './API';
 import { CordovaAdapter } from '../CordovaAdapter';
 import { CordovaFotaAdapter } from '../CordovaFotaAdapter';
 import Environment, { EnvironmentType } from './Environment';
@@ -17,7 +17,7 @@ const GATEWAY_TAG = 'GATEWAY_TAG';
 
 namespace Client {
 	let gateway: Gateway;
-	let currentOrganization: SystemTenant;
+	let currentOrganization: Team;
 
 	export async function handleGatewayConnect() {
 		const tenantId = await getTenantId();
@@ -170,15 +170,15 @@ namespace Client {
 		return [];
 	}
 
-	export async function getCurrentTenant(): Promise<SystemTenant> {
+	export async function getCurrentTenant(): Promise<Team> {
 		const savedOrg = JSON.parse(localStorage.getItem(CURRENT_ORG_TAG));
 		if (savedOrg) {
-			return savedOrg as SystemTenant;
+			return savedOrg as Team;
 		}
 		return currentOrganization;
 	}
 
-	export function setCurrentOrganization(newOrg: SystemTenant) {
+	export function setCurrentOrganization(newOrg: Team) {
 		localStorage.setItem(CURRENT_ORG_TAG, JSON.stringify(newOrg));
 		currentOrganization = newOrg;
 	}

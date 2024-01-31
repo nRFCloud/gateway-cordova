@@ -2,12 +2,12 @@ import * as React from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Dialog, DialogContent, DialogTitle, List, ListItem, withTheme, ListItemText } from '@material-ui/core/es';
 
-import { SystemTenant } from '../../utils/API';
+import { Team } from '../../utils/API';
 import { Logger } from '../../logger/Logger';
 
 interface MyProps {
-	organizations: SystemTenant[];
-	handleOrganizationSelection: (org: SystemTenant) => void;
+	organizations: Team[];
+	handleOrganizationSelection: (org: Team) => void;
 	theme: any;
 }
 
@@ -22,7 +22,7 @@ const OrganizationSelector: React.FC<MyProps> = ({ organizations, theme, handleO
 		},
 	})();
 
-	const handleClick = (org: SystemTenant) => {
+	const handleClick = (org: Team) => {
 		handleOrganizationSelection(org);
 	};
 

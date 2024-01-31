@@ -5,6 +5,8 @@ import { getOrganization, getOrganizations, createGateway as apiCreateGateway, C
 
 import { Logger } from '../logger/Logger';
 import { Platform } from './Platform';
+import ApiWrapper, { HttpMethod } from './ApiWrapper';
+import { Cognito } from './Cognito';
 
 interface GQLTenant {
 	id?: string;
@@ -13,13 +15,13 @@ interface GQLTenant {
 	apiKey: string;
 }
 
-export interface SystemTenant {
+export interface Team {
 	id: string;
 	name: string;
 	apiKey: string;
 }
 
-function convertTenant(inTenant: GQLTenant): SystemTenant {
+function convertTenant(inTenant: GQLTenant): Team {
 	return {
 		id: inTenant.id ?? inTenant.tenantId,
 		name: inTenant.name,
@@ -32,9 +34,19 @@ export interface GetOrgOptions {
 	graphQLUrl: string;
 }
 
+//Change all of these.
 namespace API {
+	export const login = async (username: string, password: string): Promise<any> => {
+		try {
+			const { data } = await ApiWrapper.request(process.env.LOGIN_API_ENDPOINT, HttpMethod.post, JSON.stringify({ username, password }), null);
+			Cognito.storeRefreshCredentials(username, data.refreshToken, data.AccessToken);
+			ApiWrapper.setApiKey(data.idToken);
+		} catch (err) {
+			throw err;
+		}
+	}
 
-	export const getTenants = async (options?: GetOrgOptions): Promise<SystemTenant[]> => {
+	export const getTenants = async (options?: GetOrgOptions): Promise<Team[]> => {
 		options = options ? options : {
 			credentials: AWS.config.credentials as Credentials,
 			graphQLUrl: window['GRAPHQL_URL'],
@@ -48,7 +60,7 @@ namespace API {
 			Logger.error(err);
 		}
 		try {
-			const oldTenant = await getOldTenant(options);
+			const oldTenant = await getOldTeam(options);
 			if (oldTenant) {
 				return [oldTenant];
 			}
@@ -58,11 +70,11 @@ namespace API {
 		return [];
 	};
 
-	async function getOldTenant(options: { credentials: any; graphQLUrl: any; }): Promise<SystemTenant> {
+	async function getOldTeam(options: { credentials: any; graphQLUrl: any; }): Promise<Team> {
 		try {
-			const tenant = await getOrganization(options.credentials, options.graphQLUrl);
-			console.info('tenant from graphql', tenant);
-			return convertTenant(tenant);
+			const team = await getOrganization(options.credentials, options.graphQLUrl);
+			console.info('tenant from graphql', team);
+			return convertTenant(team);
 
 		} catch (err) {
 			Logger.error(err);
@@ -70,7 +82,7 @@ namespace API {
 		return null;
 	}
 
-	async function getAllOrganizations(options: GetOrgOptions): Promise<SystemTenant[]> {
+	async function getAllOrganizations(options: GetOrgOptions): Promise<Team[]> {
 		try {
 			const tenants = await getOrganizations(options.credentials, options.graphQLUrl);
 			return tenants.map(convertTenant);

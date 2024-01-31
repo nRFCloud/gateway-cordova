@@ -154,12 +154,11 @@ class LoginPage extends React.Component<MyProps, MyState> {
 						SelectDisplayProps={{
 							id: 'environment-selector'
 						}}
-
 					>
 						<MenuItem value={EnvironmentType.Prod}>Production</MenuItem>
 						<MenuItem value={EnvironmentType.Beta}>Beta</MenuItem>
 						<MenuItem value={EnvironmentType.Dev}>Dev</MenuItem>
-						{/* <MenuItem value={EnvironmentType.Feature}>Feature</MenuItem> */}
+						<MenuItem value={EnvironmentType.Feature}>Feature</MenuItem>
 					</Select>
 				</FormControl>
 			);
@@ -179,7 +178,7 @@ class LoginPage extends React.Component<MyProps, MyState> {
 						color="secondary"
 						noWrap
 					>
-						nRF Cloud Gateway
+						nRF Cloud Gateway, we changed the title
 					</Typography>
 				</div>
 				<div className={this.props.classes.upperBg} />

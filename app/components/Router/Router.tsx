@@ -19,7 +19,7 @@ import Splashscreen from '../../utils/Splashscreen';
 import { connect, actions } from '../../providers/StateStore';
 import LogScreen from '../Logging/LogScreen';
 import { Platform } from '../../utils/Platform';
-import API, { SystemTenant } from '../../utils/API';
+import API, { Team } from '../../utils/API';
 import OrganizationSelector from '../OrganizationSelector/OrganizationSelector';
 
 
@@ -39,7 +39,7 @@ interface MyState {
 	highlightCoffeeMode: boolean;
 	isSigningOut: boolean;
 	showLog: string;
-	organizations: SystemTenant[];
+	organizations: Team[];
 }
 
 interface MyProps {
@@ -85,7 +85,7 @@ class Router extends React.Component<MyProps, MyState> {
 	}
 
 	@boundMethod
-	private async handleOrganizationSelection(org: SystemTenant) {
+	private async handleOrganizationSelection(org: Team) {
 		Client.setCurrentOrganization(org);
 		clearTimeout(this.timeoutHolder);
 		this.timeoutHolder = null;

@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk/global';
+import ApiWrapper from './ApiWrapper';
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const { CognitoIdentityCredentials } = AWS;
 const { CognitoUser } = AmazonCognitoIdentity;
@@ -76,11 +77,7 @@ export namespace Cognito {
 	export async function resumeSession(): Promise<void> {
 		const credentials = retrieveRefreshCredentials();
 
-		if (
-			credentials &&
-			credentials.username &&
-			credentials.refreshToken
-		) {
+		if (credentials && credentials.username && credentials.refreshToken) {
 			const userData = {
 				Username: credentials.username,
 				Pool: userPool,
@@ -96,13 +93,11 @@ export namespace Cognito {
 				});
 			});
 			const token = result.getIdToken().getJwtToken();
-			await authenticate(token);
-			storeRefreshCredentials(credentials.username, result.getRefreshToken());
+			ApiWrapper.setApiKey(token);
+			storeRefreshCredentials(credentials.username, result.getRefreshToken(), result.getAccessToken());
 			return;
 		} else {
-
 			const session = await getUserSession();
-
 			if (session) {
 				const token = session.getIdToken().getJwtToken();
 				return await authenticate(token);
@@ -233,9 +228,10 @@ export namespace Cognito {
 		});
 	}
 
-	function storeRefreshCredentials(username: string, refreshToken): void {
+	export function storeRefreshCredentials(username: string, refreshToken, AccessToken): void {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify({
 			username,
+			AccessToken,
 			refreshToken: refreshToken.getToken(),
 		}));
 	}
