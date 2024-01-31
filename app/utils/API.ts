@@ -46,50 +46,13 @@ namespace API {
 		}
 	}
 
-	export const getTenants = async (options?: GetOrgOptions): Promise<Team[]> => {
-		options = options ? options : {
-			credentials: AWS.config.credentials as Credentials,
-			graphQLUrl: window['GRAPHQL_URL'],
+	export const getTeams = async () => {
+		try {
+			const { data } = await ApiWrapper.request('user-accounts/initialize');
+			return data;
+		} catch (err) {
+			Logger.error(err);
 		};
-		try {
-			const orgs = await getAllOrganizations(options);
-			if (orgs) {
-				return orgs;
-			}
-		} catch (err) {
-			Logger.error(err);
-		}
-		try {
-			const oldTenant = await getOldTeam(options);
-			if (oldTenant) {
-				return [oldTenant];
-			}
-		} catch (err) {
-			Logger.error(err);
-		}
-		return [];
-	};
-
-	async function getOldTeam(options: { credentials: any; graphQLUrl: any; }): Promise<Team> {
-		try {
-			const team = await getOrganization(options.credentials, options.graphQLUrl);
-			console.info('tenant from graphql', team);
-			return convertTenant(team);
-
-		} catch (err) {
-			Logger.error(err);
-		}
-		return null;
-	}
-
-	async function getAllOrganizations(options: GetOrgOptions): Promise<Team[]> {
-		try {
-			const tenants = await getOrganizations(options.credentials, options.graphQLUrl);
-			return tenants.map(convertTenant);
-		} catch (err) {
-			//squelch
-		}
-		return null;
 	}
 
 	export const createGateway = async (options: CreateGatewayOptions): Promise<any> => {

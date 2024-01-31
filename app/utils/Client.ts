@@ -131,7 +131,7 @@ namespace Client {
 	}
 
 	async function getTenants() {
-		return API.getTenants();
+		return API.getTeams();
 	}
 
 	export async function checkIfGatewayStillExists(refGateway = gateway) {
