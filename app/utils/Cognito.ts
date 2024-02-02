@@ -1,257 +1,103 @@
-import * as AWS from 'aws-sdk/global';
+import { AuthFlowType, ChangePasswordCommand, ChangePasswordCommandOutput, CognitoIdentityProviderClient, ConfirmForgotPasswordCommand, ConfirmSignUpCommand, ForgotPasswordCommand, GlobalSignOutCommand, InitiateAuthCommand, ResendConfirmationCodeCommand, SignUpCommand } from '@aws-sdk/client-cognito-identity-provider';
+
 import ApiWrapper from './ApiWrapper';
-const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const { CognitoIdentityCredentials } = AWS;
-const { CognitoUser } = AmazonCognitoIdentity;
 
-const globalThis = window as any;
+const COGNITO_CLIENT_ID = process.env.COGNITO_USER_POOL_CLIENT_ID || '2p40shpt1ru5gerbip9limhm15';
+export const STORAGE_KEY = 'nrfcloudCognitoData';
 
-const COGNITO_CLIENT_ID = globalThis.COGNITO_USER_POOL_CLIENT_ID || '2p40shpt1ru5gerbip9limhm15';
-const COGNITO_USER_POOL_ID = globalThis.COGNITO_USER_POOL_ID || 'us-east-1_fdiBa7JSO';
-const COGNITO_IDENTITY_POOL_ID = globalThis.COGNITO_IDENTITY_POOL_ID || 'us-east-1:c00e1327-dfc2-4aa7-a484-8ca366d11a68';
-const AWS_REGION = globalThis.AWS_REGION || 'us-east-1';
-const USERPOOL_IDP = `cognito-idp.${AWS_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}`;
+const client = new CognitoIdentityProviderClient({ region: 'us-east-1' });
 
-AWS.config.region = AWS_REGION;
+namespace Cognito {
 
-const STORAGE_KEY = 'nrfcloudCognitoData';
-const STORAGE_KEY_DEVZONE_REFRESH = 'devzoneRefreshToken';
+	export async function logout() {
+		const { AccessToken } = retrieveRefreshCredentials();
+		clearRefreshCredentials();
+		const request = new GlobalSignOutCommand({ AccessToken });
+		return client.send(request);
+	};
 
-const poolData = {
-	UserPoolId: COGNITO_USER_POOL_ID,
-	ClientId: COGNITO_CLIENT_ID,
-};
+	export async function changePassword(oldPassword: string, newPassword: string): Promise<ChangePasswordCommandOutput> {
+		const { AccessToken } = retrieveRefreshCredentials();
+		const request = new ChangePasswordCommand({ PreviousPassword: oldPassword, ProposedPassword: newPassword, AccessToken });
+		return client.send(request);
+	}
 
-const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+	export function forgotPassword(Username: string): Promise<any> {
+		const input = { Username, ClientId: COGNITO_CLIENT_ID };
+		const command = new ForgotPasswordCommand(input);
+		return client.send(command);
+	}
 
-let cachedCredentials;
+	export function confirmPassword(Username: string, ConfirmationCode: string, Password: string): Promise<any> {
+		const input = { Username, ConfirmationCode, Password, ClientId: COGNITO_CLIENT_ID };
+		const command = new ConfirmForgotPasswordCommand(input);
+		return client.send(command);
+	}
 
-export namespace Cognito {
+	export function createAccount(Username: string, Password: string, firstName: string, lastName: string, country: any): Promise<any> {
+		const UserAttributes = [
+			{ Name: 'email', Value: Username },
+			{ Name: 'given_name', Value: firstName },
+			{ Name: 'family_name', Value: lastName },
+			{ Name: 'locale', Value: country },
+			{ Name: 'name', Value: `${firstName} ${lastName}` },
+		];
+		const input = { UserAttributes, ClientId: COGNITO_CLIENT_ID, Username, Password };
+		const command = new SignUpCommand(input);
+		return client.send(command);
+	}
 
-	export async function login(email: string, password: string): Promise<typeof CognitoIdentityCredentials> {
+	export function confirmRegistration(Username: string, ConfirmationCode: string): Promise<any> {
+		const input = { ClientId: COGNITO_CLIENT_ID, Username, ConfirmationCode };
+		const command = new ConfirmSignUpCommand(input);
+		return client.send(command);
+	}
 
-		const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
-			Username: email,
-			Password: password,
-		});
-
-		const userData = {
-			Username: email,
-			Pool: userPool,
-		};
-		const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-		const authTokens = await new Promise<any>((resolve, reject) => {
-			cognitoUser.authenticateUser(authenticationDetails, {
-				onSuccess: function (authTokens) {
-					resolve(authTokens);
-				},
-				onFailure: function (err) {
-					reject(err);
-				},
-			});
-		});
-		const idToken = authTokens.getIdToken();
-		const token = idToken.getJwtToken();
-		const credentials = new CognitoIdentityCredentials({
-			IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
-			Logins: {
-				[USERPOOL_IDP]: token,
-			},
-		});
-		await new Promise((resolve, reject) => {
-			if (credentials) {
-				credentials.refresh(error => {
-					if (error) {
-						return reject(error);
-					}
-					resolve();
-				});
-			} else {
-				reject('Credentials undefined');
-			}
-		});
-		storeRefreshCredentials(email, authTokens.getRefreshToken());
-		return credentials;
+	export function resendConfirmationCode(Username: string): Promise<any> {
+		const input = { ClientId: COGNITO_CLIENT_ID, Username };
+		const command = new ResendConfirmationCodeCommand(input);
+		return client.send(command);
 	}
 
 	export async function resumeSession(): Promise<void> {
-		const credentials = retrieveRefreshCredentials();
+		const { username, refreshToken } = retrieveRefreshCredentials();
 
-		if (credentials && credentials.username && credentials.refreshToken) {
-			const userData = {
-				Username: credentials.username,
-				Pool: userPool,
+		if (username && refreshToken) {
+			const input = {
+				ClientId: COGNITO_CLIENT_ID,
+				AuthParameters: { REFRESH_TOKEN: refreshToken },
+				AuthFlow: AuthFlowType.REFRESH_TOKEN_AUTH,
 			};
+			const request = new InitiateAuthCommand(input);
+			const response = await client.send(request);
 
-			const cognitoUser = new CognitoUser(userData);
-			const result: any = await new Promise((resolve, reject) => {
-				cognitoUser.refreshSession((credentials as any).refreshToken, (err, result) => {
-					if (err) {
-						return reject(err);
-					}
-					return resolve(result);
-				});
-			});
-			const token = result.getIdToken().getJwtToken();
-			ApiWrapper.setApiKey(token);
-			storeRefreshCredentials(credentials.username, result.getRefreshToken(), result.getAccessToken());
+			ApiWrapper.setApiKey(response.AuthenticationResult.IdToken);
+			storeRefreshCredentials(username, refreshToken, response.AuthenticationResult.AccessToken);
 			return;
-		} else {
-			const session = await getUserSession();
-			if (session) {
-				const token = session.getIdToken().getJwtToken();
-				return await authenticate(token);
-			}
-
 		}
 		throw new Error('No token in storage.');
 	}
 
-	export async function logout() {
-		clearRefreshCredentials();
-		const currentCognitoUser = await getCurrentUser();
-		if (currentCognitoUser) {
-			currentCognitoUser.signOut();
+	function retrieveRefreshCredentials(): { username: string, refreshToken, AccessToken } | null {
+		const data = localStorage.getItem(STORAGE_KEY);
+		if (!data) {
+			return null;
 		}
-	}
-
-	export function startDevzoneSession(devzoneRefreshToken): Promise<void> {
-
-		AWS.config.credentials = getCredentials(devzoneRefreshToken);
-		const STORAGE_KEY = 'devzoneRefreshToken';
-		localStorage.setItem(STORAGE_KEY, JSON.stringify({ devzoneRefreshToken }));
-
-		return new Promise((resolve, reject) => {
-			if (AWS.config.credentials) {
-				(AWS.config.credentials as any).refresh(error => {
-					if (error) {
-						return reject(error);
-					}
-					resolve();
-				});
-			} else {
-				reject('Credentials undefined');
-			}
-		});
-	}
-
-	export function getCredentials(token): typeof CognitoIdentityCredentials {
-		let cognitoCredentials;
-		if (token) {
-			const { aud: IdentityPoolId, sub: IdentityId } = JSON.parse(atob(token.split('.')[1]));
-			cognitoCredentials = new AWS.CognitoIdentityCredentials({
-				IdentityPoolId,
-				IdentityId,
-				Logins: {
-					'cognito-identity.amazonaws.com': token,
-				},
-			});
-		}
-
-		return cognitoCredentials;
-	}
-
-	function getQueryStringValue(key: string) {
-		const params = new URLSearchParams(location.search);
-		return params.get(key);
-	}
-
-	async function getCurrentUser(): Promise<typeof CognitoUser | null> {
-		const currentUser = userPool.getCurrentUser();
-		if (currentUser) {
-			currentUser.setSignInUserSession(await getUserSession());
-		}
-		return currentUser;
+		const { username, refreshToken, AccessToken } = JSON.parse(data);
+		return { username, refreshToken, AccessToken };
 	}
 
 	function clearRefreshCredentials(): void {
 		localStorage.removeItem(STORAGE_KEY);
-		localStorage.removeItem(STORAGE_KEY_DEVZONE_REFRESH);
 	}
 
-	function getStoredData() {
-		const data = localStorage.getItem(STORAGE_KEY_DEVZONE_REFRESH) || localStorage.getItem(STORAGE_KEY);
-		if (!data) {
-			return null;
-		}
-		const { username, refreshToken, devzoneRefreshToken } = JSON.parse(data);
-		return {
-			username,
-			refreshToken,
-			devzoneRefreshToken,
-		};
-	}
-
-	function retrieveRefreshCredentials(): { username: string, refreshToken, devzoneRefreshToken } | null {
-		const data = getStoredData();
-		if (!data) {
-			return null;
-		}
-		const { username, refreshToken, devzoneRefreshToken } = data;
-		return {
-			username,
-			refreshToken: new AmazonCognitoIdentity.CognitoRefreshToken({ RefreshToken: refreshToken }),
-			devzoneRefreshToken,
-		};
-	}
-
-	export function getUserName(): string {
-		const data = getStoredData();
-		if (!data) {
-			return '';
-		}
-		return data.username;
-	}
-
-	function authenticate(token, resetCredentials = true): Promise<null> {
-		if (resetCredentials) {
-			cachedCredentials = AWS.config.credentials = new CognitoIdentityCredentials({
-				IdentityPoolId: COGNITO_IDENTITY_POOL_ID,
-				Logins: {
-					[USERPOOL_IDP]: token,
-				},
-			});
-		}
-
-		return new Promise<null>((resolve, reject) => {
-			if (AWS.config.credentials) {
-				(AWS.config.credentials as any).refresh(error => {
-					if (error) {
-						return reject(error);
-					}
-					cachedCredentials = AWS.config.credentials;
-					resolve();
-				});
-			} else {
-				reject('Credentials undefined');
-			}
-		});
-	}
-
-	export function storeRefreshCredentials(username: string, refreshToken, AccessToken): void {
+	function storeRefreshCredentials(username: string, refreshToken, AccessToken): void {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify({
 			username,
+			refreshToken: refreshToken || refreshToken.getToken(),
 			AccessToken,
-			refreshToken: refreshToken.getToken(),
 		}));
 	}
-
-	function getUserSession(): Promise<any> {
-		const currentCognitoUser = userPool.getCurrentUser();
-		return new Promise<any>((resolve, reject) => {
-			if (
-				currentCognitoUser &&
-				currentCognitoUser.getSession
-			) {
-				return currentCognitoUser.getSession((error, session) => {
-
-					if (error) {
-						return reject(error);
-					}
-					resolve(session);
-				});
-			}
-			reject('session not available');
-		});
-	}
 }
+
+export default Cognito;

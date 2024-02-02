@@ -23,6 +23,7 @@
 	"author": "Apache Cordova Team",
 	"license": "Apache-2.0",
 	"dependencies": {
+		"@aws-sdk/client-cognito-identity-provider": "^3.505.0",
 		"@babel/cli": "^7.0.0",
 		"@babel/core": "^7.0.0",
 		"@babel/plugin-external-helpers": "^7.0.0",
